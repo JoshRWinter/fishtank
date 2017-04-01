@@ -38,6 +38,7 @@ void State::render()const{
 			++fps;
 
 		glUniform4f(renderer.uniform.rgba,0.0f,0.0f,0.0f,1.0f);
+		glBindTexture(GL_TEXTURE_2D,renderer.font.main->atlas);
 		drawtext(renderer.font.main,renderer.view.left+0.1f,renderer.view.top+0.1f,fps_string);
 	}
 #endif // SHOW_FPS

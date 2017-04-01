@@ -3,6 +3,8 @@
 #include <android_native_app_glue.h>
 #include "glesutil.h"
 
+#define SHOW_FPS
+
 #define TID_BACKGROUND 0
 
 struct Renderer{
