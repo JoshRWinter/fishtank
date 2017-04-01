@@ -1,0 +1,4 @@
+jni/glesutil.c linguist-vendored
+*.h linguist-language=C++
+
+
