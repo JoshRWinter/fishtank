@@ -1,4 +1,3 @@
-#include "object/object.h"
 #include "fishtank.h"
 
 extern const char *vertexshader,*fragmentshader;
@@ -55,15 +54,23 @@ void Renderer::init(android_app &app){
 	// gameplay textures
 	if(!loadpack(&assets,app.activity->assetManager,"assets",NULL))
 		logcat("texture init error");
+	// ui textures
+	if(!loadpack(&uiassets,app.activity->assetManager,"uiassets",NULL))
+		logcat("ui texture init error");
 
 	// fonts
 	set_ftfont_params(screen.w,screen.h,view.right*2.0f,view.bottom*2.0f,uniform.vector,uniform.size,uniform.texcoords);
-	font.main=create_ftfont(app.activity->assetManager,0.3f,"arial.ttf");
+	font.main=create_ftfont(app.activity->assetManager,0.5f,"arial.ttf");
+	font.button=create_ftfont(app.activity->assetManager,0.5f,"arial.ttf");
+	font.button_small=create_ftfont(app.activity->assetManager,0.4f,"arial.ttf");
 }
 
 void Renderer::term(){
 	destroy_ftfont(font.main);
+	destroy_ftfont(font.button);
+	destroy_ftfont(font.button_small);
 	destroypack(&assets);
+	destroypack(&uiassets);
 	glDeleteBuffers(1,&vbo);
 	glDeleteVertexArrays(1,&vao);
 	glDeleteProgram(program);

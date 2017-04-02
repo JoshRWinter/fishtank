@@ -1,11 +1,25 @@
+#ifndef FISHTANK_H
+#define FISHTANK_H
+
 #include <EGL/egl.h>
 #include <GLES2/gl2.h>
 #include <android_native_app_glue.h>
 #include "glesutil.h"
 
+struct Renderer;
+struct State;
+#include "object.h"
+#include "menu.h"
+
 #define SHOW_FPS
 
+// gameplay textures
 #define TID_BACKGROUND 0
+
+// ui textures
+#define UITID_BACKGROUND 0
+#define UITID_BUTTON 1
+#define UITID_BUTTON_SMALL 2
 
 struct Renderer{
 	Renderer();
@@ -24,7 +38,7 @@ struct Renderer{
 	unsigned vbo,vao,program;
 
 	struct{int vector,size,texcoords,rot,projection,rgba;}uniform;
-	struct{ftfont *main;}font;
+	struct{ftfont *main,*button,*button_small;}font;
 
 	pack assets; // gameplay textures
 	pack uiassets; // ui textures
@@ -42,7 +56,14 @@ struct State{
 	Renderer renderer;
 
 	bool running;
+	bool show_menu; // show the main menu
 
+	struct{
+		MenuMain main;
+		MenuInput input;
+	}menu;
+
+	crosshair pointer[2];
 	android_app *app;
 	jni_info jni;
 
@@ -53,6 +74,7 @@ struct State{
 	Base background;
 };
 
-void process(android_app*);
 int32_t inputproc(android_app*,AInputEvent*);
 void cmdproc(android_app*,int32_t);
+
+#endif // FISHTANK_H

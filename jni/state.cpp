@@ -1,8 +1,12 @@
 #include <time.h>
-#include "object/object.h"
 #include "fishtank.h"
 
 bool State::core(){
+	if(show_menu){
+		show_menu=false;
+		if(!menu.main.exec(*this))
+			return false;
+	}
 	return true;
 }
 
@@ -46,6 +50,8 @@ void State::render()const{
 
 State::State(){
 	running=false;
+	show_menu=true;
+	memset(pointer,0,sizeof(crosshair)*2);
 
 	// background
 	background.x=renderer.view.left;

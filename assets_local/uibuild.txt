@@ -1,0 +1,1 @@
+background.tga button.tga button_small.tga -o ../assets/uiassets

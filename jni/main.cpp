@@ -1,4 +1,3 @@
-#include "object/object.h"
 #include "fishtank.h"
 
 void cmdproc(android_app *app,int32_t cmd){
@@ -22,6 +21,10 @@ void cmdproc(android_app *app,int32_t cmd){
 }
 
 int32_t inputproc(android_app *app,AInputEvent *event){
+	State *state=(State*)app->userData;
+	int32_t type=AInputEvent_getType(event);
+	if(type==AINPUT_EVENT_TYPE_MOTION)
+		return retrieve_touchscreen_input(event,state->pointer,state->renderer.dev.w,state->renderer.dev.h,state->renderer.view.right*2.0f,state->renderer.view.bottom*2.0f);
 	return false;
 }
 

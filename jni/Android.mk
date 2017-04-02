@@ -23,9 +23,10 @@ LOCAL_MODULE := main
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../../freetype-2.5.3/include
 LOCAL_C_INCLUDES += $(LOCAL_PATH)/../../libogg-1.3.2/include
 LOCAL_C_INCLUDES += $(LOCAL_PATH)/../../libvorbis-1.3.4/include
-O_FILES := $(wildcard $(LOCAL_PATH)/object/*.cpp)
+OBJECT_FILES := $(wildcard $(LOCAL_PATH)/object/*.cpp)
+MENU_FILES := $(wildcard $(LOCAL_PATH)/menu/*.cpp)
 FILES := $(wildcard $(LOCAL_PATH)/*.cpp)
-LOCAL_SRC_FILES := glesutil.c $(FILES:$(LOCAL_PATH)/%=%) $(O_FILES:$(LOCAL_PATH)/%=%)
+LOCAL_SRC_FILES := glesutil.c $(FILES:$(LOCAL_PATH)/%=%) $(OBJECT_FILES:$(LOCAL_PATH)/%=%) $(MENU_FILES:$(LOCAL_PATH)/%=%)
 LOCAL_LDLIBS := -llog -landroid -lEGL -lGLESv2 -lz -lOpenSLES
 LOCAL_CFLAGS := -O3
 LOCAL_STATIC_LIBRARIES := android_native_app_glue freetype ogg-vorbis
