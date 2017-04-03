@@ -4,14 +4,18 @@
 #include <EGL/egl.h>
 #include <GLES2/gl2.h>
 #include <android_native_app_glue.h>
+#include <string>
 #include "glesutil.h"
+
+#define SHOW_FPS
 
 struct Renderer;
 struct State;
+#include "network.h"
+#include "fishnet.h"
 #include "object.h"
+#include "Match.h"
 #include "menu.h"
-
-#define SHOW_FPS
 
 // gameplay textures
 #define TID_BACKGROUND 0
@@ -58,10 +62,12 @@ struct State{
 	bool running;
 	bool show_menu; // show the main menu
 	std::string name; // the player's name
+	Match match;
 
 	struct{
 		MenuMain main;
 		MenuPlay play;
+		MenuConnect connect;
 		MenuInput input;
 	}menu;
 

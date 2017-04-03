@@ -18,7 +18,6 @@ struct MenuMain:Menu{
 	Base background;
 };
 
-#define MSG_LIMIT 45
 struct MenuInput:Menu{
 	bool exec(State&,const char*,std::string*);
 	virtual void render(const Renderer&)const;
@@ -41,6 +40,24 @@ struct MenuPlay:Menu{
 	Button button_name;
 	Button button_connect;
 	Button button_back;
+};
+
+#define CONN_STATE_TRYING 1
+#define CONN_STATE_DEAD 2
+#define CONN_STATE_TIMEOUT 3
+#define CONN_STATE_READY 4
+#define CONN_STATE_KICKED 5
+#define CONNECTION_TIMEOUT 15
+struct MenuConnect{
+	bool exec(State&,const std::string&,socket_tcp&);
+	virtual void render(const Renderer&)const;
+
+	Base background;
+	std::string address;
+	std::string connected_address;
+	Button button_cancel;
+	Button button_ready;
+	int connection_state;
 };
 
 #endif // MENU_H

@@ -27,6 +27,21 @@ bool MenuPlay::exec(State &state){
 
 		// connect the player
 		if(button_connect.process(state.pointer)){
+			std::string ip_address;
+			if(!state.menu.input.exec(state,"Enter an IPv4, IPv6 ip address,\nor a DNS resolvable domain name",&ip_address))
+				return false;
+			if(ip_address.length()>0){
+				socket_tcp *tcp=new socket_tcp();
+				if(!state.menu.connect.exec(state,ip_address,*tcp))
+					return false;
+
+				if(!tcp->error()){
+					state.match.initialize(state.name,tcp);
+					return true;
+				}
+				else
+					delete tcp;
+			}
 		}
 
 		// cancel

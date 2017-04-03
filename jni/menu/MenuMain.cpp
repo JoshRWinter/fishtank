@@ -14,8 +14,7 @@ bool MenuMain::exec(State &state){
 
 	while(state.process()){
 		if(button_play.process(state.pointer)){
-			if(!state.menu.play.exec(state))
-				return false;
+			return state.menu.play.exec(state);
 		}
 		if(button_quit.process(state.pointer)){
 			ANativeActivity_finish(state.app->activity);
