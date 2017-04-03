@@ -32,4 +32,15 @@ struct MenuInput:Menu{
 	ButtonSmall enter,cancel;
 };
 
+struct MenuPlay:Menu{
+	bool exec(State&);
+	virtual void render(const Renderer&)const;
+
+	std::string *name;
+	Base background;
+	Button button_name;
+	Button button_connect;
+	Button button_back;
+};
+
 #endif // MENU_H

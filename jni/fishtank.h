@@ -57,9 +57,11 @@ struct State{
 
 	bool running;
 	bool show_menu; // show the main menu
+	std::string name; // the player's name
 
 	struct{
 		MenuMain main;
+		MenuPlay play;
 		MenuInput input;
 	}menu;
 

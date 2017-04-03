@@ -14,13 +14,8 @@ bool MenuMain::exec(State &state){
 
 	while(state.process()){
 		if(button_play.process(state.pointer)){
-			std::string text;
-			if(!state.menu.input.exec(state,"To whom would you like to connect? (ip4v|ipv6)",&text))
+			if(!state.menu.play.exec(state))
 				return false;
-			if(text.length()>0)
-				logcat("you said \"%s\"",text.c_str());
-			else
-				logcat("you didn't say anything");
 		}
 		if(button_quit.process(state.pointer)){
 			ANativeActivity_finish(state.app->activity);
@@ -48,6 +43,7 @@ void MenuMain::render(const Renderer &renderer)const{
 	glBindTexture(GL_TEXTURE_2D,renderer.uiassets.texture[UITID_BUTTON].object);
 	button_play.render(renderer);
 	button_quit.render(renderer);
+
 	// button label
 	glUniform4f(renderer.uniform.rgba,0.0f,0.0f,0.0f,1.0f);
 	glBindTexture(GL_TEXTURE_2D,renderer.font.button->atlas);

@@ -49,6 +49,7 @@ void State::render()const{
 }
 
 State::State(){
+	name="Basil Fawlty";
 	running=false;
 	show_menu=true;
 	memset(pointer,0,sizeof(crosshair)*2);
