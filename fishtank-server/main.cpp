@@ -75,6 +75,7 @@ int main(){
 
 			long long nano_time;
 			do{
+				sched_yield();
 				usleep(300);
 				get_nano_time(&nano_time);
 			}while(nano_time-last_nano_time<16666600);
