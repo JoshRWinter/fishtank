@@ -9,3 +9,5 @@ struct Client{
 	socket_tcp tcp;
 	std::string name;
 };
+
+void get_nano_time(long long*);

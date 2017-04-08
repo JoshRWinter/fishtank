@@ -35,6 +35,8 @@ int main(){
 	int client_count=0;
 	std::vector<Client*> client;
 
+	long long last_nano_time=0;
+
 	while(run.load()){
 		// accept new clients
 		std::string connector_address;
@@ -56,7 +58,28 @@ int main(){
 			}
 		}
 
-		usleep(100);
+		// keep track of steps per second
+		{
+			static int sps=60,last_time;
+			int current_time=time(NULL);
+			static unsigned long frame=0;
+			if(current_time!=last_time){
+				last_time=current_time;
+				if(sps<55&&frame>200)
+					std::cout<<"sps "<<sps<<" -- having trouble keeping up"<<std::endl;
+				sps=0;
+			}
+			else
+				++sps;
+			++frame;
+
+			long long nano_time;
+			do{
+				usleep(300);
+				get_nano_time(&nano_time);
+			}while(nano_time-last_nano_time<16666600);
+			last_nano_time=nano_time;
+		}
 	}
 
 	// clear the clients
@@ -66,4 +89,10 @@ int main(){
 
 	puts("\ngoodbye");
 	return 0;
+}
+
+void get_nano_time(long long *t){
+	timespec ts;
+	clock_gettime(CLOCK_MONOTONIC,&ts);
+	*t=((long long)ts.tv_sec*(long long)1000000000)+(long long)ts.tv_nsec;
 }
