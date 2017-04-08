@@ -6,6 +6,7 @@ public:
 	void quit();
 	void send_data(State&);
 	void recv_data(State&);
+	bool running();
 
 private:
 	socket_tcp *tcp;

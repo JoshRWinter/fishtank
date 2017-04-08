@@ -1,5 +1,6 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <sys/ioctl.h>
 #include <netdb.h>
 #include <unistd.h>
 #include <fcntl.h>
@@ -11,6 +12,10 @@
 #include <time.h>
 
 #include "network.h"
+
+socket_tcp_server::socket_tcp_server(){
+	scan=-1;
+}
 
 // creates and binds a socket
 // true on success
@@ -69,15 +74,17 @@ socket_tcp_server::~socket_tcp_server(){
 // initialize with already opened socket
 socket_tcp::socket_tcp(int socket){
 	sock=socket;
+	ai=NULL;
 }
 
 socket_tcp::socket_tcp(){
 	sock=-1;
+	ai=NULL;
 }
 
 // attempt to connect to <address> on <port>, fills <name> with canonical name of <address>, returns true on success
 bool socket_tcp::setup(const std::string &address,std::string &name,unsigned short port){
-	addrinfo hints,*ai;
+	addrinfo hints;
 
 	memset(&hints,0,sizeof(addrinfo));
 	hints.ai_family=AF_UNSPEC;
@@ -92,18 +99,15 @@ bool socket_tcp::setup(const std::string &address,std::string &name,unsigned sho
 	if(0!=getaddrinfo(address.c_str(),port_string,&hints,&ai)){
 		return false;
 	}
-	addr_info=*ai;
-	ai=NULL;
-	freeaddrinfo(ai);
 
 	char info[51];
-	if(0!=getnameinfo(addr_info.ai_addr,addr_info.ai_addrlen,info,51,NULL,0,NI_NUMERICHOST)){
+	if(0!=getnameinfo(ai->ai_addr,ai->ai_addrlen,info,51,NULL,0,NI_NUMERICHOST)){
 		return false;
 	}
 	name=info;
 
 	// create the socket
-	sock=socket(addr_info.ai_family,SOCK_STREAM,IPPROTO_TCP);
+	sock=socket(ai->ai_family,ai->ai_socktype,ai->ai_protocol);
 	if(sock==-1){
 		return false;
 	}
@@ -117,7 +121,9 @@ bool socket_tcp::connect(){
 	if(sock==-1)
 		return false;
 
-	bool result=::connect(sock,addr_info.ai_addr,addr_info.ai_addrlen)==0;
+	bool result=::connect(sock,ai->ai_addr,ai->ai_addrlen)==0;
+
+	// back to blocking
 	if(result)
 		fcntl(sock,F_SETFL,fcntl(sock,F_GETFL,0)&~O_NONBLOCK);
 
@@ -156,6 +162,15 @@ void socket_tcp::recv(void *buffer,unsigned size){
 	}
 }
 
+int socket_tcp::peek(){
+	if(sock==-1)
+		return 0;
+
+	int available=0;
+	ioctl(sock,FIONREAD,&available);
+	return available;
+}
+
 bool socket_tcp::error(){
 	return sock==-1;
 }
@@ -165,8 +180,197 @@ void socket_tcp::close(){
 		::close(sock);
 		sock=-1;
 	}
+	if(ai!=NULL){
+		freeaddrinfo(ai);
+		ai=NULL;
+	}
 }
 
 socket_tcp::~socket_tcp(){
 	this->close();
+}
+
+// UDP
+socket_udp_server::socket_udp_server(){
+	sock=-1;
+}
+
+socket_udp_server::~socket_udp_server(){
+	this->close();
+}
+
+bool socket_udp_server::bind(unsigned short port){
+	addrinfo hints,*ai;
+
+	memset(&hints,0,sizeof(addrinfo));
+	hints.ai_family=AF_UNSPEC;
+	hints.ai_socktype=SOCK_DGRAM;
+	hints.ai_flags=AI_PASSIVE;
+
+	// convert port to string
+	char port_string[20];
+	sprintf(port_string,"%hu",port);
+
+	// resolve hostname
+	if(0!=getaddrinfo(NULL,port_string,&hints,&ai)){
+		this->close();
+		return false;
+	}
+
+	// create the socket
+	sock=socket(ai->ai_family,ai->ai_socktype,ai->ai_protocol);
+	if(sock==-1){
+		this->close();
+		return false;
+	}
+
+	// bind to port
+	if(::bind(sock,ai->ai_addr,ai->ai_addrlen)){
+		this->close();
+		return false;
+	}
+
+	freeaddrinfo(ai);
+
+	return true;
+}
+
+void socket_udp_server::close(){
+	if(sock!=-1){
+		::close(sock);
+		sock=-1;
+	}
+}
+
+void socket_udp_server::send(const void *buffer,unsigned len,const udp_id &id){
+	if(sock==-1)
+		return;
+	if(!id.initialized){
+		this->close();
+		return;
+	}
+
+	// no such thing as partial sends for sendto with udp
+	int result=sendto(sock,buffer,len,0,(sockaddr*)&id.storage,id.len);
+	if(result!=len){
+		this->close();
+		return;
+	}
+}
+
+void socket_udp_server::recv(void *buffer,unsigned len,udp_id &id){
+	if(sock==-1)
+		return;
+
+	// no partial receives
+	int result=recvfrom(sock,buffer,len,0,(sockaddr*)&id.storage,&id.len);
+	if(result!=len){
+		this->close();
+		return;
+	}
+	id.initialized=true;
+}
+
+int socket_udp_server::peek(){
+	if(sock==-1)
+		return 0;
+
+	int available=0;
+	ioctl(sock,FIONREAD,&available);
+
+	return available;
+}
+
+bool socket_udp_server::error(){
+	return sock==-1;
+}
+
+// udp client
+socket_udp::socket_udp(){
+	sock=-1;
+	ai=NULL;
+}
+
+socket_udp::~socket_udp(){
+	this->close();
+}
+
+// remember it is auto bound no need to explicitly bind
+bool socket_udp::setup(const std::string &address,unsigned short port){
+	addrinfo hints;
+
+	memset(&hints,0,sizeof(addrinfo));
+	hints.ai_family=AF_UNSPEC;
+	hints.ai_socktype=SOCK_DGRAM;
+	hints.ai_protocol=0;
+
+	// convert port to string
+	char port_string[20];
+	sprintf(port_string,"%hu",port);
+
+	// resolve hostname
+	if(0!=getaddrinfo(address.c_str(),port_string,&hints,&ai)){
+		return false;
+	}
+
+	// create the socket
+	sock=socket(ai->ai_family,ai->ai_socktype,ai->ai_protocol);
+	if(sock==-1){
+		return false;
+	}
+
+	return true;
+}
+
+void socket_udp::send(const void *buffer,unsigned len){
+	if(sock==-1)
+		return;
+
+	// no such thing as a partial send for udp with sendto
+	ssize_t result=sendto(sock,buffer,len,0,(sockaddr*)ai->ai_addr,ai->ai_addrlen);
+	if(result!=len){
+		this->close();
+		return;
+	}
+}
+
+void socket_udp::recv(void *buffer,unsigned len){
+	if(sock==-1)
+		return;
+
+	// ignored
+	sockaddr_storage src_addr;
+	socklen_t src_len;
+
+	// no such thing as a partial send for udp with sendto
+	ssize_t result=recvfrom(sock,buffer,len,0,(sockaddr*)&src_addr,&src_len);
+	if(result!=len){
+		this->close();
+		return;
+	}
+}
+
+int socket_udp::peek(){
+	if(sock==-1)
+		return 0;
+
+	int avail=0;
+	ioctl(sock,FIONREAD,&avail);
+
+	return avail;
+}
+
+bool socket_udp::error(){
+	return sock==-1;
+}
+
+void socket_udp::close(){
+	if(sock!=-1){
+		::close(sock);
+		sock=-1;
+	}
+	if(ai!=NULL){
+		freeaddrinfo(ai);
+		ai=NULL;
+	}
 }
