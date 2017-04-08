@@ -83,7 +83,7 @@ socket_tcp::socket_tcp(){
 }
 
 // attempt to connect to <address> on <port>, fills <name> with canonical name of <address>, returns true on success
-bool socket_tcp::setup(const std::string &address,std::string &name,unsigned short port){
+bool socket_tcp::setup(const std::string &address,unsigned short port){
 	addrinfo hints;
 
 	memset(&hints,0,sizeof(addrinfo));
@@ -115,6 +115,14 @@ bool socket_tcp::setup(const std::string &address,std::string &name,unsigned sho
 	fcntl(sock,F_SETFL,fcntl(sock,F_GETFL,0)|O_NONBLOCK);
 
 	return true;
+}
+
+// disable the object, preserve the fd so the destructor doesn't get it
+int socket_tcp::disable(){
+	int tmp=sock;
+	sock=-1;
+	this->close();
+	return tmp;
 }
 
 bool socket_tcp::connect(){
@@ -173,6 +181,10 @@ int socket_tcp::peek(){
 
 bool socket_tcp::error(){
 	return sock==-1;
+}
+
+void socket_tcp::get_name(std::string &s){
+	s=name;
 }
 
 void socket_tcp::close(){

@@ -22,16 +22,19 @@ public:
 	socket_tcp(int);
 	~socket_tcp();
 
-	bool setup(const std::string &address,std::string&,unsigned short);
+	bool setup(const std::string &address,unsigned short);
+	int disable();
 	bool connect();
 	void send(const void*,unsigned);
 	void recv(void*,unsigned);
 	int peek();
 	void close();
 	bool error();
+	void get_name(std::string&);
 
 private:
 	int sock;
+	std::string name;
 	addrinfo *ai;
 };
 

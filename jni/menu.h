@@ -49,7 +49,7 @@ struct MenuPlay:Menu{
 #define CONN_STATE_KICKED 5
 #define CONNECTION_TIMEOUT 15
 struct MenuConnect{
-	bool exec(State&,const std::string&,socket_tcp&);
+	bool exec(State&,const std::string&);
 	virtual void render(const Renderer&)const;
 
 	Base background;

@@ -1,18 +1,20 @@
 #include <time.h>
 #include "../fishtank.h"
 
-bool MenuConnect::exec(State &state,const std::string &ip,socket_tcp &tcp){
+bool MenuConnect::exec(State &state,const std::string &ip){
 	Base::init_background(background,state.renderer);
 
+	socket_tcp tcp;
 	button_cancel.init(-BUTTON_WIDTH/2.0f,0.5f,"Cancel");
 	button_ready.init(-BUTTON_WIDTH/2.0f,0.5f,"Ready!");
 	address=ip;
 	connection_state=CONN_STATE_TRYING;
 	int initial_time=time(NULL);
-	if(!tcp.setup(ip,connected_address,TCP_PORT)){
+	if(!tcp.setup(ip,TCP_PORT)){
 		tcp.close();
 		connection_state=CONN_STATE_DEAD;
 	}
+	tcp.get_name(connected_address);
 
 	while(state.process()){
 		if(connection_state!=CONN_STATE_READY){
@@ -37,8 +39,10 @@ bool MenuConnect::exec(State &state,const std::string &ip,socket_tcp &tcp){
 				// see if the client is accepted
 				uint8_t accepted;
 				tcp.recv(&accepted,sizeof(uint8_t));
-				if(accepted)
+				if(accepted){
 					connection_state=CONN_STATE_READY;
+					state.match.initialize(state.name,tcp);
+				}
 				else{
 					tcp.close();
 					connection_state=CONN_STATE_KICKED;

@@ -31,16 +31,8 @@ bool MenuPlay::exec(State &state){
 			if(!state.menu.input.exec(state,"Enter an IPv4, IPv6 ip address,\nor a DNS resolvable domain name",&ip_address))
 				return false;
 			if(ip_address.length()>0){
-				socket_tcp *tcp=new socket_tcp();
-				if(!state.menu.connect.exec(state,ip_address,*tcp))
+				if(!state.menu.connect.exec(state,ip_address))
 					return false;
-
-				if(!tcp->error()){
-					state.match.initialize(state.name,tcp);
-					return true;
-				}
-				else
-					delete tcp;
 			}
 		}
 
