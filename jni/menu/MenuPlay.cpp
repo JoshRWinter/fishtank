@@ -33,6 +33,8 @@ bool MenuPlay::exec(State &state){
 			if(ip_address.length()>0){
 				if(!state.menu.connect.exec(state,ip_address))
 					return false;
+				if(state.match.connected())
+					return true;
 			}
 		}
 

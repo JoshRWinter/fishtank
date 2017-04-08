@@ -10,10 +10,9 @@ Match::~Match(){
 }
 
 void Match::initialize(const std::string &name,socket_tcp &s){
-	connected=true;
-
 	// setup the socket
 	tcp=s;
+	// prevent s destructor from closing its internal socket
 	s.disable();
 
 	// send the name
@@ -22,13 +21,12 @@ void Match::initialize(const std::string &name,socket_tcp &s){
 	tcp.send(name.c_str(),name_length);
 }
 
-bool Match::running(){
-	return connected;
+bool Match::connected(){
+	return !tcp.error();
 }
 
 void Match::quit(){
 	tcp.close();
-	connected=false;
 }
 
 void send_data(const State &state){

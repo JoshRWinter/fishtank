@@ -16,7 +16,7 @@ bool MenuMain::exec(State &state){
 		if(button_play.process(state.pointer)){
 			if(!state.menu.play.exec(state))
 				return false;
-			if(state.match.running())
+			if(state.match.connected())
 				return true;
 		}
 		if(button_quit.process(state.pointer)){
