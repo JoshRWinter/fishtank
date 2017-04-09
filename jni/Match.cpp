@@ -40,7 +40,7 @@ void Match::quit(){
 
 void Match::send_data(const State &state){
 	// send a tcp heartbeat to see if the connection is still alive
-	if(onein(200)){
+	if(onein(30)){
 		to_server_tcp heartbeat;
 		heartbeat.type=TYPE_HEARTBEAT;
 		tcp.send(&heartbeat.type,sizeof(heartbeat.type));
@@ -54,7 +54,7 @@ void Match::send_data(const State &state){
 
 void Match::recv_data(State &state){
 	// collect tcp info
-	if(tcp.peek()==SIZEOF_TO_CLIENT_TCP){
+	if(tcp.peek()>=SIZEOF_TO_CLIENT_TCP){
 		to_client_tcp tctcp;
 
 		tcp.recv(&tctcp.type,sizeof(tctcp.type));

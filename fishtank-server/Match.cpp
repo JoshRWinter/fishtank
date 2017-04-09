@@ -45,7 +45,7 @@ void Match::step(){
 
 void Match::send_data(){
 	// send out a heartbeat to all clients to see if they're still connected
-	if(onein(400)){
+	if(onein(100)){
 		for(std::vector<Client*>::iterator it=client_list.begin();it!=client_list.end();){
 			Client &client=**it;
 			to_client_tcp heartbeat;
@@ -58,6 +58,7 @@ void Match::send_data(){
 			client.tcp.send(&heartbeat.id,sizeof(heartbeat.id));
 			if(client.tcp.error()){
 				// kick
+				std::cout<<client.name<<" has disconnected."<<std::endl;
 				client.kick();
 				delete *it;
 				it=client_list.erase(it);
@@ -74,7 +75,7 @@ void Match::recv_data(){
 	for(std::vector<Client*>::iterator it=client_list.begin();it!=client_list.end();){
 		Client &client=**it;
 
-		if(client.tcp.peek()==SIZEOF_TO_SERVER_TCP){
+		if(client.tcp.peek()>=SIZEOF_TO_SERVER_TCP){
 			to_server_tcp tstcp;
 			client.tcp.recv(&tstcp.type,sizeof(tstcp.type));
 			client.tcp.recv(&tstcp.msg,sizeof(tstcp.msg));
