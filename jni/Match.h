@@ -10,4 +10,5 @@ public:
 
 private:
 	socket_tcp tcp;
+	socket_udp udp;
 };

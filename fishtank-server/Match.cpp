@@ -47,6 +47,7 @@ void Match::wait_next_step(){
 	static unsigned long frame=0;
 	if(current_time!=last_time){
 		last_time=current_time;
+		// server is falling behind
 		if(sps<55&&frame>200)
 			std::cout<<"sps "<<sps<<" -- having trouble keeping up"<<std::endl;
 		sps=0;

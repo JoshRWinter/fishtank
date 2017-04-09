@@ -1,3 +1,5 @@
+#include <cstdint>
+
 #define TCP_PORT 28856
 #define UDP_PORT 28857
 
