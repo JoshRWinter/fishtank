@@ -26,7 +26,7 @@ void Match::accept_new_clients(){
 			std::cout<<"rejected "<<connector_address<<", too many players!"<<std::endl;
 			socket_tcp tmp=connector_socket;
 			uint8_t i=0;
-			tmp.send(&i,sizeof(int8_t));
+			tmp.send(&i,sizeof(uint8_t));
 		}
 		else{
 			// accept the client
