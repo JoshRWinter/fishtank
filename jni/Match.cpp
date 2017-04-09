@@ -24,9 +24,9 @@ void Match::initialize(const std::string &name,socket_tcp &s){
 	}
 
 	// send the name
-	uint8_t name_length=name.length();
-	tcp.send(&name_length,sizeof(uint8_t));
-	tcp.send(name.c_str(),name_length);
+	char tmp[MSG_LIMIT+1];
+	strcpy(tmp,name.c_str());
+	tcp.send(name.c_str(),MSG_LIMIT+1);
 }
 
 bool Match::connected(){
@@ -38,8 +38,34 @@ void Match::quit(){
 	udp.close();
 }
 
-void send_data(const State &state){
+void Match::send_data(const State &state){
+	// send a tcp heartbeat to see if the connection is still alive
+	if(onein(300)){
+		to_server_tcp heartbeat;
+		heartbeat.type=TYPE_HEARTBEAT;
+		tcp.send(&heartbeat.type,sizeof(heartbeat.type));
+		tcp.send(&heartbeat.msg,sizeof(heartbeat.msg));
+		if(tcp.error()){
+			quit();
+			return;
+		}
+	}
 }
 
-void recv_data(State &state){
+void Match::recv_data(State &state){
+	// collect tcp info
+	if(tcp.peek()==SIZEOF_TO_CLIENT_TCP){
+		to_client_tcp tctcp;
+
+		tcp.recv(&tctcp.type,sizeof(tctcp.type));
+		tcp.recv(&tctcp.msg,sizeof(tctcp.msg));
+		tcp.recv(&tctcp.name,sizeof(tctcp.name));
+		tcp.recv(&tctcp.id,sizeof(tctcp.id));
+
+		switch(tctcp.type){
+		case TYPE_HEARTBEAT:
+			// ignore;
+			break;
+		}
+	}
 }

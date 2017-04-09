@@ -7,6 +7,10 @@ bool State::core(){
 		if(!menu.main.exec(*this))
 			return false;
 	}
+
+	match.recv_data(*this);
+	match.send_data(*this);
+
 	return true;
 }
 

@@ -12,6 +12,8 @@
 #define TYPE_CHAT 0
 #define TYPE_NEW_PLAYER 1
 #define TYPE_DELETE_PLAYER 2
+#define TYPE_HEARTBEAT 3
+#define SIZEOF_TO_SERVER_TCP (1+MSG_LIMIT+1)
 struct to_server_tcp{
 	uint8_t type;
 	uint8_t msg[MSG_LIMIT+1];
@@ -27,10 +29,12 @@ struct to_server_tcp{
 #define STATE_PRESS_AIMLEFT 6
 #define STATE_PRESS_AIMRIGHT 7
 #define STATE_ID 8
+#define SIZEOF_TO_SERVER_HEARTBEAT (4*9)
 struct to_server_heartbeat{
-	uint8_t state[9]; 
+	int32_t state[9];
 };
 
+#define SIZEOF_TO_CLIENT_TCP (1+(MSG_LIMIT+1)+(MSG_LIMIT+1)+1)
 struct to_client_tcp{
 	uint8_t type;
 	uint8_t msg[MSG_LIMIT+1];
@@ -38,6 +42,7 @@ struct to_client_tcp{
 	uint8_t id;
 };
 
+#define SIZEOF_TO_CLIENT_HEARTBEAT (4*MAX_PLAYERS*9)
 struct to_client_heartbeat{
 	int32_t state[MAX_PLAYERS*9];
 };

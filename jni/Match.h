@@ -4,7 +4,7 @@ public:
 	~Match();
 	void initialize(const std::string&,socket_tcp&);
 	void quit();
-	void send_data(State&);
+	void send_data(const State&);
 	void recv_data(State&);
 	bool connected();
 

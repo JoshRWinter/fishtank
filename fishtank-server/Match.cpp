@@ -1,6 +1,7 @@
+#include <string.h>
 #include "fishtank-server.h"
 
-Match::Match():client_list(MAX_PLAYERS){
+Match::Match(){
 	client_count=0;
 	last_nano_time=0;
 }
@@ -38,6 +39,66 @@ void Match::accept_new_clients(){
 }
 
 void Match::step(){
+	recv_data();
+	send_data();
+}
+
+void Match::send_data(){
+	// send out a heartbeat to all clients to see if they're still connected
+	if(onein(400)){
+		for(std::vector<Client*>::iterator it=client_list.begin();it!=client_list.end();){
+			Client &client=**it;
+			to_client_tcp heartbeat;
+
+			memset(&heartbeat,0,sizeof(to_client_tcp));
+			heartbeat.type=TYPE_HEARTBEAT;
+			client.tcp.send(&heartbeat.type,sizeof(heartbeat.type));
+			client.tcp.send(&heartbeat.msg,sizeof(heartbeat.msg));
+			client.tcp.send(&heartbeat.name,sizeof(heartbeat.name));
+			client.tcp.send(&heartbeat.id,sizeof(heartbeat.id));
+			if(client.tcp.error()){
+				// kick
+				client.kick();
+				delete *it;
+				it=client_list.erase(it);
+				continue;
+			}
+
+			++it;
+		}
+	}
+}
+
+void Match::recv_data(){
+	// collect data from tcp
+	for(std::vector<Client*>::iterator it=client_list.begin();it!=client_list.end();){
+		Client &client=**it;
+
+		if(client.tcp.peek()==SIZEOF_TO_SERVER_TCP){
+			to_server_tcp tstcp;
+			client.tcp.recv(&tstcp.type,sizeof(tstcp.type));
+			client.tcp.recv(&tstcp.msg,sizeof(tstcp.msg));
+			tstcp.msg[MSG_LIMIT]=0; // carefully
+			if(client.tcp.error()){
+				// kick
+				client.kick();
+				delete *it;
+				it=client_list.erase(it);
+				continue;
+			}
+
+			switch(tstcp.type){
+			case TYPE_HEARTBEAT:
+				// ignore
+				break;
+			case TYPE_CHAT:
+				std::cout<<client.name<<" says "<<tstcp.msg<<std::endl;
+				break;
+			}
+		}
+
+		++it;
+	}
 }
 
 void Match::wait_next_step(){

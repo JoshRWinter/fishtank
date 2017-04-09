@@ -1,5 +1,6 @@
 #include <atomic>
 #include <signal.h>
+#include <time.h>
 
 #include "fishtank-server.h"
 
@@ -17,6 +18,7 @@ void signal_handler(int s){
 }
 
 int main(){
+	srand(time(NULL));
 	run.store(true);
 	signal(SIGINT,signal_handler);
 	signal(SIGTERM,signal_handler);
@@ -45,4 +47,9 @@ void get_nano_time(long long *t){
 	timespec ts;
 	clock_gettime(CLOCK_MONOTONIC,&ts);
 	*t=((long long)ts.tv_sec*(long long)1000000000)+(long long)ts.tv_nsec;
+}
+
+int randomint(int low,int high){
+	if(low>=high)return low;
+	return low+(rand()%(high-low+1));
 }

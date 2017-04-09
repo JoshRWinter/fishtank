@@ -5,6 +5,8 @@
 #include "../jni/fishnet.h"
 #include "../jni/network.h"
 
+#define onein(n) (randomint(0,n-1)==0)
+
 struct Client{
 	Client(int);
 	~Client();
@@ -21,6 +23,8 @@ public:
 	bool setup();
 	void accept_new_clients();
 	void step();
+	void send_data();
+	void recv_data();
 	void wait_next_step();
 
 	std::vector<Client*> client_list;
@@ -31,3 +35,4 @@ public:
 };
 
 void get_nano_time(long long*);
+int randomint(int,int);
