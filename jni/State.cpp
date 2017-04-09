@@ -10,6 +10,11 @@ bool State::core(){
 
 	match.recv_data(*this);
 	match.send_data(*this);
+	// see if an error happened with the above operations
+	if(!match.connected()){
+		logcat("error, disconnected");
+		show_menu=true;
+	}
 
 	return true;
 }
