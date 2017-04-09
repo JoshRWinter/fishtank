@@ -6,11 +6,15 @@
 
 std::atomic<bool> run;
 
+int last_ctrlc=0; // only accessed by signal_handler
 void signal_handler(int s){
 	switch(s){
 	case SIGINT:
 	case SIGTERM:
 		run.store(false);
+		if(last_ctrlc!=0&&time(NULL)-last_ctrlc>1)
+			exit(2);
+		last_ctrlc=time(NULL);
 		break;
 	default:
 		break;
