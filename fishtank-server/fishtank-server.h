@@ -25,6 +25,7 @@ public:
 	void step();
 	void send_data();
 	void recv_data();
+	void send_chat(const std::string&,const std::string&);
 	void wait_next_step();
 
 	std::vector<Client*> client_list;

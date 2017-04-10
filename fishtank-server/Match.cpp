@@ -21,7 +21,7 @@ void Match::accept_new_clients(){
 	std::string connector_address;
 	int connector_socket=tcp.accept(connector_address);
 	if(connector_socket!=-1){
-	if(client_count==MAX_PLAYERS){
+		if(client_count==MAX_PLAYERS){
 			// have to kick the client
 			std::cout<<"rejected "<<connector_address<<", too many players!"<<std::endl;
 			socket_tcp tmp=connector_socket;
@@ -34,6 +34,10 @@ void Match::accept_new_clients(){
 			client_list.push_back(c);
 			++client_count;
 			std::cout<<c->name<<" just connected ("<<connector_address<<")"<<std::endl;
+			// inform the other clients of the new player
+			std::string msg=c->name+" has connected";
+			std::cout<<msg<<std::endl;
+			send_chat(msg,"server");
 		}
 	}
 }
@@ -59,9 +63,13 @@ void Match::send_data(){
 			if(client.tcp.error()){
 				// kick
 				std::cout<<client.name<<" has disconnected."<<std::endl;
+				std::string msg=client.name+" has disconnected";
 				client.kick();
 				delete *it;
 				it=client_list.erase(it);
+
+				// inform the other clients of the disconnection
+				send_chat(msg,"server");
 				continue;
 			}
 
@@ -72,21 +80,15 @@ void Match::send_data(){
 
 void Match::recv_data(){
 	// collect data from tcp
-	for(std::vector<Client*>::iterator it=client_list.begin();it!=client_list.end();){
+	for(std::vector<Client*>::iterator it=client_list.begin();it!=client_list.end();++it){
 		Client &client=**it;
 
 		if(client.tcp.peek()>=SIZEOF_TO_SERVER_TCP){
 			to_server_tcp tstcp;
+
 			client.tcp.recv(&tstcp.type,sizeof(tstcp.type));
 			client.tcp.recv(&tstcp.msg,sizeof(tstcp.msg));
 			tstcp.msg[MSG_LIMIT]=0; // carefully
-			if(client.tcp.error()){
-				// kick
-				client.kick();
-				delete *it;
-				it=client_list.erase(it);
-				continue;
-			}
 
 			switch(tstcp.type){
 			case TYPE_HEARTBEAT:
@@ -97,8 +99,25 @@ void Match::recv_data(){
 				break;
 			}
 		}
+	}
+}
 
-		++it;
+// send a chat message to everyone including the speaker
+void Match::send_chat(const std::string &msg,const std::string &from){
+	to_client_tcp tctcp;
+	//memset(&tctcp,0,sizeof(to_client_tcp));
+
+	tctcp.type=TYPE_CHAT;
+	strncpy((char*)tctcp.msg,msg.c_str(),MSG_LIMIT+1);
+	strncpy((char*)tctcp.name,from.c_str(),MSG_LIMIT+1);
+
+	for(std::vector<Client*>::iterator it=client_list.begin();it!=client_list.end();++it){
+		Client &client=**it;
+
+		client.tcp.send(&tctcp.type,sizeof(tctcp.type));
+		client.tcp.send(&tctcp.msg,sizeof(tctcp.msg));
+		client.tcp.send(&tctcp.name,sizeof(tctcp.name));
+		client.tcp.send(&tctcp.id,sizeof(tctcp.id));
 	}
 }
 

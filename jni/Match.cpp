@@ -62,9 +62,16 @@ void Match::recv_data(State &state){
 		tcp.recv(&tctcp.name,sizeof(tctcp.name));
 		tcp.recv(&tctcp.id,sizeof(tctcp.id));
 
+		// carefully
+		tctcp.msg[MSG_LIMIT]=0;
+		tctcp.name[MSG_LIMIT]=0;
+
 		switch(tctcp.type){
 		case TYPE_HEARTBEAT:
 			// ignore;
+			break;
+		case TYPE_CHAT:
+			logcat("%s says %s",tctcp.name,tctcp.msg);
 			break;
 		}
 	}

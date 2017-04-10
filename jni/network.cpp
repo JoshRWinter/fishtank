@@ -144,7 +144,7 @@ void socket_tcp::send(const void *buffer,unsigned size){
 
 	int tr=0; // bytes transferred
 	while(tr!=size){
-		int result=::send(sock,(char*)buffer+tr,size-tr,0);
+		int result=::send(sock,((char*)buffer)+tr,size-tr,0);
 		if(result<1){
 			this->close();
 			return;
@@ -160,7 +160,7 @@ void socket_tcp::recv(void *buffer,unsigned size){
 
 	int tr=0; // bytes transferred
 	while(tr!=size){
-		int result=::recv(sock,(char*)buffer+tr,size-tr,0);
+		int result=::recv(sock,((char*)buffer)+tr,size-tr,0);
 		if(result<1){
 			this->close();
 			return;
