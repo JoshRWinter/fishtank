@@ -105,7 +105,7 @@ void Match::recv_data(){
 // send a chat message to everyone including the speaker
 void Match::send_chat(const std::string &msg,const std::string &from){
 	to_client_tcp tctcp;
-	//memset(&tctcp,0,sizeof(to_client_tcp));
+	memset(&tctcp,0,sizeof(to_client_tcp));
 
 	tctcp.type=TYPE_CHAT;
 	strncpy((char*)tctcp.msg,msg.c_str(),MSG_LIMIT+1);
