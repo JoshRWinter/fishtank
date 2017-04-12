@@ -60,7 +60,6 @@ void Match::recv_data(State &state){
 		tcp.recv(&tctcp.type,sizeof(tctcp.type));
 		tcp.recv(&tctcp.msg,sizeof(tctcp.msg));
 		tcp.recv(&tctcp.name,sizeof(tctcp.name));
-		tcp.recv(&tctcp.id,sizeof(tctcp.id));
 
 		// carefully
 		tctcp.msg[MSG_LIMIT]=0;

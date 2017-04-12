@@ -59,7 +59,6 @@ void Match::send_data(){
 			client.tcp.send(&heartbeat.type,sizeof(heartbeat.type));
 			client.tcp.send(&heartbeat.msg,sizeof(heartbeat.msg));
 			client.tcp.send(&heartbeat.name,sizeof(heartbeat.name));
-			client.tcp.send(&heartbeat.id,sizeof(heartbeat.id));
 			if(client.tcp.error()){
 				// kick
 				std::cout<<client.name<<" has disconnected."<<std::endl;
@@ -117,7 +116,6 @@ void Match::send_chat(const std::string &msg,const std::string &from){
 		client.tcp.send(&tctcp.type,sizeof(tctcp.type));
 		client.tcp.send(&tctcp.msg,sizeof(tctcp.msg));
 		client.tcp.send(&tctcp.name,sizeof(tctcp.name));
-		client.tcp.send(&tctcp.id,sizeof(tctcp.id));
 	}
 }
 
