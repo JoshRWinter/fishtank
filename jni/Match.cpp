@@ -27,6 +27,11 @@ void Match::initialize(const std::string &name,socket_tcp &s){
 	char tmp[MSG_LIMIT+1];
 	strcpy(tmp,name.c_str());
 	tcp.send(name.c_str(),MSG_LIMIT+1);
+
+	// get the udp secret
+	int32_t udp_secret_tmp;
+	tcp.recv(&udp_secret_tmp,4);
+	udp_secret=ntohl(udp_secret_tmp);
 }
 
 bool Match::connected(){

@@ -9,6 +9,7 @@ public:
 	bool connected();
 
 private:
+	int32_t udp_secret;
 	socket_tcp tcp;
 	socket_udp udp;
 };

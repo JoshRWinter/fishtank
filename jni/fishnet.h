@@ -29,9 +29,10 @@ struct to_server_tcp{
 #define STATE_PRESS_AIMRIGHT 6
 #define STATE_HEALTH 7
 #define STATE_COLORID 8
-#define SIZEOF_TO_SERVER_HEARTBEAT (4*9)
+#define STATE_UDP_SECRET 9
+#define SIZEOF_TO_SERVER_HEARTBEAT (4*10)
 struct to_server_heartbeat{
-	int32_t state[9];
+	int32_t state[10];
 };
 
 // message from server to client tcp

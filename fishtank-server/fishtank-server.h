@@ -14,6 +14,7 @@ struct Client{
 
 	socket_tcp tcp;
 	std::string name;
+	int32_t udp_secret;
 };
 
 class Match{
