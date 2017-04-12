@@ -30,7 +30,6 @@ public:
 	void wait_next_step();
 
 	std::vector<Client*> client_list;
-	int client_count;
 	socket_tcp_server tcp;
 	socket_udp_server udp;
 	long long last_nano_time;

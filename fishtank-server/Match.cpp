@@ -2,7 +2,6 @@
 #include "fishtank-server.h"
 
 Match::Match(){
-	client_count=0;
 	last_nano_time=0;
 }
 Match::~Match(){
@@ -21,7 +20,7 @@ void Match::accept_new_clients(){
 	std::string connector_address;
 	int connector_socket=tcp.accept(connector_address);
 	if(connector_socket!=-1){
-		if(client_count==MAX_PLAYERS){
+		if(client_list.size()==MAX_PLAYERS){
 			// have to kick the client
 			std::cout<<"rejected "<<connector_address<<", too many players!"<<std::endl;
 			socket_tcp tmp=connector_socket;
@@ -32,7 +31,6 @@ void Match::accept_new_clients(){
 			// accept the client
 			Client *c=new Client(connector_socket);
 			client_list.push_back(c);
-			++client_count;
 			std::cout<<c->name<<" just connected ("<<connector_address<<")"<<std::endl;
 			// inform the other clients of the new player
 			std::string msg=c->name+" has connected";
