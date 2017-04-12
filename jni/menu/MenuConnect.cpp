@@ -37,7 +37,7 @@ bool MenuConnect::exec(State &state,const std::string &ip){
 			bool result=tcp.connect(); // non blocking
 			if(result){
 				// see if the client is accepted
-				uint8_t accepted;
+				uint8_t accepted=0;
 				tcp.recv(&accepted,sizeof(uint8_t));
 				if(accepted){
 					connection_state=CONN_STATE_READY;
