@@ -1,3 +1,6 @@
+#ifndef NETWORK_H
+#define NETWORK_H
+
 #include <string>
 #include <netinet/in.h>
 #include <netdb.h>
@@ -77,3 +80,5 @@ private:
 	int sock;
 	addrinfo *ai;
 };
+
+#endif // NETWORK_H
