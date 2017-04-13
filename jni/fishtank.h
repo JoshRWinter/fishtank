@@ -78,6 +78,11 @@ struct State{
 	apack aassets; // sound effects
 	slesenv *soundengine;
 
+	// ui buttons
+	struct{
+		ButtonBasic left,right,down,up,fire,aim_left,aim_right;
+	}input;
+
 	// objects
 	Base background;
 };

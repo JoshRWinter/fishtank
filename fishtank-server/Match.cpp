@@ -106,16 +106,21 @@ void Match::recv_data(){
 		udp_id id;
 		udp.recv(&tsh.state,SIZEOF_TO_SERVER_HEARTBEAT,id);
 
-		tsh.state[STATE_PRESS_LEFT]=ntohl(tsh.state[STATE_PRESS_LEFT]);
-		tsh.state[STATE_PRESS_RIGHT]=ntohl(tsh.state[STATE_PRESS_RIGHT]);
-		tsh.state[STATE_PRESS_DOWN]=ntohl(tsh.state[STATE_PRESS_DOWN]);
-		tsh.state[STATE_PRESS_UP]=ntohl(tsh.state[STATE_PRESS_UP]);
-		tsh.state[STATE_PRESS_FIRE]=ntohl(tsh.state[STATE_PRESS_FIRE]);
-		tsh.state[STATE_PRESS_AIMLEFT]=ntohl(tsh.state[STATE_PRESS_AIMLEFT]);
-		tsh.state[STATE_PRESS_AIMRIGHT]=ntohl(tsh.state[STATE_PRESS_AIMRIGHT]);
-		tsh.state[STATE_HEALTH]=ntohl(tsh.state[STATE_HEALTH]);
-		tsh.state[STATE_COLORID]=ntohl(tsh.state[STATE_COLORID]);
-		tsh.state[STATE_UDP_SECRET]=ntohl(tsh.state[STATE_UDP_SECRET]);
+		// figure out which player sent this state update
+		Client *client=get_client_by_secret(ntohl(tsh.state[CLIENT_STATE_UDP_SECRET]));
+		if(client==NULL){
+			std::cout<<"unrecognized udp id"<<std::endl;
+			continue;
+		}
+
+		// update the client with the new info
+		client->input.left=ntohl(tsh.state[CLIENT_STATE_PRESS_LEFT]);
+		client->input.right=ntohl(tsh.state[CLIENT_STATE_PRESS_LEFT]);
+		client->input.down=ntohl(tsh.state[CLIENT_STATE_PRESS_LEFT]);
+		client->input.up=ntohl(tsh.state[CLIENT_STATE_PRESS_LEFT]);
+		client->input.aim_left=ntohl(tsh.state[CLIENT_STATE_PRESS_LEFT]);
+		client->input.aim_right=ntohl(tsh.state[CLIENT_STATE_PRESS_LEFT]);
+		client->input.fire=ntohl(tsh.state[CLIENT_STATE_PRESS_FIRE])/FLOAT_MULTIPLIER;
 	}
 }
 
@@ -135,6 +140,15 @@ void Match::send_chat(const std::string &msg,const std::string &from){
 		client.tcp.send(&tctcp.msg,sizeof(tctcp.msg));
 		client.tcp.send(&tctcp.name,sizeof(tctcp.name));
 	}
+}
+
+Client *Match::get_client_by_secret(int32_t s){
+	for(Client *c:client_list){
+		if(c->udp_secret==s)
+			return c;
+	}
+
+	return NULL;
 }
 
 void Match::wait_next_step(){

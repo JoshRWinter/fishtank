@@ -60,16 +60,15 @@ void Match::send_data(const State &state){
 	to_server_heartbeat tsh;
 	memset(&tsh,0,sizeof(to_server_heartbeat));
 
-	tsh.state[STATE_PRESS_LEFT]=0;
-	tsh.state[STATE_PRESS_RIGHT]=0;
-	tsh.state[STATE_PRESS_DOWN]=0;
-	tsh.state[STATE_PRESS_UP]=0;
-	tsh.state[STATE_PRESS_FIRE]=0;
-	tsh.state[STATE_PRESS_AIMLEFT]=0;
-	tsh.state[STATE_PRESS_AIMRIGHT]=0;
-	tsh.state[STATE_HEALTH]=0;
-	tsh.state[STATE_COLORID]=0;
-	tsh.state[STATE_UDP_SECRET]=htonl(udp_secret);
+	tsh.state[CLIENT_STATE_PRESS_LEFT]=htonl(state.input.left.active);
+	tsh.state[CLIENT_STATE_PRESS_RIGHT]=htonl(state.input.right.active);
+	tsh.state[CLIENT_STATE_PRESS_DOWN]=htonl(state.input.down.active);
+	tsh.state[CLIENT_STATE_PRESS_UP]=htonl(state.input.up.active);
+	tsh.state[CLIENT_STATE_PRESS_FIRE]=htonl(state.input.fire.active);
+	tsh.state[CLIENT_STATE_PRESS_AIMLEFT]=htonl(state.input.aim_left.active);
+	tsh.state[CLIENT_STATE_PRESS_AIMRIGHT]=htonl(state.input.aim_right.active);
+	tsh.state[CLIENT_STATE_UDP_SECRET]=htonl(udp_secret);
+
 	udp.send(&tsh.state,SIZEOF_TO_SERVER_HEARTBEAT);
 }
 

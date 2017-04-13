@@ -15,6 +15,11 @@ struct Client{
 	socket_tcp tcp;
 	std::string name;
 	int32_t udp_secret;
+
+	struct{
+		bool left,right,down,up,aim_left,aim_right;
+		float fire;
+	}input;
 };
 
 class Match{
@@ -27,6 +32,7 @@ public:
 	void send_data();
 	void recv_data();
 	void send_chat(const std::string&,const std::string&);
+	Client *get_client_by_secret(int32_t);
 	void wait_next_step();
 
 	std::vector<Client*> client_list;

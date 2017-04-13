@@ -12,8 +12,8 @@ void Button::init(float xpos,float ypos,const char *button_label){
 	active=false;
 }
 
-bool Button::process(const crosshair *ch){
-	if(pointing(ch[0])){
+bool Button::process(const crosshair *ch,float tolerance){
+	if(pointing(ch[0],tolerance)){
 		if(ch[0].active)
 			active=true;
 		else if(active){
@@ -60,4 +60,19 @@ void ButtonSmall::render_text(const Renderer &renderer)const{
 	else
 		glUniform4f(renderer.uniform.rgba,0.0f,0.0f,0.0f,1.0f);
 	drawtextcentered(renderer.font.button_small,x+(BUTTON_SMALL_SIZE/2.0f),y+(BUTTON_SMALL_SIZE/2.0f)-0.2f,label);
+}
+
+void ButtonBasic::init(float xpos,float ypos,float size,const char *name){
+	x=xpos;
+	y=ypos;
+	active=false;
+	label=name;
+	w=size;
+	h=size;
+	frame=0;
+	count=1;
+}
+
+void ButtonBasic::render_text(const Renderer &renderer)const{
+	drawtextcentered(renderer.font.button_small,x+(w/2.0f),y+(h/2.0f)-(renderer.font.button_small->fontsize/2.0f),label);
 }

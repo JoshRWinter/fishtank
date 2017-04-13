@@ -6,7 +6,7 @@
 #define MAX_PLAYERS 6
 #define MSG_LIMIT 45
 
-#define FLOAT_MULTIPLIER 10000
+#define FLOAT_MULTIPLIER 10000.0
 
 // message from client to server tcp
 #define TYPE_CHAT 0
@@ -20,19 +20,17 @@ struct to_server_tcp{
 };
 
 // absolute state update heartbeat from client to server udp
-#define STATE_PRESS_LEFT 0
-#define STATE_PRESS_RIGHT 1
-#define STATE_PRESS_DOWN 2
-#define STATE_PRESS_UP 3
-#define STATE_PRESS_FIRE 4
-#define STATE_PRESS_AIMLEFT 5
-#define STATE_PRESS_AIMRIGHT 6
-#define STATE_HEALTH 7
-#define STATE_COLORID 8
-#define STATE_UDP_SECRET 9
-#define SIZEOF_TO_SERVER_HEARTBEAT (4*10)
+#define CLIENT_STATE_PRESS_LEFT 0
+#define CLIENT_STATE_PRESS_RIGHT 1
+#define CLIENT_STATE_PRESS_DOWN 2
+#define CLIENT_STATE_PRESS_UP 3
+#define CLIENT_STATE_PRESS_FIRE 4
+#define CLIENT_STATE_PRESS_AIMLEFT 5
+#define CLIENT_STATE_PRESS_AIMRIGHT 6
+#define CLIENT_STATE_UDP_SECRET 7
+#define SIZEOF_TO_SERVER_HEARTBEAT (4*8)
 struct to_server_heartbeat{
-	int32_t state[10];
+	int32_t state[8];
 };
 
 // message from server to client tcp

@@ -1,7 +1,7 @@
 #include "../fishtank.h"
 
-bool Base::pointing(const crosshair &ch)const{
-	return ch.x>x&&ch.x<x+w&&ch.y>y&&ch.y<y+h;
+bool Base::pointing(const crosshair &ch,float tolerance)const{
+	return ch.x>x+tolerance&&ch.x<(x+w)-tolerance&&ch.y>y+tolerance&&ch.y<(y+h)-tolerance;
 }
 
 void Base::init_background(Base &b,const Renderer &renderer){

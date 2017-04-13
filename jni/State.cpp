@@ -16,6 +16,16 @@ bool State::core(){
 		show_menu=true;
 	}
 
+	// process ui buttons
+	const float UI_TOLERANCE=-0.25f;
+	input.left.process(pointer,UI_TOLERANCE);
+	input.right.process(pointer,UI_TOLERANCE);
+	input.up.process(pointer,UI_TOLERANCE);
+	input.down.process(pointer,UI_TOLERANCE);
+	input.fire.process(pointer,UI_TOLERANCE);
+	input.aim_left.process(pointer,UI_TOLERANCE);
+	input.aim_right.process(pointer,UI_TOLERANCE);
+
 	return true;
 }
 
@@ -37,6 +47,27 @@ void State::render()const{
 	glBindTexture(GL_TEXTURE_2D,renderer.assets.texture[TID_BACKGROUND].object);
 	renderer.draw(background);
 
+	// draw ui buttons
+	glBindTexture(GL_TEXTURE_2D,renderer.uiassets.texture[UITID_BUTTON_SMALL].object);
+	input.left.render(renderer);
+	input.right.render(renderer);
+	input.up.render(renderer);
+	input.down.render(renderer);
+	input.fire.render(renderer);
+	input.aim_left.render(renderer);
+	input.aim_right.render(renderer);
+	// ui button text
+	glUniform4f(renderer.uniform.rgba,0.0f,0.0f,0.0f,1.0f);
+	glBindTexture(GL_TEXTURE_2D,renderer.font.button_small->atlas);
+	input.left.render_text(renderer);
+	input.right.render_text(renderer);
+	input.up.render_text(renderer);
+	input.down.render_text(renderer);
+	input.fire.render_text(renderer);
+	input.aim_left.render_text(renderer);
+	input.aim_right.render_text(renderer);
+
+	// fps
 #ifdef SHOW_FPS
 	{
 		static char fps_string[36];
@@ -71,6 +102,17 @@ State::State(){
 	background.rot=0.0f;
 	background.count=1;
 	background.frame=0;
+
+	// ui buttons
+	const float DPAD_SIZE=0.8f;
+	const float FIRE_BUTTON_SIZE=1.5f;
+	input.left.init(-7.0f,2.25f,DPAD_SIZE,"L");
+	input.right.init(-4.5f,2.25f,DPAD_SIZE,"R");
+	input.down.init(-5.75f,3.2f,DPAD_SIZE,"D");
+	input.up.init(-5.75f,1.3f,DPAD_SIZE,"U");
+	input.fire.init(5.0f,2.0f,FIRE_BUTTON_SIZE,"FIRE");
+	input.aim_left.init(3.9f,2.5f,DPAD_SIZE,"L");
+	input.aim_right.init(6.75f,2.5f,DPAD_SIZE,"R");
 }
 
 void State::reset(){

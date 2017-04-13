@@ -10,7 +10,7 @@
 
 struct Base{
 	bool collide(const Base&)const;
-	bool pointing(const crosshair&)const;
+	bool pointing(const crosshair&,float=0.0f)const;
 	int correct(const Base&);
 	static void init_background(Base&,const Renderer&);
 
@@ -22,7 +22,7 @@ struct Base{
 #define BUTTON_HEIGHT BUTTON_WIDTH
 struct Button:Base{
 	void init(float,float,const char*);
-	bool process(const crosshair*);
+	bool process(const crosshair*,float=0.0f);
 	void render(const Renderer&)const;
 	void render_text(const Renderer&)const;
 
@@ -33,6 +33,11 @@ struct Button:Base{
 #define BUTTON_SMALL_SIZE 1.05f
 struct ButtonSmall:Button{
 	void init(float,float,const char*);
+	void render_text(const Renderer&)const;
+};
+
+struct ButtonBasic:Button{
+	void init(float,float,float,const char*);
 	void render_text(const Renderer&)const;
 };
 
