@@ -55,6 +55,22 @@ void Match::send_data(const State &state){
 			return;
 		}
 	}
+
+	// send udp state update heartbeat
+	to_server_heartbeat tsh;
+	memset(&tsh,0,sizeof(to_server_heartbeat));
+
+	tsh.state[STATE_PRESS_LEFT]=0;
+	tsh.state[STATE_PRESS_RIGHT]=0;
+	tsh.state[STATE_PRESS_DOWN]=0;
+	tsh.state[STATE_PRESS_UP]=0;
+	tsh.state[STATE_PRESS_FIRE]=0;
+	tsh.state[STATE_PRESS_AIMLEFT]=0;
+	tsh.state[STATE_PRESS_AIMRIGHT]=0;
+	tsh.state[STATE_HEALTH]=0;
+	tsh.state[STATE_COLORID]=0;
+	tsh.state[STATE_UDP_SECRET]=htonl(udp_secret);
+	udp.send(&tsh.state,SIZEOF_TO_SERVER_HEARTBEAT);
 }
 
 void Match::recv_data(State &state){

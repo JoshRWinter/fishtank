@@ -97,6 +97,26 @@ void Match::recv_data(){
 			}
 		}
 	}
+
+	// recv client heartbeats
+	while(udp.peek()>=SIZEOF_TO_SERVER_HEARTBEAT){
+		to_server_heartbeat tsh;
+		memset(&tsh,0,sizeof(to_server_heartbeat));
+
+		udp_id id;
+		udp.recv(&tsh.state,SIZEOF_TO_SERVER_HEARTBEAT,id);
+
+		tsh.state[STATE_PRESS_LEFT]=ntohl(tsh.state[STATE_PRESS_LEFT]);
+		tsh.state[STATE_PRESS_RIGHT]=ntohl(tsh.state[STATE_PRESS_RIGHT]);
+		tsh.state[STATE_PRESS_DOWN]=ntohl(tsh.state[STATE_PRESS_DOWN]);
+		tsh.state[STATE_PRESS_UP]=ntohl(tsh.state[STATE_PRESS_UP]);
+		tsh.state[STATE_PRESS_FIRE]=ntohl(tsh.state[STATE_PRESS_FIRE]);
+		tsh.state[STATE_PRESS_AIMLEFT]=ntohl(tsh.state[STATE_PRESS_AIMLEFT]);
+		tsh.state[STATE_PRESS_AIMRIGHT]=ntohl(tsh.state[STATE_PRESS_AIMRIGHT]);
+		tsh.state[STATE_HEALTH]=ntohl(tsh.state[STATE_HEALTH]);
+		tsh.state[STATE_COLORID]=ntohl(tsh.state[STATE_COLORID]);
+		tsh.state[STATE_UDP_SECRET]=ntohl(tsh.state[STATE_UDP_SECRET]);
+	}
 }
 
 // send a chat message to everyone including the speaker
