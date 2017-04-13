@@ -94,4 +94,12 @@ void Match::recv_data(State &state){
 			break;
 		}
 	}
+
+	// collect state updates from the server
+	while(udp.peek()>=SIZEOF_TO_CLIENT_HEARTBEAT){
+		to_client_heartbeat tch;
+		udp.recv(&tch,SIZEOF_TO_CLIENT_HEARTBEAT);
+
+		// ignore for now
+	}
 }

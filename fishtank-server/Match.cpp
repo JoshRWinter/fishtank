@@ -73,6 +73,36 @@ void Match::send_data(){
 			++it;
 		}
 	}
+
+	// send data to all connected clients
+	to_client_heartbeat tch;
+	memset(&tch,0,sizeof(to_client_heartbeat));
+	int i=0;
+
+	// initialize tch with state data
+	for(Client *c:client_list){
+		Client &client=*c;
+
+		tch.state[i*SERVER_STATE_HEALTH]=htonl(0);
+		tch.state[i*SERVER_STATE_XPOS]=htonl(0);
+		tch.state[i*SERVER_STATE_YPOS]=htonl(0);
+		tch.state[i*SERVER_STATE_ANGLE]=htonl(0);
+		tch.state[i*SERVER_STATE_COLORID]=htonl(client.colorid);
+		tch.state[i*SERVER_STATE_FIRE]=htonl(0);
+
+		++i;
+	}
+	for(;i<MAX_PLAYERS;++i)
+		tch.state[i*SERVER_STATE_COLORID]=htonl(0);
+
+	// dispatch state data
+	for(Client *c:client_list){
+		Client &client=*c;
+		if(!client.udpid.initialized)
+			continue;
+
+		udp.send(&tch,SIZEOF_TO_CLIENT_HEARTBEAT,client.udpid);
+	}
 }
 
 void Match::recv_data(){
@@ -112,6 +142,8 @@ void Match::recv_data(){
 			std::cout<<"unrecognized udp id"<<std::endl;
 			continue;
 		}
+		if(!client->udpid.initialized)
+			client->udpid=id;
 
 		// update the client with the new info
 		client->input.left=ntohl(tsh.state[CLIENT_STATE_PRESS_LEFT]);

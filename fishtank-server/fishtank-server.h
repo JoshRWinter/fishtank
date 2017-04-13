@@ -15,6 +15,10 @@ struct Client{
 	socket_tcp tcp;
 	std::string name;
 	int32_t udp_secret;
+	udp_id udpid;
+
+	// gameplay related
+	int colorid;
 
 	struct{
 		bool left,right,down,up,aim_left,aim_right;
