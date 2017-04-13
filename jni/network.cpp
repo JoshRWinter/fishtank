@@ -352,7 +352,7 @@ void socket_udp::recv(void *buffer,unsigned len){
 
 	// ignored
 	sockaddr_storage src_addr;
-	socklen_t src_len;
+	socklen_t src_len=sizeof(sockaddr_storage);
 
 	// no such thing as a partial send for udp with sendto
 	ssize_t result=recvfrom(sock,buffer,len,0,(sockaddr*)&src_addr,&src_len);
