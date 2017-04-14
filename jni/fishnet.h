@@ -34,7 +34,7 @@ struct to_server_heartbeat{
 };
 
 // message from server to client tcp
-#define SIZEOF_TO_CLIENT_TCP (1+(MSG_LIMIT+1)+(MSG_LIMIT+1)+1)
+#define SIZEOF_TO_CLIENT_TCP (1+(MSG_LIMIT+1)+(MSG_LIMIT+1))
 struct to_client_tcp{
 	uint8_t type;
 	uint8_t msg[MSG_LIMIT+1];
@@ -48,7 +48,11 @@ struct to_client_tcp{
 #define SERVER_STATE_ANGLE 3
 #define SERVER_STATE_COLORID 4
 #define SERVER_STATE_FIRE 5
-#define SIZEOF_TO_CLIENT_HEARTBEAT (4*MAX_PLAYERS*6)
+#define SERVER_STATE_FIELDS 6
+#define SIZEOF_TO_CLIENT_HEARTBEAT (4*MAX_PLAYERS*SERVER_STATE_FIELDS)
 struct to_client_heartbeat{
 	int32_t state[MAX_PLAYERS*6];
 };
+
+#define PLAYER_WIDTH 1.5f
+#define PLAYER_HEIGHT 1.0f

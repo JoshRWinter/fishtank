@@ -40,7 +40,11 @@ void Match::accept_new_clients(){
 	}
 }
 
+// execute one step
 void Match::step(){
+	// process players
+	Player::process(*this);
+
 	recv_data();
 	send_data();
 }
@@ -83,17 +87,15 @@ void Match::send_data(){
 	for(Client *c:client_list){
 		Client &client=*c;
 
-		tch.state[i*SERVER_STATE_HEALTH]=htonl(0);
-		tch.state[i*SERVER_STATE_XPOS]=htonl(0);
-		tch.state[i*SERVER_STATE_YPOS]=htonl(0);
-		tch.state[i*SERVER_STATE_ANGLE]=htonl(0);
-		tch.state[i*SERVER_STATE_COLORID]=htonl(client.colorid);
-		tch.state[i*SERVER_STATE_FIRE]=htonl(0);
+		tch.state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_HEALTH]=htonl(client.player.health);
+		tch.state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_XPOS]=htonl(client.player.x*FLOAT_MULTIPLIER);
+		tch.state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_YPOS]=htonl(client.player.y*FLOAT_MULTIPLIER);
+		tch.state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_ANGLE]=htonl(0);
+		tch.state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_COLORID]=htonl(client.colorid);
+		tch.state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_FIRE]=htonl(0);
 
 		++i;
 	}
-	for(;i<MAX_PLAYERS;++i)
-		tch.state[i*SERVER_STATE_COLORID]=htonl(0);
 
 	// dispatch state data
 	for(Client *c:client_list){
@@ -147,11 +149,11 @@ void Match::recv_data(){
 
 		// update the client with the new info
 		client->input.left=ntohl(tsh.state[CLIENT_STATE_PRESS_LEFT]);
-		client->input.right=ntohl(tsh.state[CLIENT_STATE_PRESS_LEFT]);
-		client->input.down=ntohl(tsh.state[CLIENT_STATE_PRESS_LEFT]);
-		client->input.up=ntohl(tsh.state[CLIENT_STATE_PRESS_LEFT]);
-		client->input.aim_left=ntohl(tsh.state[CLIENT_STATE_PRESS_LEFT]);
-		client->input.aim_right=ntohl(tsh.state[CLIENT_STATE_PRESS_LEFT]);
+		client->input.right=ntohl(tsh.state[CLIENT_STATE_PRESS_RIGHT]);
+		client->input.down=ntohl(tsh.state[CLIENT_STATE_PRESS_DOWN]);
+		client->input.up=ntohl(tsh.state[CLIENT_STATE_PRESS_UP]);
+		client->input.aim_left=ntohl(tsh.state[CLIENT_STATE_PRESS_AIMLEFT]);
+		client->input.aim_right=ntohl(tsh.state[CLIENT_STATE_PRESS_AIMRIGHT]);
 		client->input.fire=ntohl(tsh.state[CLIENT_STATE_PRESS_FIRE])/FLOAT_MULTIPLIER;
 	}
 }

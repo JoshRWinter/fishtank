@@ -5,6 +5,7 @@
 #include <GLES2/gl2.h>
 #include <android_native_app_glue.h>
 #include <string>
+#include <vector>
 #include "glesutil.h"
 
 #define SHOW_FPS
@@ -19,6 +20,7 @@ struct State;
 
 // gameplay textures
 #define TID_BACKGROUND 0
+#define TID_TANK 1
 
 // ui textures
 #define UITID_BACKGROUND 0
@@ -85,6 +87,7 @@ struct State{
 
 	// objects
 	Base background;
+	std::vector<Player> player_list;
 };
 
 int32_t inputproc(android_app*,AInputEvent*);

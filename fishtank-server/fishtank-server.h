@@ -1,9 +1,14 @@
+#ifndef FISHTANK_SERVER_H
+#define FISHTANK_SERVER_H
+
 #include <vector>
 #include <cstdint>
 #include <unistd.h>
 #include <iostream>
 #include "../jni/fishnet.h"
 #include "../jni/network.h"
+struct Match;
+#include "object.h"
 
 #define onein(n) (randomint(0,n-1)==0)
 
@@ -19,6 +24,7 @@ struct Client{
 
 	// gameplay related
 	int colorid;
+	Player player;
 
 	struct{
 		bool left,right,down,up,aim_left,aim_right;
@@ -47,3 +53,5 @@ public:
 
 void get_nano_time(long long*);
 int randomint(int,int);
+
+#endif // FISHTANK_SERVER_H

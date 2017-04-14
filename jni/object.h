@@ -1,17 +1,9 @@
 #ifndef OBJECT_H
 #define OBJECT_H
 
-#include <string>
-
-#define COLLIDE_LEFT 1
-#define COLLIDE_RIGHT 2
-#define COLLIDE_BOTTOM 3
-#define COLLIDE_TOP 4
-
 struct Base{
 	bool collide(const Base&)const;
 	bool pointing(const crosshair&,float=0.0f)const;
-	int correct(const Base&);
 	static void init_background(Base&,const Renderer&);
 
 	float x,y,w,h,rot;
@@ -39,6 +31,16 @@ struct ButtonSmall:Button{
 struct ButtonBasic:Button{
 	void init(float,float,float,const char*);
 	void render_text(const Renderer&)const;
+};
+
+struct Player:Base{
+	Player();
+	static void render(const Renderer&,const std::vector<Player>&);
+
+	Base turret;
+	int colorid; // zero if empty player
+	int health;
+	bool cue_fire;
 };
 
 #endif // OBJECT_H

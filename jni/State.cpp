@@ -47,6 +47,10 @@ void State::render()const{
 	glBindTexture(GL_TEXTURE_2D,renderer.assets.texture[TID_BACKGROUND].object);
 	renderer.draw(background);
 
+
+	// draw players
+	Player::render(renderer,player_list);
+
 	// draw ui buttons
 	glBindTexture(GL_TEXTURE_2D,renderer.uiassets.texture[UITID_BUTTON_SMALL].object);
 	input.left.render(renderer);
@@ -93,6 +97,12 @@ State::State(){
 	running=false;
 	show_menu=true;
 	memset(pointer,0,sizeof(crosshair)*2);
+
+	// players
+	Player dummy;
+	for(int i=0;i<MAX_PLAYERS;++i){
+		player_list.push_back(dummy);
+	}
 
 	// background
 	background.x=renderer.view.left;

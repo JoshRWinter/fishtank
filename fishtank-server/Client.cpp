@@ -16,6 +16,8 @@ Client::Client(int s):tcp(s){
 	udp_secret=rand()%1000000;
 	int32_t tmp=htonl(udp_secret);
 	tcp.send(&tmp,4);
+
+	colorid=4;
 }
 
 Client::~Client(){

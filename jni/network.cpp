@@ -237,6 +237,8 @@ bool socket_udp_server::bind(unsigned short port){
 	}
 
 	// bind to port
+	int reuse=1;
+	setsockopt(sock,SOL_SOCKET,SO_REUSEADDR,&reuse,sizeof(int));
 	if(::bind(sock,ai->ai_addr,ai->ai_addrlen)){
 		this->close();
 		return false;

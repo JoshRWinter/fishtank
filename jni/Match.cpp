@@ -1,3 +1,4 @@
+#include <errno.h>
 #include "fishtank.h"
 
 Match::Match(){
@@ -24,9 +25,9 @@ void Match::initialize(const std::string &name,socket_tcp &s){
 	}
 
 	// send the name
-	char tmp[MSG_LIMIT+1];
-	strcpy(tmp,name.c_str());
-	tcp.send(name.c_str(),MSG_LIMIT+1);
+	char name_tmp[MSG_LIMIT+1];
+	strncpy(name_tmp,name.c_str(),MSG_LIMIT+1);
+	tcp.send(name_tmp,MSG_LIMIT+1);
 
 	// get the udp secret
 	int32_t udp_secret_tmp;
@@ -100,6 +101,17 @@ void Match::recv_data(State &state){
 		to_client_heartbeat tch;
 		udp.recv(&tch,SIZEOF_TO_CLIENT_HEARTBEAT);
 
-		// ignore for now
+		int i=0;
+		for(Player &player:state.player_list){
+			player.health=ntohl(tch.state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_HEALTH]);
+			player.x=(int)ntohl(tch.state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_XPOS])/FLOAT_MULTIPLIER;
+			player.y=(int)ntohl(tch.state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_YPOS])/FLOAT_MULTIPLIER;
+			player.turret.rot=ntohl(tch.state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_YPOS])/FLOAT_MULTIPLIER;
+			player.colorid=ntohl(tch.state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_COLORID]);
+			player.cue_fire=ntohl(tch.state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_FIRE]);
+
+			++i;
+		}
+
 	}
 }

@@ -1,3 +1,4 @@
+#include <signal.h>
 #include "fishtank.h"
 
 void cmdproc(android_app *app,int32_t cmd){
