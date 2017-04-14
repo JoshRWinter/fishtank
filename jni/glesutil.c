@@ -9,6 +9,8 @@
 #include <ogg/ogg.h>
 #include <vorbis/vorbisfile.h>
 #include <unistd.h>
+#include <ft2build.h>
+#include FT_FREETYPE_H
 #define GLESUTIL_DEBUG
 #include "glesutil.h"
 

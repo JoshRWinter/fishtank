@@ -1,10 +1,8 @@
 #include <android/log.h>
 #include <android/sensor.h>
 #include <GLES2/gl2ext.h>
-#include <ft2build.h>
 #include <SLES/OpenSLES.h>
 #include <SLES/OpenSLES_Android.h>
-#include FT_FREETYPE_H
 
 #define GLESUTIL_DEBUG
 
