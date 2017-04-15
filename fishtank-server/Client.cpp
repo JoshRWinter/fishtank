@@ -18,6 +18,13 @@ Client::Client(int s):tcp(s){
 	tcp.send(&tmp,4);
 
 	colorid=4;
+	input.left=false;
+	input.right=false;
+	input.up=false;
+	input.down=false;
+	input.aim_left=false;
+	input.aim_right=false;
+	input.fire=0.0f;
 }
 
 Client::~Client(){

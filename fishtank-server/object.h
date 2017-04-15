@@ -1,8 +1,6 @@
 #ifndef OBJECT_H
 #define OBJECT_H
 
-#define GRAVITY 0.1f
-
 #define COLLIDE_LEFT 1
 #define COLLIDE_RIGHT 2
 #define COLLIDE_BOTTOM 3
@@ -14,8 +12,8 @@ struct Base{
 	float x,y,w,h,rot;
 };
 
-#define PLAYER_X_SPEED 0.06f
-#define PLAYER_Y_SPEED 0.1f
+#define PLAYER_X_SPEED 0.03f
+#define PLAYER_Y_SPEED 0.03f
 struct Player:Base{
 	Player();
 	static void process(Match&);
