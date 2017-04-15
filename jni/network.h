@@ -26,7 +26,6 @@ public:
 	~socket_tcp();
 
 	bool setup(const std::string &address,unsigned short);
-	int disable();
 	bool connect();
 	void send(const void*,unsigned);
 	void recv(void*,unsigned);

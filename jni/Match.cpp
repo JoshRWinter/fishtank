@@ -9,11 +9,7 @@ Match::~Match(){
 	quit();
 }
 
-void Match::initialize(const std::string &name,socket_tcp &s){
-	// setup the tcp socket
-	tcp=s;
-	// prevent s destructor from closing its internal socket
-	s.disable();
+void Match::initialize(const std::string &name){
 	// setup the udp socket
 	std::string address;
 	tcp.get_name(address);
@@ -37,6 +33,10 @@ void Match::initialize(const std::string &name,socket_tcp &s){
 
 bool Match::connected(){
 	return !tcp.error();
+}
+
+socket_tcp &Match::get_tcp(){
+	return tcp;
 }
 
 void Match::quit(){

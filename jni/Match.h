@@ -2,11 +2,12 @@ class Match{
 public:
 	Match();
 	~Match();
-	void initialize(const std::string&,socket_tcp&);
+	void initialize(const std::string&);
 	void quit();
 	void send_data(const State&);
 	void recv_data(State&);
 	bool connected();
+	socket_tcp &get_tcp();
 
 private:
 	int32_t udp_secret;

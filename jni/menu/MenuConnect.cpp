@@ -4,7 +4,7 @@
 bool MenuConnect::exec(State &state,const std::string &ip){
 	Base::init_background(background,state.renderer);
 
-	socket_tcp tcp;
+	socket_tcp &tcp=state.match.get_tcp();
 	button_cancel.init(-BUTTON_WIDTH/2.0f,0.5f,"Cancel");
 	button_ready.init(-BUTTON_WIDTH/2.0f,0.5f,"Ready!");
 	address=ip;
@@ -41,7 +41,7 @@ bool MenuConnect::exec(State &state,const std::string &ip){
 				tcp.recv(&accepted,sizeof(uint8_t));
 				if(accepted){
 					connection_state=CONN_STATE_READY;
-					state.match.initialize(state.name,tcp);
+					state.match.initialize(state.name);
 				}
 				else{
 					tcp.close();

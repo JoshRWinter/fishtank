@@ -117,14 +117,6 @@ bool socket_tcp::setup(const std::string &address,unsigned short port){
 	return true;
 }
 
-// disable the object, preserve the fd so the destructor doesn't get it
-int socket_tcp::disable(){
-	int tmp=sock;
-	sock=-1;
-	this->close();
-	return tmp;
-}
-
 bool socket_tcp::connect(){
 	if(sock==-1)
 		return false;
