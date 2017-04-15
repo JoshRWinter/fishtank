@@ -69,6 +69,7 @@ void ButtonBasic::init(float xpos,float ypos,float size,const char *name){
 	label=name;
 	w=size;
 	h=size;
+	rot=0.0f;
 	frame=0;
 	count=1;
 }
