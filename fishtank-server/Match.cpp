@@ -88,8 +88,10 @@ void Match::send_data(){
 		Client &client=*c;
 
 		tch.state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_HEALTH]=htonl(client.player.health);
-		tch.state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_XPOS]=htonl(client.player.x*FLOAT_MULTIPLIER);
-		tch.state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_YPOS]=htonl(client.player.y*FLOAT_MULTIPLIER);
+		tch.state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_XV]=htonl(client.player.xv*FLOAT_MULTIPLIER);
+		tch.state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_YV]=htonl(client.player.yv*FLOAT_MULTIPLIER);
+		tch.state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_XPOS]=htonl((client.player.x-client.player.xv)*FLOAT_MULTIPLIER);
+		tch.state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_YPOS]=htonl((client.player.y-client.player.yv)*FLOAT_MULTIPLIER);
 		tch.state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_ANGLE]=htonl(0);
 		tch.state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_COLORID]=htonl(client.colorid);
 		tch.state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_FIRE]=htonl(0);

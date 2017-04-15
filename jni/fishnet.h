@@ -43,15 +43,17 @@ struct to_client_tcp{
 
 // absolute state update from client to server udp
 #define SERVER_STATE_HEALTH 0
-#define SERVER_STATE_XPOS 1
-#define SERVER_STATE_YPOS 2
-#define SERVER_STATE_ANGLE 3
-#define SERVER_STATE_COLORID 4
-#define SERVER_STATE_FIRE 5
-#define SERVER_STATE_FIELDS 6
+#define SERVER_STATE_XV 1
+#define SERVER_STATE_YV 2
+#define SERVER_STATE_XPOS 3
+#define SERVER_STATE_YPOS 4
+#define SERVER_STATE_ANGLE 5
+#define SERVER_STATE_COLORID 6
+#define SERVER_STATE_FIRE 7
+#define SERVER_STATE_FIELDS 8
 #define SIZEOF_TO_CLIENT_HEARTBEAT (4*MAX_PLAYERS*SERVER_STATE_FIELDS)
 struct to_client_heartbeat{
-	int32_t state[MAX_PLAYERS*6];
+	int32_t state[MAX_PLAYERS*SERVER_STATE_FIELDS];
 };
 
 #define PLAYER_WIDTH 1.5f

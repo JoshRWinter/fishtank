@@ -35,8 +35,10 @@ struct ButtonBasic:Button{
 
 struct Player:Base{
 	Player();
+	static void process(State&);
 	static void render(const Renderer&,const std::vector<Player>&);
 
+	float xv,yv;
 	Base turret;
 	int colorid; // zero if empty player
 	int health;

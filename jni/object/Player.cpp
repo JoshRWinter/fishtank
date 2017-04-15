@@ -4,6 +4,8 @@ Player::Player(){
 	colorid=0;
 	x=0.0f;
 	y=0.0f;
+	xv=0.0f;
+	yv=0.0f;
 	w=PLAYER_WIDTH;
 	h=PLAYER_HEIGHT;
 	rot=0.0f;
@@ -11,6 +13,13 @@ Player::Player(){
 	cue_fire=false;
 	frame=0;
 	count=1;
+}
+
+void Player::process(State &state){
+	for(Player &player:state.player_list){
+		player.x+=player.xv;
+		player.y+=player.yv;
+	}
 }
 
 void Player::render(const Renderer &renderer,const std::vector<Player> &player_list){

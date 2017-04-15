@@ -104,9 +104,11 @@ void Match::recv_data(State &state){
 		int i=0;
 		for(Player &player:state.player_list){
 			player.health=ntohl(tch.state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_HEALTH]);
+			player.xv=(int)ntohl(tch.state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_XV])/FLOAT_MULTIPLIER;
+			player.yv=(int)ntohl(tch.state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_YV])/FLOAT_MULTIPLIER;
 			player.x=(int)ntohl(tch.state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_XPOS])/FLOAT_MULTIPLIER;
 			player.y=(int)ntohl(tch.state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_YPOS])/FLOAT_MULTIPLIER;
-			player.turret.rot=ntohl(tch.state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_YPOS])/FLOAT_MULTIPLIER;
+			player.turret.rot=ntohl(tch.state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_ANGLE])/FLOAT_MULTIPLIER;
 			player.colorid=ntohl(tch.state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_COLORID]);
 			player.cue_fire=ntohl(tch.state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_FIRE]);
 

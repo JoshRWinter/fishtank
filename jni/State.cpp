@@ -8,13 +8,18 @@ bool State::core(){
 			return false;
 	}
 
+	// get network updates
 	match.recv_data(*this);
+	// send network updates
 	match.send_data(*this);
 	// see if an error happened with the above operations
 	if(!match.connected()){
 		logcat("error, disconnected");
 		show_menu=true;
 	}
+
+	// process players
+	Player::process(*this);
 
 	// process ui buttons
 	const float UI_TOLERANCE=-0.25f;
