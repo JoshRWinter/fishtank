@@ -1,3 +1,4 @@
+#include <math.h>
 #include "../fishtank-server.h"
 
 Player::Player(){
@@ -6,6 +7,7 @@ Player::Player(){
 	y=0.0f;
 	xv=0.0f;
 	yv=0.0f;
+	angle=M_PI/2.0f;
 }
 
 void Player::process(Match &match){
@@ -27,6 +29,18 @@ void Player::process(Match &match){
 		if(client.input.down)
 			client.player.yv=PLAYER_Y_SPEED;
 		*/
+
+		// handle turret rotation
+		if(client.input.aim_left){
+			client.player.angle-=PLAYER_ANGLE_INCREMENT;
+			if(client.player.angle<0.3f)
+				client.player.angle=0.3f;
+		}
+		else if(client.input.aim_right){
+			client.player.angle+=PLAYER_ANGLE_INCREMENT;
+			if(client.player.angle>M_PI-0.3f)
+				client.player.angle=M_PI-0.3f;
+		}
 
 		// update pos based on velocities
 		client.player.x+=client.player.xv;

@@ -58,6 +58,8 @@ struct to_client_heartbeat{
 
 #define PLAYER_WIDTH 1.5f
 #define PLAYER_HEIGHT 1.0f
+#define TURRET_WIDTH 1.5f
+#define TURRET_HEIGHT 0.2f
 
 #define FLOOR 4.0f
 #define GRAVITY 0.001f

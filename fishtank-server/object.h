@@ -14,11 +14,13 @@ struct Base{
 
 #define PLAYER_X_SPEED 0.03f
 #define PLAYER_Y_SPEED 0.03f
+#define PLAYER_ANGLE_INCREMENT 0.02f
 struct Player:Base{
 	Player();
 	static void process(Match&);
 
 	int health;
+	float angle; // angle of the turret
 	float xv,yv;
 };
 
