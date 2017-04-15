@@ -34,7 +34,6 @@ void Match::accept_new_clients(){
 			std::cout<<c->name<<" just connected ("<<connector_address<<")"<<std::endl;
 			// inform the other clients of the new player
 			std::string msg=c->name+" has connected";
-			std::cout<<msg<<std::endl;
 			send_chat(msg,"server");
 		}
 	}
