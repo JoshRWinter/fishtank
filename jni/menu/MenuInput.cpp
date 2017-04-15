@@ -7,7 +7,7 @@ bool MenuInput::exec(State &state,const char *header_text,std::string *menu_text
 	const char *letters[]={"Q","W","E","R","T","Y","U","I","O","P",
 						"A","S","D","F","G","H","J","K","L",":",
 						"Z","X","C","V","B","N","M","."};
-	const char *numerals[]={"0","1","2","3","4","5","6","7","8","9"};
+	const char *numerals[]={"1","2","3","4","5","6","7","8","9","0"};
 	space.init(-BUTTON_SMALL_SIZE/2.0f,3.3f,"Sp.");
 	backspace.init(6.0f,-0.7f,"BS");
 	enter.init(6.0f,3.0f,"OK");
@@ -54,25 +54,26 @@ bool MenuInput::exec(State &state,const char *header_text,std::string *menu_text
 
 	while(state.process()){
 		// process buttons
+		const float BUTTON_TOLERANCE=-0.15f;
 		for(int i=0;i<28;++i){
-			if(alpha[i].process(state.pointer))
+			if(alpha[i].process(state.pointer,BUTTON_TOLERANCE))
 				if(text->length()!=MSG_LIMIT)
 					text->push_back(tolower(alpha[i].label[0]));
 		}
 		for(int i=0;i<10;++i){
-			if(numeric[i].process(state.pointer))
+			if(numeric[i].process(state.pointer,BUTTON_TOLERANCE))
 				if(text->length()!=MSG_LIMIT)
 					text->push_back(numeric[i].label[0]);
 		}
-		if(space.process(state.pointer))
+		if(space.process(state.pointer,BUTTON_TOLERANCE))
 			if(text->length()!=MSG_LIMIT)
 				text->push_back(' ');
-		if(backspace.process(state.pointer))
+		if(backspace.process(state.pointer,BUTTON_TOLERANCE))
 			if(text->length()>0)
 				text->pop_back();
-		if(enter.process(state.pointer))
+		if(enter.process(state.pointer,BUTTON_TOLERANCE))
 			return true;
-		if(cancel.process(state.pointer)){
+		if(cancel.process(state.pointer,BUTTON_TOLERANCE)){
 			text->clear();
 			return true;
 		}
