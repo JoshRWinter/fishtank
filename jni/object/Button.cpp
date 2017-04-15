@@ -13,16 +13,19 @@ void Button::init(float xpos,float ypos,const char *button_label){
 }
 
 bool Button::process(const crosshair *ch,float tolerance){
-	if(pointing(ch[0],tolerance)){
-		if(ch[0].active)
-			active=true;
-		else if(active){
-			active=false;
-			return true;
+	for(int i=0;i<2;++i){
+		if(pointing(ch[i],tolerance)){
+			if(ch[i].active){
+				active=true;
+				return false;
+			}
+			else if(active){
+				active=false;
+				return true;
+			}
 		}
 	}
-	else
-		active=false;
+	active=false;
 	return false;
 }
 
