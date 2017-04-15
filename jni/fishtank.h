@@ -9,6 +9,7 @@
 #include "glesutil.h"
 
 #define SHOW_FPS
+#define DATAPATH "/data/data/joshwinter.fishtank/files"
 
 struct Renderer;
 struct State;
@@ -58,12 +59,15 @@ struct State{
 	bool core();
 	void render()const;
 	bool process()const;
+	void write_config();
+	bool read_config();
 
 	Renderer renderer;
 
 	bool running;
 	bool show_menu; // show the main menu
 	std::string name; // the player's name
+	std::string connect_to; // connecting to address ...
 	Match match;
 
 	struct{

@@ -13,6 +13,7 @@ void cmdproc(android_app *app,int32_t cmd){
 		state->renderer.term();
 		break;
 	case APP_CMD_DESTROY:
+		state->write_config();
 		state->reset();
 		break;
 	case APP_CMD_RESUME:

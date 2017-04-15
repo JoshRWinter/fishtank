@@ -27,11 +27,10 @@ bool MenuPlay::exec(State &state){
 
 		// connect the player
 		if(button_connect.process(state.pointer)){
-			std::string ip_address="kosh.nku.edu";
-			if(!state.menu.input.exec(state,"Enter an IPv4, IPv6 ip address,\nor a DNS resolvable domain name",&ip_address))
+			if(!state.menu.input.exec(state,"Enter an IPv4, IPv6 ip address,\nor a DNS resolvable domain name",&state.connect_to))
 				return false;
-			if(ip_address.length()>0){
-				if(!state.menu.connect.exec(state,ip_address))
+			if(state.connect_to.length()>0){
+				if(!state.menu.connect.exec(state,state.connect_to))
 					return false;
 				if(state.match.connected())
 					return true;

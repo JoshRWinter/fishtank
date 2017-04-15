@@ -98,7 +98,11 @@ void State::render()const{
 }
 
 State::State(){
-	name="Basil Fawlty";
+	if(!read_config()){
+		name="basil fawlty";
+		connect_to="";
+	}
+
 	running=false;
 	show_menu=true;
 	memset(pointer,0,sizeof(crosshair)*2);
@@ -131,4 +135,37 @@ State::State(){
 }
 
 void State::reset(){
+}
+
+bool State::read_config(){
+	FILE *file=fopen(DATAPATH"/00","rb");
+
+	if(!file)
+		return false;
+	char connect_to_tmp[MSG_LIMIT+1];
+	char name_tmp[MSG_LIMIT+1];
+	fread(connect_to_tmp,1,MSG_LIMIT+1,file);
+	fread(name_tmp,1,MSG_LIMIT+1,file);
+	name=name_tmp;
+	connect_to=connect_to_tmp;
+
+	fclose(file);
+	return true;
+}
+
+void State::write_config(){
+	FILE *file=fopen(DATAPATH"/00","wb");
+	if(!file){
+		logcat("could not open " DATAPATH "/00 for writing");
+		return;
+	}
+
+	char connect_to_tmp[MSG_LIMIT+1];
+	char name_tmp[MSG_LIMIT+1];
+	strncpy(connect_to_tmp,connect_to.c_str(),MSG_LIMIT+1);
+	strncpy(name_tmp,name.c_str(),MSG_LIMIT+1);
+	fwrite(connect_to_tmp,1,MSG_LIMIT+1,file);
+	fwrite(name_tmp,1,MSG_LIMIT+1,file);
+
+	fclose(file);
 }
