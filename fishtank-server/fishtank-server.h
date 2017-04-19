@@ -15,8 +15,7 @@ struct Client;
 
 struct Client{
 	Client(int,const std::string&);
-	~Client();
-	void kick();
+	void kick(Match&);
 
 	socket_tcp tcp;
 	std::string name;

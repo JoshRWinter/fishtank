@@ -73,7 +73,7 @@ void Match::send_data(){
 				client.tcp.get_name(ip);
 				std::cout<<client.name<<" has disconnected ("<<ip<<")"<<std::endl;
 				std::string msg=client.name+" has disconnected";
-				client.kick();
+				client.kick(*this);
 				delete *it;
 				it=client_list.erase(it);
 

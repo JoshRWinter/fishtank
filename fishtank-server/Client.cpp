@@ -27,10 +27,13 @@ Client::Client(int s,const std::string &addr):tcp(s,addr){
 	input.fire=0.0f;
 }
 
-Client::~Client(){
-	kick();
-}
-
-void Client::kick(){
+void Client::kick(Match &match){
 	tcp.close();
+
+	// delete all shells associated with this client
+	for(std::vector<Shell*>::iterator it=match.shell_list.begin();it!=match.shell_list.end();)
+		if(&(*it)->owner==this){
+			delete *it;
+			it=match.shell_list.erase(it);
+		}
 }
