@@ -8,6 +8,7 @@
 #include "../jni/fishnet.h"
 #include "../jni/network.h"
 struct Match;
+struct Client;
 #include "object.h"
 
 #define onein(n) (randomint(0,n-1)==0)
@@ -46,6 +47,7 @@ public:
 	void wait_next_step();
 
 	std::vector<Client*> client_list;
+	std::vector<Shell*> shell_list;
 	socket_tcp_server tcp;
 	socket_udp_server udp;
 	long long last_nano_time;
@@ -53,5 +55,6 @@ public:
 
 void get_nano_time(long long*);
 int randomint(int,int);
+float zerof(float*,float);
 
 #endif // FISHTANK_SERVER_H

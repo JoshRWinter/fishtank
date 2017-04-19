@@ -1,1 +1,1 @@
-background.tga button.tga button_small.tga -o ../assets/uiassets
+background.tga button.tga button_small.tga firepower_indicator.tga -o ../assets/uiassets

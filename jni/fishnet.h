@@ -56,10 +56,18 @@ struct to_client_heartbeat{
 	int32_t state[MAX_PLAYERS*SERVER_STATE_FIELDS];
 };
 
+#define VIEW_LEFT -8.0f
+#define VIEW_RIGHT 8.0f
+#define VIEW_BOTTOM 4.5f
+#define VIEW_TOP -4.5f
+
 #define PLAYER_WIDTH 1.5f
 #define PLAYER_HEIGHT 1.0f
 #define TURRET_WIDTH 1.5f
 #define TURRET_HEIGHT 0.2f
 
+#define SHELL_WIDTH 0.5f
+#define SHELL_HEIGHT 0.5f
+
 #define FLOOR 4.0f
-#define GRAVITY 0.001f
+#define GRAVITY 0.01f

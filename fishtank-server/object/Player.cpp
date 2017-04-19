@@ -8,6 +8,8 @@ Player::Player(){
 	xv=0.0f;
 	yv=0.0f;
 	angle=M_PI/2.0f;
+	w=PLAYER_WIDTH;
+	h=PLAYER_HEIGHT;
 }
 
 void Player::process(Match &match){
@@ -16,13 +18,24 @@ void Player::process(Match &match){
 		if(client.colorid==0)
 			continue;
 
+		// handle firing the cannon
+		if(client.input.fire>0.0f){
+			Shell *s=new Shell(match,client);
+			match.shell_list.push_back(s);
+			client.input.fire=0.0f;
+			// launch the player backwards a bit
+			client.player.xv=-s->xv/2.0f;
+		}
+
+		// bring velocities down to zero
+		const float RETARD=0.01f;
+		zerof(&client.player.xv,RETARD);
+
 		// handle velocities
 		if(client.input.left)
 			client.player.xv=-PLAYER_X_SPEED;
 		if(client.input.right)
 			client.player.xv=PLAYER_X_SPEED;
-		if(!client.input.left&&!client.input.right)
-			client.player.xv=0.0f;
 		if(client.input.up)
 			client.player.yv=-PLAYER_Y_SPEED;
 		/*

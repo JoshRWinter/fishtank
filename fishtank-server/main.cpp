@@ -56,3 +56,15 @@ int randomint(int low,int high){
 	if(low>=high)return low;
 	return low+(rand()%(high-low+1));
 }
+
+float zerof(float *val,float step){
+	if(*val>0.0f){
+		*val-=step;
+		if(*val<0.0f)*val=0.0f;
+	}
+	else if(*val<0.0f){
+		*val+=step;
+		if(*val>0.0f)*val=0.0f;
+	}
+	return *val;
+}

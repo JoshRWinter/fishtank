@@ -24,4 +24,12 @@ struct Player:Base{
 	float xv,yv;
 };
 
+struct Shell:Base{
+	Shell(const Match&,const Client&);
+	static void process(Match&);
+
+	float xv,yv;
+	const Client &owner;
+};
+
 #endif // OBJECT_H

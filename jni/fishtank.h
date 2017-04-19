@@ -22,11 +22,15 @@ struct State;
 // gameplay textures
 #define TID_BACKGROUND 0
 #define TID_TANK 1
+#define TID_SHELL 2
 
 // ui textures
 #define UITID_BACKGROUND 0
 #define UITID_BUTTON 1
 #define UITID_BUTTON_SMALL 2
+#define UITID_FIREPOWER_INDICATOR 3
+
+#define FIREPOWER_INCREMENT 0.008f
 
 struct Renderer{
 	Renderer();
@@ -69,7 +73,9 @@ struct State{
 	std::string name; // the player's name
 	std::string connect_to; // connecting to address ...
 	Match match;
+	float firepower,final_firepower;
 
+	// menus
 	struct{
 		MenuMain main;
 		MenuPlay play;
@@ -92,6 +98,7 @@ struct State{
 	// objects
 	Base background;
 	std::vector<Player> player_list;
+	std::vector<Shell*> shell_list;
 };
 
 int32_t inputproc(android_app*,AInputEvent*);

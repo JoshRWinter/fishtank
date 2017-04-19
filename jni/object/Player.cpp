@@ -11,7 +11,7 @@ Player::Player(){
 	h=PLAYER_HEIGHT;
 	rot=0.0f;
 	health=100;
-	cue_fire=false;
+	cue_fire=0.0f;
 	frame=0;
 	count=1;
 
@@ -24,11 +24,18 @@ Player::Player(){
 
 void Player::process(State &state){
 	for(Player &player:state.player_list){
+		// handle firing the cannon
+		if(player.cue_fire>0.0f){
+			state.shell_list.push_back(new Shell(state,player));
+			player.cue_fire=0.0f;
+		}
 		player.x+=player.xv;
 		player.y+=player.yv;
 
 		player.turret.x=player.x+(PLAYER_WIDTH/2.0f)-(TURRET_WIDTH/2.0f);
 		player.turret.y=player.y+(PLAYER_HEIGHT/2.0f)-(TURRET_HEIGHT*2.5f);
+
+		state.final_firepower=0.0f;
 	}
 }
 

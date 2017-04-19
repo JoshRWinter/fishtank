@@ -101,8 +101,8 @@ void Renderer::draw(const Base &b)const{
 }
 
 Renderer::Renderer(){
-	view.left=-8.0f;
-	view.right=8.0f;
-	view.bottom=4.5f;
-	view.top=-4.5f;
+	view.left=VIEW_LEFT;
+	view.right=VIEW_RIGHT;
+	view.bottom=VIEW_BOTTOM;
+	view.top=VIEW_TOP;
 }

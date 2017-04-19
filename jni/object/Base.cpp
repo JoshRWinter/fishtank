@@ -1,5 +1,9 @@
 #include "../fishtank.h"
 
+bool Base::collide(const Base &b,float tolerance)const{
+	return x+w>b.x+tolerance&&x<(b.x+b.w)-tolerance&&y+h>b.y+tolerance&&y<(b.y+b.h)-tolerance;
+}
+
 bool Base::pointing(const crosshair &ch,float tolerance)const{
 	return ch.x>x+tolerance&&ch.x<(x+w)-tolerance&&ch.y>y+tolerance&&ch.y<(y+h)-tolerance;
 }

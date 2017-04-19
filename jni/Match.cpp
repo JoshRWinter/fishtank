@@ -65,7 +65,7 @@ void Match::send_data(const State &state){
 	tsh.state[CLIENT_STATE_PRESS_RIGHT]=htonl(state.input.right.active);
 	tsh.state[CLIENT_STATE_PRESS_DOWN]=htonl(state.input.down.active);
 	tsh.state[CLIENT_STATE_PRESS_UP]=htonl(state.input.up.active);
-	tsh.state[CLIENT_STATE_PRESS_FIRE]=htonl(state.input.fire.active);
+	tsh.state[CLIENT_STATE_PRESS_FIRE]=htonl(state.final_firepower*FLOAT_MULTIPLIER);
 	tsh.state[CLIENT_STATE_PRESS_AIMLEFT]=htonl(state.input.aim_left.active);
 	tsh.state[CLIENT_STATE_PRESS_AIMRIGHT]=htonl(state.input.aim_right.active);
 	tsh.state[CLIENT_STATE_UDP_SECRET]=htonl(udp_secret);
@@ -110,7 +110,8 @@ void Match::recv_data(State &state){
 			player.y=(int)ntohl(tch.state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_YPOS])/FLOAT_MULTIPLIER;
 			player.turret.rot=(int)ntohl(tch.state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_ANGLE])/FLOAT_MULTIPLIER;
 			player.colorid=ntohl(tch.state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_COLORID]);
-			player.cue_fire=ntohl(tch.state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_FIRE]);
+			if(player.cue_fire==0.0f)
+				player.cue_fire=(int)ntohl(tch.state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_FIRE])/FLOAT_MULTIPLIER;
 
 			++i;
 		}

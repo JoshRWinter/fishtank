@@ -1,8 +1,10 @@
 #ifndef OBJECT_H
 #define OBJECT_H
 
+#define FIRE_BUTTON_SIZE 1.8f
+
 struct Base{
-	bool collide(const Base&)const;
+	bool collide(const Base&,float=0.0f)const;
 	bool pointing(const crosshair&,float=0.0f)const;
 	static void init_background(Base&,const Renderer&);
 
@@ -42,7 +44,19 @@ struct Player:Base{
 	Base turret;
 	int colorid; // zero if empty player
 	int health;
-	bool cue_fire;
+	float cue_fire;
+};
+
+#define SHELL_VIS_WIDTH 0.0f
+#define SHELL_VIS_HEIGHT 0.2f
+struct Shell:Base{
+	Shell(const State&,const Player&);
+	static void process(State&);
+	static void render(const Renderer&,const std::vector<Shell*>&);
+
+	float xv,yv;
+	const Player &owner;
+	Base visual; // the shell that is rendered
 };
 
 #endif // OBJECT_H

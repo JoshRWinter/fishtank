@@ -9,6 +9,11 @@ Match::~Match(){
 	for(std::vector<Client*>::iterator it=client_list.begin();it!=client_list.end();++it)
 		delete *it;
 	client_list.clear();
+
+	// clear the shell list
+	for(std::vector<Shell*>::iterator it=shell_list.begin();it!=shell_list.end();++it)
+		delete *it;
+	shell_list.clear();
 }
 
 bool Match::setup(){
@@ -43,6 +48,8 @@ void Match::accept_new_clients(){
 void Match::step(){
 	// process players
 	Player::process(*this);
+	// process shells
+	Shell::process(*this);
 
 	recv_data();
 	send_data();
@@ -93,7 +100,7 @@ void Match::send_data(){
 		tch.state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_YPOS]=htonl((client.player.y-client.player.yv)*FLOAT_MULTIPLIER);
 		tch.state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_ANGLE]=htonl(client.player.angle*FLOAT_MULTIPLIER);
 		tch.state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_COLORID]=htonl(client.colorid);
-		tch.state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_FIRE]=htonl(0);
+		tch.state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_FIRE]=htonl(client.input.fire*FLOAT_MULTIPLIER);
 
 		++i;
 	}
@@ -155,7 +162,8 @@ void Match::recv_data(){
 		client->input.up=ntohl(tsh.state[CLIENT_STATE_PRESS_UP]);
 		client->input.aim_left=ntohl(tsh.state[CLIENT_STATE_PRESS_AIMLEFT]);
 		client->input.aim_right=ntohl(tsh.state[CLIENT_STATE_PRESS_AIMRIGHT]);
-		client->input.fire=ntohl(tsh.state[CLIENT_STATE_PRESS_FIRE])/FLOAT_MULTIPLIER;
+		if(client->input.fire==0.0f)
+			client->input.fire=(int)ntohl(tsh.state[CLIENT_STATE_PRESS_FIRE])/FLOAT_MULTIPLIER;
 	}
 }
 

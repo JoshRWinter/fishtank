@@ -21,15 +21,31 @@ bool State::core(){
 	// process players
 	Player::process(*this);
 
+	// process shells
+	Shell::process(*this);
+
 	// process ui buttons
 	const float UI_TOLERANCE=-0.25f;
 	input.left.process(pointer,UI_TOLERANCE);
 	input.right.process(pointer,UI_TOLERANCE);
 	input.up.process(pointer,UI_TOLERANCE);
 	input.down.process(pointer,UI_TOLERANCE);
-	input.fire.process(pointer,UI_TOLERANCE);
 	input.aim_left.process(pointer,UI_TOLERANCE);
 	input.aim_right.process(pointer,UI_TOLERANCE);
+	if(input.fire.process(pointer,UI_TOLERANCE)){
+		const float minimum=0.35f;
+		if(firepower<minimum)
+			firepower=minimum;
+		final_firepower=firepower;
+		firepower=0.0f;
+	}
+	else if(input.fire.active){
+		firepower+=FIREPOWER_INCREMENT;
+		if(firepower>1.0f)
+			firepower=1.0f;
+	}
+	else
+		firepower=0.0f;
 
 	return true;
 }
@@ -52,10 +68,20 @@ void State::render()const{
 	glBindTexture(GL_TEXTURE_2D,renderer.assets.texture[TID_BACKGROUND].object);
 	renderer.draw(background);
 
+	// draw shells
+	if(shell_list.size()!=0)
+		Shell::render(renderer,shell_list);
 
 	// draw players
 	Player::render(renderer,player_list);
 
+	// firepower indicator
+	if(firepower>0.0f){
+		glBindTexture(GL_TEXTURE_2D,renderer.uiassets.texture[UITID_FIREPOWER_INDICATOR].object);
+		float s=FIRE_BUTTON_SIZE*firepower;
+		Base fpi={input.fire.x+(FIRE_BUTTON_SIZE/2.0f)-(s/2.0f),input.fire.y+(FIRE_BUTTON_SIZE/2.0f)-(s/2.0f),s,s,0.0f,0,1};
+		renderer.draw(fpi);
+	}
 	// draw ui buttons
 	glBindTexture(GL_TEXTURE_2D,renderer.uiassets.texture[UITID_BUTTON_SMALL].object);
 	input.left.render(renderer);
@@ -106,6 +132,8 @@ State::State(){
 	running=false;
 	show_menu=true;
 	memset(pointer,0,sizeof(crosshair)*2);
+	firepower=0.0f;
+	final_firepower=0.0f;
 
 	// players
 	Player dummy;
@@ -124,17 +152,20 @@ State::State(){
 
 	// ui buttons
 	const float DPAD_SIZE=0.8f;
-	const float FIRE_BUTTON_SIZE=1.5f;
 	input.left.init(-7.0f,2.25f,DPAD_SIZE,"L");
 	input.right.init(-4.5f,2.25f,DPAD_SIZE,"R");
 	input.down.init(-5.75f,3.2f,DPAD_SIZE,"D");
 	input.up.init(-5.75f,1.3f,DPAD_SIZE,"U");
-	input.fire.init(5.0f,2.0f,FIRE_BUTTON_SIZE,"FIRE");
+	input.fire.init(4.825f,2.0f,FIRE_BUTTON_SIZE,"FIRE");
 	input.aim_left.init(3.9f,2.5f,DPAD_SIZE,"L");
 	input.aim_right.init(6.75f,2.5f,DPAD_SIZE,"R");
 }
 
 void State::reset(){
+	// clear shells
+	for(Shell *shell:shell_list)
+		delete shell;
+	shell_list.clear();
 }
 
 bool State::read_config(){
