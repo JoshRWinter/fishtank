@@ -14,7 +14,7 @@ struct Client;
 #define onein(n) (randomint(0,n-1)==0)
 
 struct Client{
-	Client(int);
+	Client(int,const std::string&);
 	~Client();
 	void kick();
 

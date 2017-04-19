@@ -72,8 +72,9 @@ socket_tcp_server::~socket_tcp_server(){
 
 // SOCKET TCP CLIENT
 // initialize with already opened socket
-socket_tcp::socket_tcp(int socket){
+socket_tcp::socket_tcp(int socket,const std::string &sock_name){
 	sock=socket;
+	name=sock_name;
 	ai=NULL;
 }
 

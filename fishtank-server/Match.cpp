@@ -28,13 +28,13 @@ void Match::accept_new_clients(){
 		if(client_list.size()==MAX_PLAYERS){
 			// have to kick the client
 			std::cout<<"rejected "<<connector_address<<", too many players!"<<std::endl;
-			socket_tcp tmp=connector_socket;
+			socket_tcp tmp(connector_socket,connector_address);
 			uint8_t i=0;
 			tmp.send(&i,sizeof(uint8_t));
 		}
 		else{
 			// accept the client
-			Client *c=new Client(connector_socket);
+			Client *c=new Client(connector_socket,connector_address);
 			client_list.push_back(c);
 			std::cout<<c->name<<" just connected ("<<connector_address<<")"<<std::endl;
 			// inform the other clients of the new player
@@ -69,7 +69,9 @@ void Match::send_data(){
 			client.tcp.send(&heartbeat.name,sizeof(heartbeat.name));
 			if(client.tcp.error()){
 				// kick
-				std::cout<<client.name<<" has disconnected."<<std::endl;
+				std::string ip;
+				client.tcp.get_name(ip);
+				std::cout<<client.name<<" has disconnected ("<<ip<<")"<<std::endl;
 				std::string msg=client.name+" has disconnected";
 				client.kick();
 				delete *it;
@@ -183,6 +185,13 @@ void Match::send_chat(const std::string &msg,const std::string &from){
 		client.tcp.send(&tctcp.msg,sizeof(tctcp.msg));
 		client.tcp.send(&tctcp.name,sizeof(tctcp.name));
 	}
+
+	// display the chat on stdout
+	if(from=="server")
+		std::cout<<"chat\033[36m[\033[31mserver: \033[36m";
+	else
+		std::cout<<"\033[36mchat["<<from<<": ";
+	std::cout<<msg<<"]\033[0m"<<std::endl;
 }
 
 Client *Match::get_client_by_secret(int32_t s){

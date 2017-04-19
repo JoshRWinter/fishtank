@@ -34,6 +34,8 @@ int main(){
 		return 1;
 	}
 
+	std::cout<<"\033[32m[ready on tcp:"<<TCP_PORT<<" udp:"<<UDP_PORT<<"]\033[0m"<<std::endl;
+
 	while(run.load()){
 		match.accept_new_clients();
 

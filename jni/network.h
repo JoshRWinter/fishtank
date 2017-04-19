@@ -22,7 +22,7 @@ private:
 class socket_tcp{
 public:
 	socket_tcp();
-	socket_tcp(int);
+	socket_tcp(int,const std::string&);
 	~socket_tcp();
 
 	bool setup(const std::string &address,unsigned short);
