@@ -1,2 +1,15 @@
-all:
-	g++ -o fishtank-server -O3 *.cpp object/*.cpp  ../jni/network.cpp -g
+CPPFLAGS := -g -c -std=c++11
+LFLAGS := -lrt
+
+OBJS := ../jni/network.o main.o Match.o Client.o object/Base.o object/Player.o object/Shell.o
+
+fishtank-server: $(OBJS)
+	g++ -o $@ $(OBJS) $(LFLAGS)
+
+%.o: %.cpp ../jni/network.h fishtank-server.h object.h
+	g++ -o $@ $(CPPFLAGS) $<
+
+clean:
+	rm *.o object/*.o
+
+.PHONY: clean

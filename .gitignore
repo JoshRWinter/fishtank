@@ -5,3 +5,5 @@ bin
 libs
 local.properties
 obj
+*.o
+
