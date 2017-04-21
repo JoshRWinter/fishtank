@@ -1,3 +1,4 @@
+#include <time.h>
 #include <signal.h>
 #include "fishtank.h"
 
@@ -33,6 +34,7 @@ int32_t inputproc(android_app *app,AInputEvent *event){
 extern "C" void android_main(android_app *app){
 	logcat("--- BEGIN NEW LOG ---");
 	app_dummy();
+	srand48(time(NULL));
 	State state;
 	state.app=app;
 	app->userData=&state;
@@ -40,9 +42,18 @@ extern "C" void android_main(android_app *app){
 	app->onAppCmd=cmdproc;
 	init_jni(app,&state.jni);
 
+	long long last_time=0;
+	get_nano_time(&last_time);
 	while(state.process()&&state.core()){
 		state.render();
 		eglSwapBuffers(state.renderer.display,state.renderer.surface);
+
+		// update state.speed, the time delta
+		long long current_time,diff;
+		get_nano_time(&current_time);
+		diff=current_time-last_time;
+		state.speed=diff/16666600.0f;
+		last_time=current_time;
 	};
 
 	term_jni(&state.jni);

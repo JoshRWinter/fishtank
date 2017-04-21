@@ -1,4 +1,3 @@
-#include <time.h>
 #include "fishtank.h"
 
 bool State::core(){
@@ -40,7 +39,7 @@ bool State::core(){
 		firepower=0.0f;
 	}
 	else if(input.fire.active){
-		firepower+=FIREPOWER_INCREMENT;
+		firepower+=FIREPOWER_INCREMENT*speed;
 		if(firepower>1.0f)
 			firepower=1.0f;
 	}
@@ -129,6 +128,7 @@ State::State(){
 		connect_to="";
 	}
 
+	speed=1.0f;
 	running=false;
 	show_menu=true;
 	memset(pointer,0,sizeof(crosshair)*2);

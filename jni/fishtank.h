@@ -68,6 +68,7 @@ struct State{
 
 	Renderer renderer;
 
+	float speed;
 	bool running;
 	bool show_menu; // show the main menu
 	std::string name; // the player's name

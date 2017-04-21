@@ -29,8 +29,8 @@ void Player::process(State &state){
 			state.shell_list.push_back(new Shell(state,player));
 			player.cue_fire=0.0f;
 		}
-		player.x+=player.xv;
-		player.y+=player.yv;
+		player.x+=player.xv*state.speed;
+		player.y+=player.yv*state.speed;
 
 		player.turret.x=player.x+(PLAYER_WIDTH/2.0f)-(TURRET_WIDTH/2.0f);
 		player.turret.y=player.y+(PLAYER_HEIGHT/2.0f)-(TURRET_HEIGHT*2.5f);

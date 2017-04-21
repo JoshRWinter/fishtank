@@ -946,6 +946,12 @@ void termOpenSL(slesenv *soundengine){
 	free(soundengine);
 }
 
+void get_nano_time(long long *lli){
+	struct timespec ts;
+	clock_gettime(CLOCK_MONOTONIC,&ts);
+	*lli=((long long)ts.tv_sec*(long long)1000000000)+(long long)ts.tv_nsec;
+}
+
 void init_jni(struct android_app *app,struct jni_info *jni_info){
 	jni_info->vm=app->activity->vm;
 	jni_info->clazz=app->activity->clazz;

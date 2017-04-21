@@ -27,11 +27,11 @@ void Shell::process(State &state){
 		Shell &shell=**it;
 
 		// update shell velocities
-		shell.yv+=GRAVITY;
+		shell.yv+=GRAVITY*state.speed;
 
 		// update shell position
-		shell.x+=shell.xv;
-		shell.y+=shell.yv;
+		shell.x+=shell.xv*state.speed;
+		shell.y+=shell.yv*state.speed;
 		float speed=fabs(shell.xv);
 		shell.visual.w=(speed<0.3f?0.3f:speed)*2.4f;
 		shell.visual.x=shell.x+(SHELL_WIDTH/2.0f)-(shell.visual.w/2.0f);

@@ -128,6 +128,7 @@ float targetf(float *val,float step,float target);
 float align(float *rot,float step,float target);
 unsigned screenshot(int w,int h,int darken);
 unsigned screenshotblur(int w,int h,int resize,int intensity);
+void get_nano_time(long long*);
 void init_jni(struct android_app *app,struct jni_info *jni_info);
 void vibratedevice(struct jni_info* jni_info,int mills);
 void hidenavbars(struct jni_info *jni_info);
