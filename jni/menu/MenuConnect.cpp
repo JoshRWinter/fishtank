@@ -61,7 +61,7 @@ void MenuConnect::render(const Renderer &renderer)const{
 	// background
 	glUniform4f(renderer.uniform.rgba,1.0f,1.0f,1.0f,1.0f);
 	glBindTexture(GL_TEXTURE_2D,renderer.uiassets.texture[UITID_BACKGROUND].object);
-	renderer.draw(background);
+	renderer.uidraw(background);
 
 	// main text
 	glUniform4f(renderer.uniform.rgba,0.0f,0.0f,0.0f,1.0f);

@@ -2,7 +2,7 @@
 #include "fishtank.h"
 
 Match::Match(){
-	quit();
+	my_index=0;
 }
 
 Match::~Match(){
@@ -29,6 +29,11 @@ void Match::initialize(const std::string &name){
 	int32_t udp_secret_tmp;
 	tcp.recv(&udp_secret_tmp,4);
 	udp_secret=ntohl(udp_secret_tmp);
+
+	// get the id
+	int32_t id_tmp;
+	tcp.recv(&id_tmp,sizeof(id_tmp));
+	id=ntohl(id_tmp);
 }
 
 bool Match::connected(){
@@ -112,6 +117,9 @@ void Match::recv_data(State &state){
 			player.colorid=ntohl(tch.state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_COLORID]);
 			if(player.cue_fire==0.0f)
 				player.cue_fire=(int)ntohl(tch.state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_FIRE])/FLOAT_MULTIPLIER;
+			int cid=ntohl(tch.state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_ID]);
+			if(id==cid)
+				my_index=i;
 
 			++i;
 		}

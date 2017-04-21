@@ -34,7 +34,7 @@ void Button::render(const Renderer &renderer)const{
 		glUniform4f(renderer.uniform.rgba,0.0f,0.5f,0.8f,1.0f);
 	else
 		glUniform4f(renderer.uniform.rgba,0.0f,0.0f,0.0f,1.0f);
-	renderer.draw(*this);
+	renderer.uidraw(*this);
 }
 
 void Button::render_text(const Renderer &renderer)const{

@@ -34,7 +34,7 @@ void MenuMain::render(const Renderer &renderer)const{
 	glUniform4f(renderer.uniform.rgba,1.0f,1.0f,1.0f,1.0f);
 	// background
 	glBindTexture(GL_TEXTURE_2D,renderer.uiassets.texture[UITID_BACKGROUND].object);
-	renderer.draw(background);
+	renderer.uidraw(background);
 
 	// title text
 	glUniform4f(renderer.uniform.rgba,0.0f,0.0f,0.0f,1.0f);

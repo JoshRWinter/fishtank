@@ -19,6 +19,8 @@ struct Client{
 
 	socket_tcp tcp;
 	std::string name;
+	static int last_id;
+	int32_t id;
 	int32_t udp_secret;
 	udp_id udpid;
 

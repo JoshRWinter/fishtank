@@ -102,6 +102,7 @@ void Match::send_data(){
 		tch.state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_YPOS]=htonl((client.player.y-client.player.yv)*FLOAT_MULTIPLIER);
 		tch.state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_ANGLE]=htonl(client.player.angle*FLOAT_MULTIPLIER);
 		tch.state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_COLORID]=htonl(client.colorid);
+		tch.state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_ID]=htonl(client.id);
 		tch.state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_FIRE]=htonl(client.input.fire*FLOAT_MULTIPLIER);
 
 		++i;

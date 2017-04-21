@@ -88,7 +88,7 @@ bool MenuInput::exec(State &state,const char *header_text,std::string *menu_text
 void MenuInput::render(const Renderer &renderer)const{
 	glUniform4f(renderer.uniform.rgba,1.0f,1.0f,1.0f,1.0f);
 	glBindTexture(GL_TEXTURE_2D,renderer.uiassets.texture[UITID_BACKGROUND].object);
-	renderer.draw(background);
+	renderer.uidraw(background);
 
 	// render buttons
 	glBindTexture(GL_TEXTURE_2D,renderer.uiassets.texture[UITID_BUTTON_SMALL].object);

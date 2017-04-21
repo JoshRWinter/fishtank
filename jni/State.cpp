@@ -65,7 +65,7 @@ void State::render()const{
 	glUniform4f(renderer.uniform.rgba,1.0f,1.0f,1.0f,1.0f);
 	// draw backdround
 	glBindTexture(GL_TEXTURE_2D,renderer.assets.texture[TID_BACKGROUND].object);
-	renderer.draw(background);
+	renderer.uidraw(background);
 
 	// draw shells
 	if(shell_list.size()!=0)
@@ -79,7 +79,7 @@ void State::render()const{
 		glBindTexture(GL_TEXTURE_2D,renderer.uiassets.texture[UITID_FIREPOWER_INDICATOR].object);
 		float s=FIRE_BUTTON_SIZE*firepower;
 		Base fpi={input.fire.x+(FIRE_BUTTON_SIZE/2.0f)-(s/2.0f),input.fire.y+(FIRE_BUTTON_SIZE/2.0f)-(s/2.0f),s,s,0.0f,0,1};
-		renderer.draw(fpi);
+		renderer.uidraw(fpi);
 	}
 	// draw ui buttons
 	glBindTexture(GL_TEXTURE_2D,renderer.uiassets.texture[UITID_BUTTON_SMALL].object);

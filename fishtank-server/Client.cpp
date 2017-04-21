@@ -1,5 +1,6 @@
 #include "fishtank-server.h"
 
+int Client::last_id=0;
 Client::Client(int s,const std::string &addr):tcp(s,addr){
 	// accept the client
 	uint8_t accepted=1;
@@ -16,6 +17,12 @@ Client::Client(int s,const std::string &addr):tcp(s,addr){
 	udp_secret=rand()%1000000;
 	int32_t tmp=htonl(udp_secret);
 	tcp.send(&tmp,4);
+
+	// send the clients id
+	Client::last_id++;
+	id=Client::last_id;
+	int id_tmp=htonl(last_id);
+	tcp.send(&id_tmp,sizeof(id_tmp));
 
 	colorid=4;
 	input.left=false;

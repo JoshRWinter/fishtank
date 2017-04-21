@@ -38,6 +38,7 @@ struct Renderer{
 	void term();
 	void draw(const Base&,bool)const;
 	void draw(const Base&)const;
+	void uidraw(const Base&)const;
 
 	device dev; // screen resolution
 	device screen; // framebuffer resolution
@@ -47,14 +48,14 @@ struct Renderer{
 	EGLContext context;
 
 	unsigned vbo,vao,program;
+	float player_x,player_y;
 
 	struct{int vector,size,texcoords,rot,projection,rgba;}uniform;
 	struct{ftfont *main,*button,*button_small;}font;
+	struct{float left,right,bottom,top;}view;
 
 	pack assets; // gameplay textures
 	pack uiassets; // ui textures
-
-	struct{float left,right,bottom,top;}view;
 };
 
 struct State{

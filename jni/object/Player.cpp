@@ -36,6 +36,12 @@ void Player::process(State &state){
 		player.turret.y=player.y+(PLAYER_HEIGHT/2.0f)-(TURRET_HEIGHT*2.5f);
 
 		state.final_firepower=0.0f;
+
+		// tell the renderer the player's position
+		if(&player==&state.player_list[state.match.my_index]){
+			state.renderer.player_x=player.x;
+			state.renderer.player_y=player.y;
+		}
 	}
 }
 
