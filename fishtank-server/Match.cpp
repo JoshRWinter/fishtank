@@ -36,6 +36,14 @@ void Match::accept_new_clients(){
 			// accept the client
 			Client *c=new Client(connector_socket,connector_address);
 			client_list.push_back(c);
+
+			// if this is the only client, reset the level config
+			if(client_list.size()==1)
+				Platform::create_all(*this);
+
+			// send the level configuration to this client
+			send_level_config(*c);
+
 			std::cout<<c->name<<" just connected ("<<connector_address<<")"<<std::endl;
 			// inform the other clients of the new player
 			std::string msg=c->name+" has connected";
@@ -50,6 +58,8 @@ void Match::step(){
 	Player::process(*this);
 	// process shells
 	Shell::process(*this);
+	// process platforms
+	Platform::process(platform_list);
 
 	recv_data();
 	send_data();
@@ -88,22 +98,24 @@ void Match::send_data(){
 
 	// send data to all connected clients
 	to_client_heartbeat tch;
+	int32_t *server_state=tch.state+SERVER_STATE_GLOBAL_FIELDS;
 	memset(&tch,0,sizeof(to_client_heartbeat));
+	tch.state[SERVER_STATE_GLOBAL_PLATFORMS]=Platform::platform_status;
 	int i=0;
 
 	// initialize tch with state data
 	for(Client *c:client_list){
 		Client &client=*c;
 
-		tch.state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_HEALTH]=htonl(client.player.health);
-		tch.state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_XV]=htonl(client.player.xv*FLOAT_MULTIPLIER);
-		tch.state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_YV]=htonl(client.player.yv*FLOAT_MULTIPLIER);
-		tch.state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_XPOS]=htonl((client.player.x-client.player.xv)*FLOAT_MULTIPLIER);
-		tch.state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_YPOS]=htonl((client.player.y-client.player.yv)*FLOAT_MULTIPLIER);
-		tch.state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_ANGLE]=htonl(client.player.angle*FLOAT_MULTIPLIER);
-		tch.state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_COLORID]=htonl(client.colorid);
-		tch.state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_ID]=htonl(client.id);
-		tch.state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_FIRE]=htonl(client.input.fire*FLOAT_MULTIPLIER);
+		server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_HEALTH]=htonl(client.player.health);
+		server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_XV]=htonl(client.player.xv*FLOAT_MULTIPLIER);
+		server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_YV]=htonl(client.player.yv*FLOAT_MULTIPLIER);
+		server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_XPOS]=htonl((client.player.x-client.player.xv)*FLOAT_MULTIPLIER);
+		server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_YPOS]=htonl((client.player.y-client.player.yv)*FLOAT_MULTIPLIER);
+		server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_ANGLE]=htonl(client.player.angle*FLOAT_MULTIPLIER);
+		server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_COLORID]=htonl(client.colorid);
+		server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_ID]=htonl(client.id);
+		server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_FIRE]=htonl(client.input.fire*FLOAT_MULTIPLIER);
 
 		++i;
 	}
@@ -202,6 +214,25 @@ Client *Match::get_client_by_secret(int32_t s){
 	}
 
 	return NULL;
+}
+
+void Match::send_level_config(Client &client){
+	for(const Platform &platform:platform_list){
+		int32_t horiz=platform.horiz;
+		int32_t x=(platform.x+(platform.w/2.0f))*FLOAT_MULTIPLIER;
+		int32_t y=(platform.y+(platform.h/2.0f))*FLOAT_MULTIPLIER;
+		int32_t health=platform.health;
+
+		horiz=htonl(horiz);
+		x=htonl(x);
+		y=htonl(y);
+		health=htonl(health);
+
+		client.tcp.send(&horiz,sizeof(horiz));
+		client.tcp.send(&x,sizeof(x));
+		client.tcp.send(&y,sizeof(y));
+		client.tcp.send(&health,sizeof(health));
+	}
 }
 
 void Match::wait_next_step(){

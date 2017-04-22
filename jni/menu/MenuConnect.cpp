@@ -41,7 +41,7 @@ bool MenuConnect::exec(State &state,const std::string &ip){
 				tcp.recv(&accepted,sizeof(uint8_t));
 				if(accepted){
 					connection_state=CONN_STATE_READY;
-					state.match.initialize(state.name);
+					state.match.initialize(state);
 				}
 				else{
 					tcp.close();

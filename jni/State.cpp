@@ -74,6 +74,9 @@ void State::render()const{
 	// draw players
 	Player::render(renderer,player_list);
 
+	// draw platforms
+	Platform::render(renderer,platform_list);
+
 	// firepower indicator
 	if(firepower>0.0f){
 		glBindTexture(GL_TEXTURE_2D,renderer.uiassets.texture[UITID_FIREPOWER_INDICATOR].object);
@@ -166,6 +169,7 @@ void State::reset(){
 	for(Shell *shell:shell_list)
 		delete shell;
 	shell_list.clear();
+	// platforms are cleared in Match::get_level_config
 }
 
 bool State::read_config(){

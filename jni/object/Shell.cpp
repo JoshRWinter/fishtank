@@ -52,8 +52,25 @@ void Shell::process(State &state){
 				stop=true;
 				break;
 			}
+
 		}
-		if(stop)continue;
+		if(stop)
+			continue;
+
+		// check for shells colliding with platform
+		for(const Platform &platform:state.platform_list){
+			if(!platform.active)
+				continue;
+
+			if(shell.collide(platform)){
+				delete *it;
+				it=state.shell_list.erase(it);
+				stop=true;
+				break;
+			}
+		}
+		if(stop)
+			continue;
 
 		// check for shell going below screen
 		if(shell.y>state.renderer.view.bottom){

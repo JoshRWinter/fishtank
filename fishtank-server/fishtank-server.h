@@ -45,10 +45,12 @@ public:
 	void recv_data();
 	void send_chat(const std::string&,const std::string&);
 	Client *get_client_by_secret(int32_t);
+	void send_level_config(Client&);
 	void wait_next_step();
 
 	std::vector<Client*> client_list;
 	std::vector<Shell*> shell_list;
+	std::vector<Platform> platform_list;
 	socket_tcp_server tcp;
 	socket_udp_server udp;
 	long long last_nano_time;

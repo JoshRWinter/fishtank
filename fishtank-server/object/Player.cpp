@@ -64,5 +64,25 @@ void Player::process(Match &match){
 			client.player.y=FLOOR-PLAYER_HEIGHT;
 			client.player.yv=0.0f;
 		}
+
+		// check for player colliding with platform
+		for(const Platform &platform:match.platform_list){
+			if(platform.health<1)
+				continue;
+
+			int side=client.player.correct(platform);
+			switch(side){
+			case 0: // no collision
+				break;
+			case COLLIDE_RIGHT:
+			case COLLIDE_LEFT:
+				client.player.xv=0.0f;
+				break;
+			case COLLIDE_TOP:
+			case COLLIDE_BOTTOM:
+				client.player.yv=0.0f;
+				break;
+			}
+		}
 	}
 }

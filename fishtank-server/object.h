@@ -32,4 +32,14 @@ struct Shell:Base{
 	const Client &owner;
 };
 
+struct Platform:Base{
+	Platform(bool,float,float);
+	static void create_all(Match&);
+	static void process(const std::vector<Platform>&);
+
+	static uint32_t platform_status;
+	bool horiz; // flat or vertical
+	int health;
+};
+
 #endif // OBJECT_H

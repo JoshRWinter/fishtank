@@ -23,6 +23,7 @@ struct State;
 #define TID_BACKGROUND 0
 #define TID_TANK 1
 #define TID_SHELL 2
+#define TID_PLATFORM 1
 
 // ui textures
 #define UITID_BACKGROUND 0
@@ -100,6 +101,7 @@ struct State{
 	// objects
 	Base background;
 	std::vector<Player> player_list;
+	std::vector<Platform> platform_list;
 	std::vector<Shell*> shell_list;
 };
 

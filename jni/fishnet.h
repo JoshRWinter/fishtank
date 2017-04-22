@@ -41,7 +41,9 @@ struct to_client_tcp{
 	uint8_t name[MSG_LIMIT+1];
 };
 
-// absolute state update from client to server udp
+// absolute state update from server to client udp
+#define SERVER_STATE_GLOBAL_PLATFORMS 0
+#define SERVER_STATE_GLOBAL_FIELDS 1
 #define SERVER_STATE_HEALTH 0
 #define SERVER_STATE_XV 1
 #define SERVER_STATE_YV 2
@@ -51,10 +53,11 @@ struct to_client_tcp{
 #define SERVER_STATE_COLORID 6
 #define SERVER_STATE_FIRE 7
 #define SERVER_STATE_ID 8
-#define SERVER_STATE_FIELDS 9
-#define SIZEOF_TO_CLIENT_HEARTBEAT (4*MAX_PLAYERS*SERVER_STATE_FIELDS)
+#define SERVER_STATE_PLATFORMS 9
+#define SERVER_STATE_FIELDS 10
+#define SIZEOF_TO_CLIENT_HEARTBEAT ((4*MAX_PLAYERS*SERVER_STATE_FIELDS)+(4*SERVER_STATE_GLOBAL_FIELDS))
 struct to_client_heartbeat{
-	int32_t state[MAX_PLAYERS*SERVER_STATE_FIELDS];
+	int32_t state[SERVER_STATE_GLOBAL_FIELDS+(MAX_PLAYERS*SERVER_STATE_FIELDS)];
 };
 
 #define VIEW_LEFT -8.0f
@@ -72,3 +75,7 @@ struct to_client_heartbeat{
 
 #define FLOOR 4.0f
 #define GRAVITY 0.01f
+
+#define PLATFORM_COUNT 32
+#define PLATFORM_WIDTH 3.75f
+#define PLATFORM_HEIGHT 0.65f

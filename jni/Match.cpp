@@ -9,7 +9,7 @@ Match::~Match(){
 	quit();
 }
 
-void Match::initialize(const std::string &name){
+void Match::initialize(State &state){
 	// setup the udp socket
 	std::string address;
 	tcp.get_name(address);
@@ -22,7 +22,7 @@ void Match::initialize(const std::string &name){
 
 	// send the name
 	char name_tmp[MSG_LIMIT+1];
-	strncpy(name_tmp,name.c_str(),MSG_LIMIT+1);
+	strncpy(name_tmp,state.name.c_str(),MSG_LIMIT+1);
 	tcp.send(name_tmp,MSG_LIMIT+1);
 
 	// get the udp secret
@@ -34,6 +34,9 @@ void Match::initialize(const std::string &name){
 	int32_t id_tmp;
 	tcp.recv(&id_tmp,sizeof(id_tmp));
 	id=ntohl(id_tmp);
+
+	// get the level configuration
+	get_level_config(state);
 }
 
 bool Match::connected(){
@@ -102,27 +105,61 @@ void Match::recv_data(State &state){
 	}
 
 	// collect state updates from the server
+	uint32_t platform_status;
 	while(udp.peek()>=SIZEOF_TO_CLIENT_HEARTBEAT){
 		to_client_heartbeat tch;
 		udp.recv(&tch,SIZEOF_TO_CLIENT_HEARTBEAT);
+		int32_t *server_state=tch.state+SERVER_STATE_GLOBAL_FIELDS;
+
+		platform_status=tch.state[SERVER_STATE_GLOBAL_PLATFORMS];
 
 		int i=0;
 		for(Player &player:state.player_list){
-			player.health=ntohl(tch.state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_HEALTH]);
-			player.xv=(int)ntohl(tch.state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_XV])/FLOAT_MULTIPLIER;
-			player.yv=(int)ntohl(tch.state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_YV])/FLOAT_MULTIPLIER;
-			player.x=(int)ntohl(tch.state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_XPOS])/FLOAT_MULTIPLIER;
-			player.y=(int)ntohl(tch.state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_YPOS])/FLOAT_MULTIPLIER;
-			player.turret.rot=(int)ntohl(tch.state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_ANGLE])/FLOAT_MULTIPLIER;
-			player.colorid=ntohl(tch.state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_COLORID]);
+			player.health=ntohl(server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_HEALTH]);
+			player.xv=(int)ntohl(server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_XV])/FLOAT_MULTIPLIER;
+			player.yv=(int)ntohl(server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_YV])/FLOAT_MULTIPLIER;
+			player.x=(int)ntohl(server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_XPOS])/FLOAT_MULTIPLIER;
+			player.y=(int)ntohl(server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_YPOS])/FLOAT_MULTIPLIER;
+			player.turret.rot=(int)ntohl(server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_ANGLE])/FLOAT_MULTIPLIER;
+			player.colorid=ntohl(server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_COLORID]);
 			if(player.cue_fire==0.0f)
-				player.cue_fire=(int)ntohl(tch.state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_FIRE])/FLOAT_MULTIPLIER;
-			int cid=ntohl(tch.state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_ID]);
+				player.cue_fire=(int)ntohl(server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_FIRE])/FLOAT_MULTIPLIER;
+			int cid=ntohl(server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_ID]);
 			if(id==cid)
 				my_index=i;
 
 			++i;
 		}
 
+		// update the platforms
+		i=0;
+		for(Platform &platform:state.platform_list){
+			platform.active=((platform_status>>i)&1)==1;
+			++i;
+		}
+	}
+}
+
+void Match::get_level_config(State &state){
+	state.platform_list.clear();
+	for(int i=0;i<PLATFORM_COUNT;++i){
+		int32_t horiz;
+		int32_t x;
+		int32_t y;
+		int32_t health;
+
+		tcp.recv(&horiz,sizeof(horiz));
+		tcp.recv(&x,sizeof(x));
+		tcp.recv(&y,sizeof(y));
+		tcp.recv(&health,sizeof(health));
+
+		horiz=ntohl(horiz);
+		x=ntohl(x);
+		y=ntohl(y);
+		health=ntohl(health);
+
+		Platform p(health>0,horiz,x/FLOAT_MULTIPLIER,y/FLOAT_MULTIPLIER);
+
+		state.platform_list.push_back(p);
 	}
 }

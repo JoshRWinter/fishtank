@@ -44,6 +44,24 @@ void Shell::process(Match &match){
 		if(stop)
 			continue;
 
+		// check for shells colliding with platforms
+		for(Platform &platform:match.platform_list){
+			if(platform.health<1)
+				continue;
+
+			if(shell.collide(platform)){
+				platform.health-=25;
+				if(platform.health<0)
+					platform.health=0;
+				delete *it;
+				it=match.shell_list.erase(it);
+				stop=true;
+				break;
+			}
+		}
+		if(stop)
+			continue;
+
 		// check for shells going below the screen
 		if(shell.y>VIEW_BOTTOM){
 			delete *it;

@@ -59,4 +59,12 @@ struct Shell:Base{
 	Base visual; // the shell that is rendered
 };
 
+struct Platform:Base{
+	Platform(bool,bool,float,float);
+	static void render(const Renderer&,const std::vector<Platform>&);
+
+	Base visual;
+	bool active;
+};
+
 #endif // OBJECT_H

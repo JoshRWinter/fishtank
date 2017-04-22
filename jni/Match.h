@@ -2,10 +2,11 @@ class Match{
 public:
 	Match();
 	~Match();
-	void initialize(const std::string&);
+	void initialize(State&);
 	void quit();
 	void send_data(const State&);
 	void recv_data(State&);
+	void get_level_config(State&);
 	bool connected();
 	socket_tcp &get_tcp();
 
