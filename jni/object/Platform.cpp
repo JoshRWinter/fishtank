@@ -16,10 +16,10 @@ Platform::Platform(bool platform_active,bool horiz,float xpos,float ypos){
 	y=ypos-(h/2.0f);
 	active=platform_active;
 
-	visual.x=xpos-(PLATFORM_WIDTH/2.0f);
-	visual.y=ypos-(PLATFORM_HEIGHT/2.0f);
-	visual.w=PLATFORM_WIDTH;
-	visual.h=PLATFORM_HEIGHT;
+	visual.x=xpos-(PLATFORM_VIS_WIDTH/2.0f);
+	visual.y=ypos-(PLATFORM_VIS_HEIGHT/2.0f);
+	visual.w=PLATFORM_VIS_WIDTH;
+	visual.h=PLATFORM_VIS_HEIGHT;
 	visual.count=1;
 	visual.frame=0;
 }

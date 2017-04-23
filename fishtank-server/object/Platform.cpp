@@ -36,7 +36,7 @@ void Platform::create_all(Match &match){
 
 			match.platform_list.push_back(p);
 		}
-		y-=PLATFORM_WIDTH;
+		y-=PLATFORM_WIDTH+PLATFORM_HEIGHT;
 		x=START_X;
 	}
 

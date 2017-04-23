@@ -47,7 +47,8 @@ void Player::process(State &state){
 
 void Player::render(const Renderer &renderer,const std::vector<Player> &player_list){
 	// render the player's turret
-	glBindTexture(GL_TEXTURE_2D,renderer.assets.texture[TID_TANK].object);
+	glBindTexture(GL_TEXTURE_2D,renderer.assets.texture[TID_TURRET].object);
+	glUniform4f(renderer.uniform.rgba,0.7f,0.0f,1.0f,1.0f);
 	for(const Player &player:player_list){
 		if(player.colorid==0)
 			break;
@@ -62,4 +63,5 @@ void Player::render(const Renderer &renderer,const std::vector<Player> &player_l
 
 		renderer.draw(player);
 	}
+	glUniform4f(renderer.uniform.rgba,1.0f,1.0f,1.0f,1.0f);
 }

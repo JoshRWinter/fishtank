@@ -59,6 +59,8 @@ struct Shell:Base{
 	Base visual; // the shell that is rendered
 };
 
+#define PLATFORM_VIS_WIDTH PLATFORM_WIDTH
+#define PLATFORM_VIS_HEIGHT 0.85f
 struct Platform:Base{
 	Platform(bool,bool,float,float);
 	static void render(const Renderer&,const std::vector<Platform>&);

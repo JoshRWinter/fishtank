@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="210mm"
+   height="297mm"
+   viewBox="0 0 210 297"
+   version="1.1"
+   id="svg1647"
+   inkscape:export-filename="/home/josh/android/fishtank/assets_local/turret.png"
+   inkscape:export-xdpi="29.43066"
+   inkscape:export-ydpi="29.43066"
+   inkscape:version="0.92.1 r"
+   sodipodi:docname="turret.svg">
+  <defs
+     id="defs1641" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#c0c0bc"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="2"
+     inkscape:cx="331.74668"
+     inkscape:cy="699.06445"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:snap-nodes="false"
+     inkscape:window-width="1918"
+     inkscape:window-height="1042"
+     inkscape:window-x="0"
+     inkscape:window-y="18"
+     inkscape:window-maximized="0" />
+  <metadata
+     id="metadata1644">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.67002612;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;opacity:0"
+       id="rect2192"
+       width="103.56547"
+       height="13.607142"
+       x="33.261906"
+       y="97.806541" />
+    <rect
+       style="fill:#909494;fill-opacity:1;stroke:#000000;stroke-width:1.04100001;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect2204"
+       width="14.015077"
+       height="7.7028756"
+       x="38.727573"
+       y="100.75867" />
+    <rect
+       style="fill:#909494;fill-opacity:1;stroke:#000000;stroke-width:1.04100001;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect2202"
+       width="15.889804"
+       height="10.125669"
+       x="50.310677"
+       y="99.547287" />
+    <rect
+       style="fill:#909494;fill-opacity:1;stroke:#000000;stroke-width:1.04140997;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect2198"
+       width="22.718508"
+       height="12.56559"
+       x="64.708458"
+       y="98.327316" />
+    <path
+       inkscape:connector-curvature="0"
+       id="path2208"
+       d="m 38.832972,98.327235 h -2.969943 c 0,0 -1.705385,-0.216754 -2.074591,6.282865 0.369206,6.49962 2.074591,6.28287 2.074591,6.28287 h 2.969943 z"
+       style="fill:#909494;fill-opacity:1;stroke:#000000;stroke-width:1.04100001;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       sodipodi:nodetypes="ccccc" />
+  </g>
+</svg>

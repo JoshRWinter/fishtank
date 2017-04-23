@@ -22,8 +22,9 @@ struct State;
 // gameplay textures
 #define TID_BACKGROUND 0
 #define TID_TANK 1
-#define TID_SHELL 2
-#define TID_PLATFORM 1
+#define TID_TURRET 2
+#define TID_SHELL 3
+#define TID_PLATFORM 4
 
 // ui textures
 #define UITID_BACKGROUND 0
