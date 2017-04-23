@@ -23,6 +23,9 @@ bool State::core(){
 	// process shells
 	Shell::process(*this);
 
+	// process particle shells
+	ParticleShell::process(*this);
+
 	// process ui buttons
 	const float UI_TOLERANCE=-0.25f;
 	input.left.process(pointer,UI_TOLERANCE);
@@ -76,6 +79,10 @@ void State::render()const{
 
 	// draw platforms
 	Platform::render(renderer,platform_list);
+
+	// draw particle shells
+	if(particle_shell_list.size()!=0)
+		ParticleShell::render(renderer,particle_shell_list);
 
 	// firepower indicator
 	if(firepower>0.0f){
@@ -170,6 +177,10 @@ void State::reset(){
 		delete shell;
 	shell_list.clear();
 	// platforms are cleared in Match::get_level_config
+	// clear particle shells
+	for(ParticleShell *p:particle_shell_list)
+		delete p;
+	particle_shell_list.clear();
 }
 
 bool State::read_config(){

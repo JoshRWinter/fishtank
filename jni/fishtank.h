@@ -104,6 +104,7 @@ struct State{
 	std::vector<Player> player_list;
 	std::vector<Platform> platform_list;
 	std::vector<Shell*> shell_list;
+	std::vector<ParticleShell*> particle_shell_list;
 };
 
 int32_t inputproc(android_app*,AInputEvent*);

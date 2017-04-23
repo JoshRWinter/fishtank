@@ -69,4 +69,17 @@ struct Platform:Base{
 	bool active;
 };
 
+#define PARTICLE_SHELL_HEIGHT 0.1f
+#define PARTICLE_SHELL_TTL 6,11
+struct ParticleShell:Base{
+	ParticleShell(const Shell&);
+	static void spawn(State&,const Shell&,int);
+	static void process(State&);
+	static void render(const Renderer&,const std::vector<ParticleShell*>&);
+
+	float xv,yv;
+	float ttl;
+	int colorid; // from the player who fired the shell generating this particle
+};
+
 #endif // OBJECT_H

@@ -53,6 +53,9 @@ void Shell::process(State &state){
 				continue;
 
 			if(player.collide(shell)){
+				// generate some particles
+				ParticleShell::spawn(state,shell,randomint(4,8));
+
 				delete *it;
 				it=state.shell_list.erase(it);
 				stop=true;
