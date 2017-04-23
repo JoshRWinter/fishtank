@@ -26,6 +26,9 @@ bool State::core(){
 	// process particle shells
 	ParticleShell::process(*this);
 
+	// process particle platforms
+	ParticlePlatform::process(*this);
+
 	// process ui buttons
 	const float UI_TOLERANCE=-0.25f;
 	input.left.process(pointer,UI_TOLERANCE);
@@ -79,6 +82,9 @@ void State::render()const{
 
 	// draw platforms
 	Platform::render(renderer,platform_list);
+
+	// draw particle platforms
+	ParticlePlatform::render(renderer,particle_platform_list);
 
 	// draw particle shells
 	if(particle_shell_list.size()!=0)
@@ -181,6 +187,10 @@ void State::reset(){
 	for(ParticleShell *p:particle_shell_list)
 		delete p;
 	particle_shell_list.clear();
+	// clear particle platforms
+	for(ParticlePlatform *p:particle_platform_list)
+		delete p;
+	particle_platform_list.clear();
 }
 
 bool State::read_config(){

@@ -3,8 +3,13 @@
 
 #define FIRE_BUTTON_SIZE 1.8f
 
+#define COLLIDE_LEFT 1
+#define COLLIDE_RIGHT 2
+#define COLLIDE_BOTTOM 3
+#define COLLIDE_TOP 4
 struct Base{
 	bool collide(const Base&,float=0.0f)const;
+	int correct(const Base&);
 	bool pointing(const crosshair&,float=0.0f)const;
 	static void init_background(Base&,const Renderer&);
 
@@ -67,6 +72,7 @@ struct Platform:Base{
 
 	Base visual;
 	bool active;
+	bool cue_destroy;
 };
 
 #define PARTICLE_SHELL_HEIGHT 0.1f
@@ -80,6 +86,21 @@ struct ParticleShell:Base{
 	float xv,yv;
 	float ttl;
 	int colorid; // from the player who fired the shell generating this particle
+};
+
+#define PARTICLE_PLATFORM_SPEED 0.1f
+#define PARTICLE_PLATFORM_TTL 145.0f
+#define PARTICLE_PLATFORM_SIZE 0.2f
+struct ParticlePlatform:Base{
+	ParticlePlatform(const Shell&);
+	ParticlePlatform(float,float);
+	static void spawn(State&,const Shell&,int);
+	static void spawn_destroy_platform(State&,const Platform&);
+	static void process(State&);
+	static void render(const Renderer&,const std::vector<ParticlePlatform*>&);
+
+	float xv,yv;
+	float ttl;
 };
 
 #endif // OBJECT_H

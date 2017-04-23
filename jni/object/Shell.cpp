@@ -72,6 +72,8 @@ void Shell::process(State &state){
 				continue;
 
 			if(shell.collide(platform)){
+				// generate some particles
+				ParticlePlatform::spawn(state,shell,randomint(3,5));
 				delete *it;
 				it=state.shell_list.erase(it);
 				stop=true;

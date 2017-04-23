@@ -15,6 +15,7 @@ Platform::Platform(bool platform_active,bool horiz,float xpos,float ypos){
 	x=xpos-(w/2.0f);
 	y=ypos-(h/2.0f);
 	active=platform_active;
+	cue_destroy=false;
 
 	visual.x=xpos-(PLATFORM_VIS_WIDTH/2.0f);
 	visual.y=ypos-(PLATFORM_VIS_HEIGHT/2.0f);

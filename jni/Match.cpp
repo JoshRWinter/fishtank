@@ -134,7 +134,12 @@ void Match::recv_data(State &state){
 		// update the platforms
 		i=0;
 		for(Platform &platform:state.platform_list){
+			bool before=platform.active;
 			platform.active=((platform_status>>i)&1)==1;
+			if(before&&!platform.active){
+				// spawn particle effects
+				ParticlePlatform::spawn_destroy_platform(state,platform);
+			}
 			++i;
 		}
 	}

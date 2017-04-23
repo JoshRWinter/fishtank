@@ -1,1 +1,1 @@
-background.tga tank.tga turret.tga shell.tga platform.tga -o ../assets/assets
+background.tga tank.tga turret.tga shell.tga platform.tga particle_platform.tga -o ../assets/assets
