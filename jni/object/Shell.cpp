@@ -1,3 +1,4 @@
+#include <math.h>
 #include "../fishtank.h"
 
 Shell::Shell(const State &state,const Player &player):owner(player){
@@ -10,13 +11,15 @@ Shell::Shell(const State &state,const Player &player):owner(player){
 	frame=0;
 
 	const float speed=player.cue_fire/2.4f;
-	xv=-cosf(player.turret.rot)*speed;
-	yv=-sinf(player.turret.rot)*speed;
-	x+=xv*2.0f;
-	y+=yv*2.0f;
+	float xvel=-cosf(player.turret.rot);
+	float yvel=-sinf(player.turret.rot);
+	xv=xvel*speed;
+	yv=yvel*speed;
+	x+=xvel*0.6f;
+	y+=yvel*0.6f;
 
 	visual.w=SHELL_VIS_WIDTH;
-	visual.h=SHELL_VIS_HEIGHT;
+	visual.h=0.0f;
 	visual.rot=player.turret.rot;
 	visual.frame=0;
 	visual.count=1;
@@ -32,10 +35,13 @@ void Shell::process(State &state){
 		// update shell position
 		shell.x+=shell.xv*state.speed;
 		shell.y+=shell.yv*state.speed;
-		float speed=fabs(shell.xv);
-		shell.visual.w=(speed<0.3f?0.3f:speed)*2.4f;
+		float speed=sqrtf((shell.xv*shell.xv)+(shell.yv*shell.yv));
+		shell.visual.w=(speed<0.2f?0.2f:speed)*3.0f;
 		shell.visual.x=shell.x+(SHELL_WIDTH/2.0f)-(shell.visual.w/2.0f);
 		shell.visual.y=shell.y+(SHELL_HEIGHT/2.0f)-(shell.visual.h/2.0f);
+		// grow the shell's height
+		targetf(&shell.visual.h,speed/2.5f,SHELL_VIS_HEIGHT);
+		// turn the shell to the direction it's travelling
 		shell.visual.rot=atan2f(
 			(shell.visual.y+(SHELL_VIS_HEIGHT/2.0f))-((shell.visual.y+(SHELL_VIS_HEIGHT/2.0f))+shell.yv),
 			(shell.visual.x+(shell.visual.w/2.0f))-((shell.visual.x+(shell.visual.w/2.0f))+shell.xv));

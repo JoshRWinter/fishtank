@@ -11,10 +11,12 @@ Shell::Shell(const Match &match,const Client &client):owner(client){
 	rot=0.0f;
 
 	const float speed=client.input.fire/2.4f;
-	xv=-cosf(client.player.angle)*speed;
-	yv=-sinf(client.player.angle)*speed;
-	x+=xv*2.0f;
-	y+=yv*2.0f;
+	float xvel=-cosf(client.player.angle);
+	float yvel=-sinf(client.player.angle);
+	xv=xvel*speed;
+	yv=yvel*speed;
+	x+=xvel*0.6f;
+	y+=yvel*0.6f;
 }
 
 void Shell::process(Match &match){
