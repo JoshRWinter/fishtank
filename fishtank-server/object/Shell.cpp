@@ -32,7 +32,7 @@ void Shell::process(Match &match){
 		for(Client *c:match.client_list){
 			Client &client=*c;
 
-			if(&client==&shell.owner||client.colorid==0||client.health<1)
+			if(&client==&shell.owner||client.colorid==0||client.player.health<1)
 				continue;
 
 			if(client.player.collide(shell)){
