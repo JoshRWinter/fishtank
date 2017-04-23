@@ -12,6 +12,7 @@ struct Client;
 #include "object.h"
 
 #define onein(n) (randomint(0,n-1)==0)
+#define WIN_TIMER 150
 
 struct Client{
 	Client(int,const std::string&);
@@ -46,6 +47,7 @@ public:
 	void send_chat(const std::string&,const std::string&);
 	Client *get_client_by_secret(int32_t);
 	void send_level_config(Client&);
+	bool check_win();
 	void wait_next_step();
 
 	std::vector<Client*> client_list;
@@ -54,6 +56,7 @@ public:
 	socket_tcp_server tcp;
 	socket_udp_server udp;
 	long long last_nano_time;
+	int win_timer;
 };
 
 void get_nano_time(long long*);

@@ -32,11 +32,14 @@ void Shell::process(Match &match){
 		for(Client *c:match.client_list){
 			Client &client=*c;
 
-			if(&client==&shell.owner||client.colorid==0)
+			if(&client==&shell.owner||client.colorid==0||client.health<1)
 				continue;
 
 			if(client.player.collide(shell)){
+				// push the player back and subtract health
 				client.player.xv=shell.xv;
+				client.player.health-=randomint(SHELL_DMG);
+
 				delete *it;
 				it=match.shell_list.erase(it);
 				stop=true;

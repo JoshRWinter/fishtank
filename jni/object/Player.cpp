@@ -25,7 +25,7 @@ Player::Player(){
 void Player::process(State &state){
 	for(Player &player:state.player_list){
 		// handle firing the cannon
-		if(player.cue_fire>0.0f){
+		if(player.cue_fire>0.0f&&player.health>0){
 			state.shell_list.push_back(new Shell(state,player));
 			player.cue_fire=0.0f;
 		}
@@ -52,6 +52,9 @@ void Player::render(const Renderer &renderer,const std::vector<Player> &player_l
 	for(const Player &player:player_list){
 		if(player.colorid==0)
 			break;
+		if(player.health<1)
+			continue;
+
 		renderer.draw(player.turret);
 	}
 
@@ -60,6 +63,8 @@ void Player::render(const Renderer &renderer,const std::vector<Player> &player_l
 	for(const Player &player:player_list){
 		if(player.colorid==0)
 			break;
+		if(player.health<1)
+			continue;
 
 		renderer.draw(player);
 	}

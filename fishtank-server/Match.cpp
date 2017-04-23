@@ -3,6 +3,7 @@
 
 Match::Match(){
 	last_nano_time=0;
+	win_timer=WIN_TIMER;
 }
 Match::~Match(){
 	// clear the clients
@@ -60,6 +61,33 @@ void Match::step(){
 	Shell::process(*this);
 	// process platforms
 	Platform::process(platform_list);
+
+	// check for a win
+	if(client_list.size()>1&&shell_list.size()==0){
+		if(win_timer<WIN_TIMER){
+			--win_timer;
+			if(win_timer<1){
+				// reset
+				win_timer=WIN_TIMER;
+				for(Client *client:client_list)
+					client->player.reset();
+
+				// construct a new level and send it
+				Platform::create_all(*this);
+				to_client_tcp tctcp;
+				memset(&tctcp,0,sizeof(tctcp));
+				tctcp.type=TYPE_NEW_LEVEL;
+				for(Client *client:client_list){
+					client->tcp.send(&tctcp,sizeof(tctcp));
+					send_level_config(*client);
+				}
+			}
+		}
+		else{
+			if(check_win())
+				--win_timer;
+		}
+	}
 
 	recv_data();
 	send_data();
@@ -233,6 +261,32 @@ void Match::send_level_config(Client &client){
 		client.tcp.send(&y,sizeof(y));
 		client.tcp.send(&health,sizeof(health));
 	}
+}
+
+bool Match::check_win(){
+	int alive=0;
+	std::string *string_winner;
+
+	for(Client *c:client_list){
+		if(c->player.health>0){
+			++alive;
+			string_winner=&c->name;
+		}
+	}
+
+	std::string win_message;
+	if(alive==1){
+		win_message=*string_winner + " wins!";
+		send_chat(win_message,"server");
+		return true;
+	}
+	else if(alive==0){
+		win_message="Nobody wins! hurray";
+		send_chat(win_message,"server");
+		return true;
+	}
+
+	return false;
 }
 
 void Match::wait_next_step(){

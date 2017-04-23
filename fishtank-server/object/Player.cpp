@@ -2,6 +2,10 @@
 #include "../fishtank-server.h"
 
 Player::Player(){
+	reset();
+}
+
+void Player::reset(){
 	health=100;
 	x=0.0f;
 	y=0.0f;
@@ -19,7 +23,7 @@ void Player::process(Match &match){
 			continue;
 
 		// handle firing the cannon
-		if(client.input.fire>0.0f){
+		if(client.input.fire>0.0f&&client.player.health>0){
 			Shell *s=new Shell(match,client);
 			match.shell_list.push_back(s);
 			client.input.fire=0.0f;
@@ -55,13 +59,19 @@ void Player::process(Match &match){
 				client.player.angle=M_PI-0.3f;
 		}
 
-		// update pos based on velocities
-		client.player.x+=client.player.xv;
-		client.player.y+=client.player.yv;
+		if(client.player.health>0){
+			// update pos based on velocities
+			client.player.x+=client.player.xv;
+			client.player.y+=client.player.yv;
 
-		client.player.yv+=GRAVITY;
-		if(client.player.y+PLAYER_HEIGHT>FLOOR){
-			client.player.y=FLOOR-PLAYER_HEIGHT;
+			client.player.yv+=GRAVITY;
+			if(client.player.y+PLAYER_HEIGHT>FLOOR){
+				client.player.y=FLOOR-PLAYER_HEIGHT;
+				client.player.yv=0.0f;
+			}
+		}
+		else{
+			client.player.xv=0.0f;
 			client.player.yv=0.0f;
 		}
 

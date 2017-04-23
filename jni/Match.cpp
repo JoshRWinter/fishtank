@@ -101,6 +101,9 @@ void Match::recv_data(State &state){
 		case TYPE_CHAT:
 			logcat("%s says %s",tctcp.name,tctcp.msg);
 			break;
+		case TYPE_NEW_LEVEL:
+			get_level_config(state);
+			break;
 		}
 	}
 
@@ -115,7 +118,7 @@ void Match::recv_data(State &state){
 
 		int i=0;
 		for(Player &player:state.player_list){
-			player.health=ntohl(server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_HEALTH]);
+			player.health=(int)ntohl(server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_HEALTH]);
 			player.xv=(int)ntohl(server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_XV])/FLOAT_MULTIPLIER;
 			player.yv=(int)ntohl(server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_YV])/FLOAT_MULTIPLIER;
 			player.x=(int)ntohl(server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_XPOS])/FLOAT_MULTIPLIER;

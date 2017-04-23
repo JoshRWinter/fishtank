@@ -49,7 +49,7 @@ void Shell::process(State &state){
 		// check for shells colliding with player
 		bool stop=false;
 		for(Player &player:state.player_list){
-			if(&player==&shell.owner||player.colorid==0)
+			if(&player==&shell.owner||player.colorid==0||player.health<1)
 				continue;
 
 			if(player.collide(shell)){

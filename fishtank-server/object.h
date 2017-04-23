@@ -18,12 +18,14 @@ struct Base{
 struct Player:Base{
 	Player();
 	static void process(Match&);
+	void reset();
 
 	int health;
 	float angle; // angle of the turret
 	float xv,yv;
 };
 
+#define SHELL_DMG 11,20
 struct Shell:Base{
 	Shell(const Match&,const Client&);
 	static void process(Match&);
