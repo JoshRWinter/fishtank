@@ -114,7 +114,7 @@ void ParticlePlatform::process(State &state){
 		// update position
 		particle.x+=particle.xv*state.speed;
 		particle.y+=particle.yv*state.speed;
-
+		particle.rot+=particle.xv*state.speed*6.0f;
 
 		// check for particles colliding with platforms
 		bool on_ground=false;
@@ -156,7 +156,6 @@ void ParticlePlatform::process(State &state){
 				// delete
 				delete *it;
 				it=state.particle_platform_list.erase(it);
-				logcat("size %d",state.particle_platform_list.size());
 				continue;
 			}
 		}

@@ -72,7 +72,6 @@ struct Platform:Base{
 
 	Base visual;
 	bool active;
-	bool cue_destroy;
 };
 
 #define PARTICLE_SHELL_HEIGHT 0.1f

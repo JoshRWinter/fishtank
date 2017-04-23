@@ -12,8 +12,8 @@ Platform::Platform(bool horizontal,float xpos,float ypos){
 		w=PLATFORM_HEIGHT;
 		h=PLATFORM_WIDTH;
 	}
-	x=xpos;//-(w/2.0f);
-	y=ypos;//-(h/2.0f);
+	x=xpos;
+	y=ypos;
 	rot=0.0f;
 	health=100;
 }
