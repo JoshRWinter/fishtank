@@ -1,3 +1,6 @@
+#ifndef MATCH_H
+#define MATCH_H
+
 class Match{
 public:
 	Match();
@@ -18,3 +21,5 @@ private:
 	socket_udp udp;
 	int id; // client id
 };
+
+#endif // MATCH_H

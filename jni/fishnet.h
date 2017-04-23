@@ -1,3 +1,6 @@
+#ifndef FISHNET_H
+#define FISHNET_H
+
 #include <cstdint>
 
 #define TCP_PORT 28856
@@ -79,3 +82,5 @@ struct to_client_heartbeat{
 #define PLATFORM_COUNT 32
 #define PLATFORM_WIDTH 3.75f
 #define PLATFORM_HEIGHT 0.65f
+
+#endif // FISHNET_H
