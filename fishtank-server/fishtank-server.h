@@ -62,5 +62,6 @@ public:
 void get_nano_time(long long*);
 int randomint(int,int);
 float zerof(float*,float);
+float targetf(float*,float,float);
 
 #endif // FISHTANK_SERVER_H

@@ -70,3 +70,15 @@ float zerof(float *val,float step){
 	}
 	return *val;
 }
+
+float targetf(float *val,float step,float target){
+	if(*val>target){
+		*val-=step;
+		if(*val<target)*val=target;
+	}
+	else if(*val<target){
+		*val+=step;
+		if(*val>target)*val=target;
+	}
+	return *val;
+}

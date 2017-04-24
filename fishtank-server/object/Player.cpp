@@ -32,20 +32,17 @@ void Player::process(Match &match){
 		}
 
 		// bring velocities down to zero
-		const float RETARD=0.01f;
-		zerof(&client.player.xv,RETARD);
+		const float ACCELERATE=0.0015f;
+		if(!client.input.left&&!client.input.right)
+			zerof(&client.player.xv,ACCELERATE);
 
 		// handle velocities
 		if(client.input.left)
-			client.player.xv=-PLAYER_X_SPEED;
+			targetf(&client.player.xv,ACCELERATE,-PLAYER_X_SPEED);
 		if(client.input.right)
-			client.player.xv=PLAYER_X_SPEED;
+			targetf(&client.player.xv,ACCELERATE,PLAYER_X_SPEED);
 		if(client.input.up)
 			client.player.yv=-PLAYER_Y_SPEED;
-		/*
-		if(client.input.down)
-			client.player.yv=PLAYER_Y_SPEED;
-		*/
 
 		// handle turret rotation
 		if(client.input.aim_left){

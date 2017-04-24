@@ -37,7 +37,7 @@ void Shell::process(Match &match){
 
 			if(client.player.collide(shell)){
 				// push the player back and subtract health
-				client.player.xv=shell.xv;
+				client.player.xv+=shell.xv/2.5f;
 				client.player.health-=randomint(SHELL_DMG);
 
 				delete *it;
