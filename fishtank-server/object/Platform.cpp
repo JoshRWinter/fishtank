@@ -20,8 +20,8 @@ Platform::Platform(bool horizontal,float xpos,float ypos){
 
 void Platform::create_all(Match &match){
 	match.platform_list.clear();
-	const float START_X=-5.0f;
-	float x=START_X,y=0.5f;
+	const float START_X=-12.0f;
+	float x=START_X,y=1.5f;
 
 	// create some horizontal lines
 	for(int j=0;j<3;++j){

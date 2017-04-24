@@ -7,8 +7,8 @@ Player::Player(){
 
 void Player::reset(){
 	health=100;
-	x=0.0f;
-	y=0.0f;
+	x=randomint(-150,150)/10.0f;
+	y=randomint(-15*10,(FLOOR-PLAYER_HEIGHT)*10)/10.0f;
 	xv=0.0f;
 	yv=0.0f;
 	angle=M_PI/2.0f;
