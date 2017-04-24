@@ -60,11 +60,13 @@ void Player::process(Match &match){
 		}
 
 		if(client.player.health>0){
+			// affected by gravity
+			client.player.yv+=GRAVITY;
+
 			// update pos based on velocities
 			client.player.x+=client.player.xv;
 			client.player.y+=client.player.yv;
 
-			client.player.yv+=GRAVITY;
 			if(client.player.y+PLAYER_HEIGHT>FLOOR){
 				client.player.y=FLOOR-PLAYER_HEIGHT;
 				client.player.yv=0.0f;
