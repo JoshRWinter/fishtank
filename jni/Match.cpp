@@ -35,7 +35,7 @@ void Match::initialize(State &state){
 	udp_secret=ntohl(udp_secret_tmp);
 
 	// get the id
-	int32_t id_tmp;
+	uint32_t id_tmp;
 	tcp.recv(&id_tmp,sizeof(id_tmp));
 	id=ntohl(id_tmp);
 

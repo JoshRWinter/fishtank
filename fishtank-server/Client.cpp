@@ -26,7 +26,7 @@ Client::Client(int s,const std::string &addr):tcp(s,addr){
 	// send the clients id
 	Client::last_id++;
 	id=Client::last_id;
-	int id_tmp=htonl(last_id);
+	uint32_t id_tmp=htonl(last_id);
 	tcp.send(&id_tmp,sizeof(id_tmp));
 
 	input.left=false;
