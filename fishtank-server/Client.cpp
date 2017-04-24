@@ -28,7 +28,6 @@ Client::Client(int s,const std::string &addr):tcp(s,addr){
 	input.left=false;
 	input.right=false;
 	input.up=false;
-	input.down=false;
 	input.aim_left=false;
 	input.aim_right=false;
 	input.fire=0.0f;

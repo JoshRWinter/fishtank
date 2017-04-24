@@ -201,7 +201,6 @@ void Match::recv_data(){
 		// update the client with the new info
 		client->input.left=ntohl(tsh.state[CLIENT_STATE_PRESS_LEFT]);
 		client->input.right=ntohl(tsh.state[CLIENT_STATE_PRESS_RIGHT]);
-		client->input.down=ntohl(tsh.state[CLIENT_STATE_PRESS_DOWN]);
 		client->input.up=ntohl(tsh.state[CLIENT_STATE_PRESS_UP]);
 		client->input.aim_left=ntohl(tsh.state[CLIENT_STATE_PRESS_AIMLEFT]);
 		client->input.aim_right=ntohl(tsh.state[CLIENT_STATE_PRESS_AIMRIGHT]);

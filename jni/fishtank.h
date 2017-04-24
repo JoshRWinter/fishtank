@@ -97,7 +97,7 @@ struct State{
 
 	// ui buttons
 	struct{
-		ButtonBasic left,right,down,up,fire,aim_left,aim_right;
+		ButtonBasic left,right,up,fire,aim_left,aim_right;
 	}input;
 
 	// objects

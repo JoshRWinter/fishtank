@@ -26,15 +26,14 @@ struct to_server_tcp{
 // absolute state update heartbeat from client to server udp
 #define CLIENT_STATE_PRESS_LEFT 0
 #define CLIENT_STATE_PRESS_RIGHT 1
-#define CLIENT_STATE_PRESS_DOWN 2
-#define CLIENT_STATE_PRESS_UP 3
-#define CLIENT_STATE_PRESS_FIRE 4
-#define CLIENT_STATE_PRESS_AIMLEFT 5
-#define CLIENT_STATE_PRESS_AIMRIGHT 6
-#define CLIENT_STATE_UDP_SECRET 7
-#define SIZEOF_TO_SERVER_HEARTBEAT (4*8)
+#define CLIENT_STATE_PRESS_UP 2
+#define CLIENT_STATE_PRESS_FIRE 3
+#define CLIENT_STATE_PRESS_AIMLEFT 4
+#define CLIENT_STATE_PRESS_AIMRIGHT 5
+#define CLIENT_STATE_UDP_SECRET 6
+#define SIZEOF_TO_SERVER_HEARTBEAT (4*7)
 struct to_server_heartbeat{
-	int32_t state[8];
+	int32_t state[7];
 };
 
 // message from server to client tcp

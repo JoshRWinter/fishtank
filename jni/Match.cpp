@@ -71,7 +71,6 @@ void Match::send_data(const State &state){
 
 	tsh.state[CLIENT_STATE_PRESS_LEFT]=htonl(state.input.left.active);
 	tsh.state[CLIENT_STATE_PRESS_RIGHT]=htonl(state.input.right.active);
-	tsh.state[CLIENT_STATE_PRESS_DOWN]=htonl(state.input.down.active);
 	tsh.state[CLIENT_STATE_PRESS_UP]=htonl(state.input.up.active);
 	tsh.state[CLIENT_STATE_PRESS_FIRE]=htonl(state.final_firepower*FLOAT_MULTIPLIER);
 	tsh.state[CLIENT_STATE_PRESS_AIMLEFT]=htonl(state.input.aim_left.active);

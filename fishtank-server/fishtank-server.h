@@ -30,7 +30,7 @@ struct Client{
 	Player player;
 
 	struct{
-		bool left,right,down,up,aim_left,aim_right;
+		bool left,right,up,aim_left,aim_right;
 		float fire;
 	}input;
 };
