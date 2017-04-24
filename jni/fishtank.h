@@ -26,6 +26,7 @@ struct State;
 #define TID_SHELL 3
 #define TID_PLATFORM 4
 #define TID_PARTICLE_PLATFORM 5
+#define TID_PARTICLE_PLAYER 6
 
 // ui textures
 #define UITID_BACKGROUND 0
@@ -107,6 +108,7 @@ struct State{
 	std::vector<Shell*> shell_list;
 	std::vector<ParticleShell*> particle_shell_list;
 	std::vector<ParticlePlatform*> particle_platform_list;
+	std::vector<ParticlePlayer*> particle_player_list;
 };
 
 int32_t inputproc(android_app*,AInputEvent*);

@@ -170,3 +170,98 @@ void ParticlePlatform::render(const Renderer &renderer,const std::vector<Particl
 	for(const ParticlePlatform *p:particle_platform_list)
 		renderer.draw(*p);
 }
+
+ParticlePlayer::ParticlePlayer(float xpos,float ypos,bool large){
+	w=large?PARTICLE_PLAYER_LARGE_SIZE:PARTICLE_PLAYER_SIZE;
+	h=w;
+	x=xpos-(w/2.0f);
+	y=ypos-(h/2.0f);
+	rot=randomint(1,360)*(M_PI/180.0f);
+	count=1;
+	frame=0;
+
+	float speed;
+	if(large)
+		speed=randomint(14,19)/100.0f;
+	else
+		speed=randomint(10,14)/100.0f;
+	xv=-cosf(rot)*speed;
+	yv=-sinf(rot)*speed;
+	rotv=xv;
+	ttl=500.0f;
+	active=true;
+}
+
+void ParticlePlayer::spawn(State &state,const Shell &shell){
+	const int count=randomint(4,7);
+	for(int i=0;i<count;++i){
+		state.particle_player_list.push_back(new ParticlePlayer(shell.x+(SHELL_WIDTH/2.0f)+shell.xv,shell.y+(SHELL_HEIGHT/2.0f)+shell.yv,false));
+	}
+}
+
+void ParticlePlayer::spawn(State &state,const Player &player){
+	const int count=randomint(12,15);
+	for(int i=0;i<count;++i){
+		state.particle_player_list.push_back(new ParticlePlayer(player.x+(PLAYER_WIDTH/2.0f),player.y+(PLAYER_HEIGHT/2.0f),true));
+	}
+}
+
+void ParticlePlayer::process(State &state){
+	for(std::vector<ParticlePlayer*>::iterator it=state.particle_player_list.begin();it!=state.particle_player_list.end();){
+		ParticlePlayer &particle=**it;
+
+		// affected by gravity
+		if(particle.active){
+			particle.yv+=GRAVITY*state.speed;
+		}
+
+		// update positions
+		particle.x+=particle.xv*state.speed;
+		particle.y+=particle.yv*state.speed;
+		particle.rot+=particle.rotv;
+
+		// check for particles colliding with ground
+		particle.active=true;
+		if(particle.y+particle.h>FLOOR){
+			particle.xv=0.0f;
+			particle.yv=0.0f;
+			particle.rotv=0.0f;
+			particle.active=false;
+		}
+		else{
+			// check for particles colliding with platforms
+			for(const Platform &platform:state.platform_list){
+				if(!platform.active)
+					continue;
+
+				if(particle.collide(platform)){
+					particle.xv=0.0f;
+					particle.yv=0.0f;
+					particle.rotv=0.0f;
+					particle.active=false;
+					break;
+				}
+			}
+		}
+
+		// delete when ttl <= 0.0f
+		particle.ttl-=state.speed;
+		if(particle.ttl<=0.0f){
+			// shrink it first
+			const float SHRINK=0.99f;
+			float oldsize=particle.w;
+			particle.w*=SHRINK;
+			particle.h=particle.w;
+			particle.x+=(oldsize-particle.w)/2.0f;
+			particle.y+=(oldsize-particle.h)/2.0f;
+		}
+
+		++it;
+	}
+}
+
+void ParticlePlayer::render(const Renderer &renderer,const std::vector<ParticlePlayer*> &particle_player_list){
+	glBindTexture(GL_TEXTURE_2D,renderer.assets.texture[TID_PARTICLE_PLAYER].object);
+	for(const ParticlePlayer *p:particle_player_list)
+		renderer.draw(*p);
+}

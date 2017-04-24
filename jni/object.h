@@ -102,4 +102,18 @@ struct ParticlePlatform:Base{
 	float ttl;
 };
 
+#define PARTICLE_PLAYER_SIZE 0.3f
+#define PARTICLE_PLAYER_LARGE_SIZE 0.6f
+struct ParticlePlayer:Base{
+	ParticlePlayer(float,float,bool);
+	static void spawn(State&,const Player&);
+	static void spawn(State&,const Shell&);
+	static void process(State&);
+	static void render(const Renderer&,const std::vector<ParticlePlayer*>&);
+
+	float xv,yv,rotv;
+	float ttl;
+	bool active;
+};
+
 #endif // OBJECT_H

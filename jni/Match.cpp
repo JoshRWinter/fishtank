@@ -102,6 +102,9 @@ void Match::recv_data(State &state){
 			break;
 		case TYPE_NEW_LEVEL:
 			get_level_config(state);
+			for(ParticlePlayer *p:state.particle_player_list)
+				delete p;
+			state.particle_player_list.clear();
 			break;
 		}
 	}
@@ -117,6 +120,8 @@ void Match::recv_data(State &state){
 
 		int i=0;
 		for(Player &player:state.player_list){
+			int before_health=player.health;
+
 			player.health=(int)ntohl(server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_HEALTH]);
 			player.xv=(int)ntohl(server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_XV])/FLOAT_MULTIPLIER;
 			player.yv=(int)ntohl(server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_YV])/FLOAT_MULTIPLIER;
@@ -129,6 +134,9 @@ void Match::recv_data(State &state){
 			int cid=ntohl(server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_ID]);
 			if(id==cid)
 				my_index=i;
+			if(before_health>0&&player.health<1&&player.colorid!=0){
+				ParticlePlayer::spawn(state,player);
+			}
 
 			++i;
 		}
