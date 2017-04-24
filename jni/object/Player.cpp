@@ -48,12 +48,17 @@ void Player::process(State &state){
 void Player::render(const Renderer &renderer,const std::vector<Player> &player_list){
 	// render the player's turret
 	glBindTexture(GL_TEXTURE_2D,renderer.assets.texture[TID_TURRET].object);
-	glUniform4f(renderer.uniform.rgba,0.7f,0.0f,1.0f,1.0f);
 	for(const Player &player:player_list){
 		if(player.colorid==0)
 			break;
+
 		if(player.health<1)
 			continue;
+
+		// figure out the color;
+		float r,g,b;
+		State::fill_color(player.colorid,&r,&g,&b);
+		glUniform4f(renderer.uniform.rgba,r,g,b,1.0f);
 
 		renderer.draw(player.turret);
 	}
@@ -65,6 +70,11 @@ void Player::render(const Renderer &renderer,const std::vector<Player> &player_l
 			break;
 		if(player.health<1)
 			continue;
+
+		// figure out the color;
+		float r,g,b;
+		State::fill_color(player.colorid,&r,&g,&b);
+		glUniform4f(renderer.uniform.rgba,r,g,b,1.0f);
 
 		renderer.draw(player);
 	}

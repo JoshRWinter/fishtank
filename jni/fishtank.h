@@ -11,6 +11,28 @@
 #define SHOW_FPS
 #define DATAPATH "/data/data/joshwinter.fishtank/files"
 
+#define RGB_RED RGB_RED_R,RGB_RED_G,RGB_RED_B,1.0f
+#define RGB_BLUE RGB_BLUE_R,RGB_BLUE_G,RGB_BLUE_B,1.0f
+#define RGB_CYAN RGB_CYAN_R,RGB_CYAN_G,RGB_CYAN_B,1.0f
+#define RGB_GREEN RGB_GREEN_R,RGB_GREEN_G,RGB_GREEN_B,1.0f
+#define RGB_PURPLE RGB_PURPLE_R,RGB_PURPLE_G,RGB_PURPLE_B,1.0f
+
+#define RGB_RED_R 0.7f
+#define RGB_RED_G 0.2f
+#define RGB_RED_B 0.15f
+#define RGB_BLUE_R 0.2f
+#define RGB_BLUE_G 0.27f
+#define RGB_BLUE_B 0.7f
+#define RGB_CYAN_R 0.2f
+#define RGB_CYAN_G 0.7f
+#define RGB_CYAN_B 0.8f
+#define RGB_GREEN_R 0.15f
+#define RGB_GREEN_G 0.7f
+#define RGB_GREEN_B 0.2f
+#define RGB_PURPLE_R 0.7f
+#define RGB_PURPLE_G 0.2f
+#define RGB_PURPLE_B 0.65f
+
 struct Renderer;
 struct State;
 #include "network.h"
@@ -70,6 +92,7 @@ struct State{
 	bool process()const;
 	void write_config();
 	bool read_config();
+	static void fill_color(int,float*,float*,float*);
 
 	Renderer renderer;
 
@@ -80,6 +103,7 @@ struct State{
 	std::string connect_to; // connecting to address ...
 	Match match;
 	float firepower,final_firepower;
+	int colorid;
 
 	// menus
 	struct{

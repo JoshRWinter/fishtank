@@ -56,6 +56,11 @@ void ParticleShell::render(const Renderer &renderer,const std::vector<ParticleSh
 	glBindTexture(GL_TEXTURE_2D,renderer.assets.texture[TID_SHELL].object);
 
 	for(const ParticleShell *p:particle_shell_list){
+		// figure out the color;
+		float r,g,b;
+		State::fill_color(p->colorid,&r,&g,&b);
+		glUniform4f(renderer.uniform.rgba,r,g,b,1.0f);
+
 		renderer.draw(*p);
 	}
 }
@@ -171,7 +176,7 @@ void ParticlePlatform::render(const Renderer &renderer,const std::vector<Particl
 		renderer.draw(*p);
 }
 
-ParticlePlayer::ParticlePlayer(float xpos,float ypos,bool large){
+ParticlePlayer::ParticlePlayer(float xpos,float ypos,bool large,int player_colorid){
 	w=large?PARTICLE_PLAYER_LARGE_SIZE:PARTICLE_PLAYER_SIZE;
 	h=w;
 	x=xpos-(w/2.0f);
@@ -182,7 +187,7 @@ ParticlePlayer::ParticlePlayer(float xpos,float ypos,bool large){
 
 	float speed;
 	if(large)
-		speed=randomint(14,19)/100.0f;
+		speed=randomint(19,24)/100.0f;
 	else
 		speed=randomint(10,14)/100.0f;
 	xv=-cosf(rot)*speed;
@@ -190,19 +195,20 @@ ParticlePlayer::ParticlePlayer(float xpos,float ypos,bool large){
 	rotv=xv;
 	ttl=500.0f;
 	active=true;
+	colorid=player_colorid;
 }
 
-void ParticlePlayer::spawn(State &state,const Shell &shell){
-	const int count=randomint(4,7);
+void ParticlePlayer::spawn(State &state,const Shell &shell,int colorid){
+	const int count=randomint(2,5);
 	for(int i=0;i<count;++i){
-		state.particle_player_list.push_back(new ParticlePlayer(shell.x+(SHELL_WIDTH/2.0f)+shell.xv,shell.y+(SHELL_HEIGHT/2.0f)+shell.yv,false));
+		state.particle_player_list.push_back(new ParticlePlayer(shell.x+(SHELL_WIDTH/2.0f)+shell.xv,shell.y+(SHELL_HEIGHT/2.0f)+shell.yv,false,colorid));
 	}
 }
 
 void ParticlePlayer::spawn(State &state,const Player &player){
 	const int count=randomint(12,15);
 	for(int i=0;i<count;++i){
-		state.particle_player_list.push_back(new ParticlePlayer(player.x+(PLAYER_WIDTH/2.0f),player.y+(PLAYER_HEIGHT/2.0f),true));
+		state.particle_player_list.push_back(new ParticlePlayer(player.x+(PLAYER_WIDTH/2.0f),player.y+(PLAYER_HEIGHT/2.0f),true,player.colorid));
 	}
 }
 
@@ -262,6 +268,13 @@ void ParticlePlayer::process(State &state){
 
 void ParticlePlayer::render(const Renderer &renderer,const std::vector<ParticlePlayer*> &particle_player_list){
 	glBindTexture(GL_TEXTURE_2D,renderer.assets.texture[TID_PARTICLE_PLAYER].object);
-	for(const ParticlePlayer *p:particle_player_list)
+	for(const ParticlePlayer *p:particle_player_list){
+		// figure out the color;
+		float r,g,b;
+		State::fill_color(p->colorid,&r,&g,&b);
+		glUniform4f(renderer.uniform.rgba,r,g,b,1.0f);
+
 		renderer.draw(*p);
+	}
+	glUniform4f(renderer.uniform.rgba,1.0f,1.0f,1.0f,1.0f);
 }

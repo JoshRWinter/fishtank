@@ -74,7 +74,7 @@ struct Platform:Base{
 	bool active;
 };
 
-#define PARTICLE_SHELL_HEIGHT 0.1f
+#define PARTICLE_SHELL_HEIGHT 0.1333f
 #define PARTICLE_SHELL_TTL 6,11
 struct ParticleShell:Base{
 	ParticleShell(const Shell&);
@@ -102,18 +102,19 @@ struct ParticlePlatform:Base{
 	float ttl;
 };
 
-#define PARTICLE_PLAYER_SIZE 0.3f
-#define PARTICLE_PLAYER_LARGE_SIZE 0.6f
+#define PARTICLE_PLAYER_SIZE 0.2f
+#define PARTICLE_PLAYER_LARGE_SIZE 0.425f
 struct ParticlePlayer:Base{
-	ParticlePlayer(float,float,bool);
+	ParticlePlayer(float,float,bool,int);
 	static void spawn(State&,const Player&);
-	static void spawn(State&,const Shell&);
+	static void spawn(State&,const Shell&,int);
 	static void process(State&);
 	static void render(const Renderer&,const std::vector<ParticlePlayer*>&);
 
 	float xv,yv,rotv;
 	float ttl;
 	bool active;
+	int colorid;
 };
 
 #endif // OBJECT_H

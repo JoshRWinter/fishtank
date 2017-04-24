@@ -15,22 +15,22 @@
    version="1.1"
    id="svg927"
    inkscape:export-filename="/home/josh/android/fishtank/assets_local/shell.png"
-   inkscape:export-xdpi="46.15913"
-   inkscape:export-ydpi="46.15913"
+   inkscape:export-xdpi="9.3495626"
+   inkscape:export-ydpi="9.3495626"
    inkscape:version="0.92.1 r"
    sodipodi:docname="shell.svg">
   <defs
      id="defs921" />
   <sodipodi:namedview
      id="base"
-     pagecolor="#ffffff"
+     pagecolor="#c8c8c8"
      bordercolor="#666666"
      borderopacity="1.0"
-     inkscape:pageopacity="0.0"
+     inkscape:pageopacity="0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.4"
-     inkscape:cx="376.19705"
-     inkscape:cy="693.87937"
+     inkscape:cx="387.26848"
+     inkscape:cy="630.30794"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -57,22 +57,20 @@
      inkscape:groupmode="layer"
      id="layer1">
     <g
-       id="g1511"
-       transform="matrix(-1,0,0,1,233.00349,-1.3229167)">
+       id="g3028">
       <path
          sodipodi:nodetypes="ccc"
          inkscape:connector-curvature="0"
          id="path1482"
-         d="m 174.90847,124.86998 c 0,0 -103.94344,-4.38257 -143.53645,-18.3365 C 86.46205,91.042226 173.96353,81.813019 173.96353,81.813019 Z"
-         style="fill:#ffff2a;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+         d="m 58.09502,123.54706 c 0,0 103.94344,-4.38257 143.53645,-18.3365 C 146.54144,89.719309 59.03996,80.490102 59.03996,80.490102 Z"
+         style="fill:#fffffd;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
       <ellipse
          ry="21.733631"
          rx="38.742558"
-         transform="scale(-1,1)"
-         cy="103.47619"
-         cx="-178.57492"
+         cy="102.15327"
+         cx="54.42857"
          id="path1478"
-         style="fill:#ffff2a;fill-opacity:1;stroke-width:0.35325676" />
+         style="fill:#fffffd;fill-opacity:1;stroke-width:0.35325676" />
     </g>
   </g>
 </svg>

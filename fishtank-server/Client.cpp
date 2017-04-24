@@ -12,6 +12,11 @@ Client::Client(int s,const std::string &addr):tcp(s,addr){
 	string[MSG_LIMIT]=0; // carefully
 	name=string;
 
+	// get the colorid
+	uint32_t colorid_tmp;
+	tcp.recv(&colorid_tmp,sizeof(colorid_tmp));
+	colorid=ntohl(colorid_tmp);
+
 	// generate and send the udp secret
 	// weird i know
 	udp_secret=rand()%1000000;
@@ -24,7 +29,6 @@ Client::Client(int s,const std::string &addr):tcp(s,addr){
 	int id_tmp=htonl(last_id);
 	tcp.send(&id_tmp,sizeof(id_tmp));
 
-	colorid=4;
 	input.left=false;
 	input.right=false;
 	input.up=false;

@@ -153,6 +153,7 @@ State::State(){
 	memset(pointer,0,sizeof(crosshair)*2);
 	firepower=0.0f;
 	final_firepower=0.0f;
+	colorid=randomint(COLOR_RED,COLOR_PURPLE);
 
 	// players
 	Player dummy;
@@ -230,4 +231,25 @@ void State::write_config(){
 	fwrite(name_tmp,1,MSG_LIMIT+1,file);
 
 	fclose(file);
+}
+
+void State::fill_color(int id,float *r,float *g,float *b){
+	switch(id){
+	default:
+	case COLOR_RED:
+		*r=RGB_RED_R;*g=RGB_RED_G;*b=RGB_RED_B;
+		break;
+	case COLOR_BLUE:
+		*r=RGB_BLUE_R;*g=RGB_BLUE_G;*b=RGB_BLUE_B;
+		break;
+	case COLOR_CYAN:
+		*r=RGB_CYAN_R;*g=RGB_CYAN_G;*b=RGB_CYAN_B;
+		break;
+	case COLOR_GREEN:
+		*r=RGB_GREEN_R;*g=RGB_GREEN_G;*b=RGB_GREEN_B;
+		break;
+	case COLOR_PURPLE:
+		*r=RGB_PURPLE_R;*g=RGB_PURPLE_G;*b=RGB_PURPLE_B;
+		break;
+	}
 }

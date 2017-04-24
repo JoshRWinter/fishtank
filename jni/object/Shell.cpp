@@ -54,9 +54,9 @@ void Shell::process(State &state){
 
 			if(player.collide(shell)){
 				// generate some particles
-				ParticleShell::spawn(state,shell,randomint(4,8));
+				ParticleShell::spawn(state,shell,randomint(6,9));
 				// more particles
-				ParticlePlayer::spawn(state,shell);
+				ParticlePlayer::spawn(state,shell,player.colorid);
 
 				delete *it;
 				it=state.shell_list.erase(it);
@@ -98,6 +98,12 @@ void Shell::process(State &state){
 
 void Shell::render(const Renderer &renderer,const std::vector<Shell*> &shell_list){
 	glBindTexture(GL_TEXTURE_2D,renderer.assets.texture[TID_SHELL].object);
-	for(const Shell *shell:shell_list)
+	for(const Shell *shell:shell_list){
+		// figure out the color;
+		float r,g,b;
+		State::fill_color(shell->owner.colorid,&r,&g,&b);
+		glUniform4f(renderer.uniform.rgba,r,g,b,1.0f);
+
 		renderer.draw(shell->visual);
+	}
 }

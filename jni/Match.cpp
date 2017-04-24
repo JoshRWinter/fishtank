@@ -25,6 +25,10 @@ void Match::initialize(State &state){
 	strncpy(name_tmp,state.name.c_str(),MSG_LIMIT+1);
 	tcp.send(name_tmp,MSG_LIMIT+1);
 
+	// send the colorid
+	uint32_t colorid_tmp=htonl(state.colorid);
+	tcp.send(&colorid_tmp,sizeof(colorid_tmp));
+
 	// get the udp secret
 	int32_t udp_secret_tmp;
 	tcp.recv(&udp_secret_tmp,4);

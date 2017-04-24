@@ -63,6 +63,12 @@ struct to_client_heartbeat{
 	int32_t state[SERVER_STATE_GLOBAL_FIELDS+(MAX_PLAYERS*SERVER_STATE_FIELDS)];
 };
 
+#define COLOR_RED 1
+#define COLOR_BLUE 2
+#define COLOR_CYAN 3
+#define COLOR_GREEN 4
+#define COLOR_PURPLE 5
+
 #define VIEW_LEFT -8.0f
 #define VIEW_RIGHT 8.0f
 #define VIEW_BOTTOM 4.5f
