@@ -28,7 +28,7 @@ void Player::process(Match &match){
 			match.shell_list.push_back(s);
 			client.input.fire=0.0f;
 			// launch the player backwards a bit
-			client.player.xv=-s->xv/2.0f;
+			client.player.xv=-s->xv/5.0f;
 		}
 
 		// bring velocities down to zero
@@ -42,7 +42,7 @@ void Player::process(Match &match){
 		if(client.input.right)
 			targetf(&client.player.xv,ACCELERATE,PLAYER_X_SPEED);
 		if(client.input.up)
-			client.player.yv=-PLAYER_Y_SPEED;
+			targetf(&client.player.yv,ACCELERATE,-PLAYER_Y_SPEED);
 
 		// handle turret rotation
 		if(client.input.aim_left){
@@ -58,7 +58,8 @@ void Player::process(Match &match){
 
 		if(client.player.health>0){
 			// affected by gravity
-			client.player.yv+=GRAVITY;
+			if(!client.input.up)
+				client.player.yv+=GRAVITY;
 
 			// update pos based on velocities
 			client.player.x+=client.player.xv;

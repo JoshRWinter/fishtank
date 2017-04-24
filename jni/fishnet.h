@@ -83,7 +83,7 @@ struct to_client_heartbeat{
 #define SHELL_HEIGHT 0.5f
 
 #define FLOOR 4.0f
-#define GRAVITY 0.01f
+#define GRAVITY 0.008f
 
 #define PLATFORM_COUNT 32
 #define PLATFORM_WIDTH 3.75f
