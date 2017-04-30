@@ -12,7 +12,7 @@ struct Client;
 #include "object.h"
 
 #define onein(n) (randomint(0,n-1)==0)
-#define WIN_TIMER 200
+#define WIN_TIMER 300
 
 struct Client{
 	Client(int,const std::string&);
