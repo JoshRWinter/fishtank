@@ -120,7 +120,7 @@ void Match::recv_data(State &state){
 		udp.recv(&tch,SIZEOF_TO_CLIENT_HEARTBEAT);
 		int32_t *server_state=tch.state+SERVER_STATE_GLOBAL_FIELDS;
 
-		platform_status=tch.state[SERVER_STATE_GLOBAL_PLATFORMS];
+		platform_status=ntohl(tch.state[SERVER_STATE_GLOBAL_PLATFORMS]);
 
 		int i=0;
 		for(Player &player:state.player_list){

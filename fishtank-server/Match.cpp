@@ -128,7 +128,7 @@ void Match::send_data(){
 	to_client_heartbeat tch;
 	int32_t *server_state=tch.state+SERVER_STATE_GLOBAL_FIELDS;
 	memset(&tch,0,sizeof(to_client_heartbeat));
-	tch.state[SERVER_STATE_GLOBAL_PLATFORMS]=Platform::platform_status;
+	tch.state[SERVER_STATE_GLOBAL_PLATFORMS]=htonl(Platform::platform_status);
 	int i=0;
 
 	// initialize tch with state data
