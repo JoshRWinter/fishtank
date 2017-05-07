@@ -174,7 +174,7 @@ State::State(){
 	const float DPAD_SIZE=1.0f;
 	input.left.init(-7.0f,2.25f,DPAD_SIZE,"L");
 	input.right.init(-4.5f,2.25f,DPAD_SIZE,"R");
-	input.up.init(-5.75f,1.3f,DPAD_SIZE,"U");
+	input.up.init(5.0f,0.7f,DPAD_SIZE,"U");
 	input.fire.init(4.625f,2.0f,FIRE_BUTTON_SIZE,"FIRE");
 	input.aim_left.init(3.3f,2.5f,DPAD_SIZE,"L");
 	input.aim_right.init(6.75f,2.5f,DPAD_SIZE,"R");
