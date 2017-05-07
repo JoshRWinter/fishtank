@@ -210,6 +210,8 @@ void ParticlePlayer::spawn(State &state,const Player &player){
 	for(int i=0;i<count;++i){
 		state.particle_player_list.push_back(new ParticlePlayer(player.x+(PLAYER_WIDTH/2.0f),player.y+(PLAYER_HEIGHT/2.0f),true,player.colorid));
 	}
+	// spawn one dead fish
+	state.dead_fish_list.push_back(new DeadFish(player.x+(PLAYER_WIDTH/2.0f),player.y+(PLAYER_HEIGHT/2.0f)));
 }
 
 void ParticlePlayer::process(State &state){

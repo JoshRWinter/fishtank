@@ -104,7 +104,7 @@ struct ParticlePlatform:Base{
 };
 
 #define PARTICLE_PLAYER_SIZE 0.2f
-#define PARTICLE_PLAYER_LARGE_SIZE 0.425f
+#define PARTICLE_PLAYER_LARGE_SIZE 0.525f
 struct ParticlePlayer:Base{
 	ParticlePlayer(float,float,bool,int);
 	static void spawn(State&,const Player&);
@@ -116,6 +116,18 @@ struct ParticlePlayer:Base{
 	float ttl;
 	bool active;
 	int colorid;
+};
+
+#define FISH_WIDTH 0.9f
+#define FISH_HEIGHT 0.4f
+struct DeadFish:Base{
+	DeadFish(float,float);
+	static void process(State&);
+	static void render(const Renderer&,const std::vector<DeadFish*>&);
+
+	float xv,yv,rotv;
+	float increase;
+	bool stuck;
 };
 
 #endif // OBJECT_H

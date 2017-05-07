@@ -32,6 +32,9 @@ bool State::core(){
 	// process particle players
 	ParticlePlayer::process(*this);
 
+	// process dead fish
+	DeadFish::process(*this);
+
 	// process ui buttons
 	const float UI_TOLERANCE=-0.25f;
 	input.left.process(pointer,UI_TOLERANCE);
@@ -75,6 +78,10 @@ void State::render()const{
 	// draw backdround
 	glBindTexture(GL_TEXTURE_2D,renderer.assets.texture[TID_BACKGROUND].object);
 	renderer.uidraw(background);
+
+	// draw dead fish
+	if(dead_fish_list.size()!=0)
+		DeadFish::render(renderer,dead_fish_list);
 
 	// draw shells
 	if(shell_list.size()!=0)
@@ -201,6 +208,10 @@ void State::reset(){
 	for(ParticlePlayer *p:particle_player_list)
 		delete p;
 	particle_player_list.clear();
+	// clear dead fish
+	for(DeadFish *f:dead_fish_list)
+		delete f;
+	dead_fish_list.clear();
 }
 
 bool State::read_config(){
