@@ -9,7 +9,7 @@
 #define MAX_PLAYERS 6
 #define MSG_LIMIT 45
 
-#define FLOAT_MULTIPLIER 10000.0
+#define FLOAT_MULTIPLIER 10000.0f
 
 // message from client to server tcp
 #define TYPE_CHAT 0

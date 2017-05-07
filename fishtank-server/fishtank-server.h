@@ -63,5 +63,7 @@ void get_nano_time(long long*);
 int randomint(int,int);
 float zerof(float*,float);
 float targetf(float*,float,float);
+int32_t sntohl(int32_t);
+int32_t shtonl(int32_t);
 
 #endif // FISHTANK_SERVER_H

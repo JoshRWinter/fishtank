@@ -82,3 +82,30 @@ float targetf(float *val,float step,float target){
 	}
 	return *val;
 }
+
+union reorder{
+	int32_t i;
+	signed char c[4];
+};
+
+
+int32_t sntohl(int32_t i){
+#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+	reorder before;
+	reorder after;
+
+	before.i=i;
+	after.c[0]=before.c[3];
+	after.c[1]=before.c[2];
+	after.c[2]=before.c[1];
+	after.c[3]=before.c[0];
+
+	return after.i;
+#else
+	return i
+#endif
+}
+
+int32_t shtonl(int32_t i){
+	return sntohl(i);
+}

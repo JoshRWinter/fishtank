@@ -136,14 +136,14 @@ void Match::send_data(){
 		Client &client=*c;
 
 		server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_HEALTH]=htonl(client.player.health);
-		server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_XV]=htonl(client.player.xv*FLOAT_MULTIPLIER);
-		server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_YV]=htonl(client.player.yv*FLOAT_MULTIPLIER);
-		server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_XPOS]=htonl((client.player.x-client.player.xv)*FLOAT_MULTIPLIER);
-		server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_YPOS]=htonl((client.player.y-client.player.yv)*FLOAT_MULTIPLIER);
-		server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_ANGLE]=htonl(client.player.angle*FLOAT_MULTIPLIER);
+		server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_XV]=shtonl(client.player.xv*FLOAT_MULTIPLIER);
+		server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_YV]=shtonl(client.player.yv*FLOAT_MULTIPLIER);
+		server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_XPOS]=shtonl((client.player.x-client.player.xv)*FLOAT_MULTIPLIER);
+		server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_YPOS]=shtonl((client.player.y-client.player.yv)*FLOAT_MULTIPLIER);
+		server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_ANGLE]=shtonl(client.player.angle*FLOAT_MULTIPLIER);
 		server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_COLORID]=htonl(client.colorid);
 		server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_ID]=htonl(client.id);
-		server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_FIRE]=htonl(client.input.fire*FLOAT_MULTIPLIER);
+		server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_FIRE]=shtonl(client.input.fire*FLOAT_MULTIPLIER);
 
 		++i;
 	}
