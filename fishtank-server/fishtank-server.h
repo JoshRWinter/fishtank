@@ -33,6 +33,15 @@ struct Client{
 		bool left,right,up,aim_left,aim_right;
 		float fire;
 	}input;
+
+	// some stats to keep track of
+	struct{
+		int join_time;
+		int match_victories;
+		int victories;
+		int deaths;
+		int rounds_played;
+	}stat;
 };
 
 class Match{
@@ -41,6 +50,7 @@ public:
 	~Match();
 	bool setup();
 	void accept_new_clients();
+	void player_summary(const Client &client)const;
 	void step();
 	void send_data();
 	void recv_data();

@@ -49,8 +49,20 @@ void Match::accept_new_clients(){
 			// inform the other clients of the new player
 			std::string msg=c->name+" has connected";
 			send_chat(msg,"server");
+			// current time
+			c->stat.join_time=time(NULL);
 		}
 	}
+}
+
+void Match::player_summary(const Client &client)const{
+	const int current=time(NULL);
+	std::cout<<client.name<<" summary:"<<std::endl;
+	std::cout<<" -- rounds played: "<<client.stat.rounds_played<<std::endl;
+	std::cout<<" -- time played: "<<((current-client.stat.join_time)/60)<<"m "<<((current-client.stat.join_time)%60)<<"s"<<std::endl;
+	std::cout<<" -- match victories: "<<client.stat.match_victories<<std::endl;
+	std::cout<<" -- one-on-one victories: "<<client.stat.victories<<std::endl;
+	std::cout<<" -- deaths: "<<client.stat.deaths<<std::endl;
 }
 
 // execute one step
@@ -80,6 +92,8 @@ void Match::step(){
 				for(Client *client:client_list){
 					client->tcp.send(&tctcp,sizeof(tctcp));
 					send_level_config(*client);
+					// increment rounds_played
+					++client->stat.rounds_played;
 				}
 			}
 		}
@@ -112,6 +126,10 @@ void Match::send_data(){
 				std::cout<<client.name<<" has disconnected ("<<ip<<")"<<std::endl;
 				std::string msg=client.name+" has disconnected";
 				client.kick(*this);
+				// round summary
+				player_summary(client);
+
+				// free up
 				delete *it;
 				it=client_list.erase(it);
 

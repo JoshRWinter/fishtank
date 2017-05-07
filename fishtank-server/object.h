@@ -23,15 +23,16 @@ struct Player:Base{
 	int health;
 	float angle; // angle of the turret
 	float xv,yv;
+
 };
 
 #define SHELL_DMG 11,20
 struct Shell:Base{
-	Shell(const Match&,const Client&);
+	Shell(const Match&,Client&);
 	static void process(Match&);
 
 	float xv,yv;
-	const Client &owner;
+	Client &owner;
 };
 
 struct Platform:Base{

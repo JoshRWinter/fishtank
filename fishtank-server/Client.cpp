@@ -35,6 +35,12 @@ Client::Client(int s,const std::string &addr):tcp(s,addr){
 	input.aim_left=false;
 	input.aim_right=false;
 	input.fire=0.0f;
+
+	stat.join_time=0;
+	stat.match_victories=0;
+	stat.victories=0;
+	stat.deaths=0;
+	stat.rounds_played=0;
 }
 
 void Client::kick(Match &match){
