@@ -37,6 +37,7 @@ struct ButtonSmall:Button{
 
 struct ButtonBasic:Button{
 	void init(float,float,float,const char*);
+	void render(const Renderer&)const;
 	void render_text(const Renderer&)const;
 };
 
