@@ -132,10 +132,11 @@ struct ParticleBubble:Base{
 #define FISH_WIDTH 0.9f
 #define FISH_HEIGHT 0.4f
 struct DeadFish:Base{
-	DeadFish(float,float);
+	DeadFish(float,float,int);
 	static void process(State&);
 	static void render(const Renderer&,const std::vector<DeadFish*>&);
 
+	int colorid;
 	float xv,yv,rotv;
 	float increase;
 	bool stuck;

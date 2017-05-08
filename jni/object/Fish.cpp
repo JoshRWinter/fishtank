@@ -1,6 +1,6 @@
 #include "../fishtank.h"
 
-DeadFish::DeadFish(float xpos,float ypos){
+DeadFish::DeadFish(float xpos,float ypos,int cid){
 	w=FISH_WIDTH;
 	h=FISH_HEIGHT;
 	x=xpos-(FISH_WIDTH/2.0f);
@@ -9,6 +9,7 @@ DeadFish::DeadFish(float xpos,float ypos){
 	count=1;
 	frame=0;
 
+	colorid=cid;
 	increase=randomint(0,10);
 	xv=0.0f;
 	yv=0.0f;
@@ -77,6 +78,12 @@ void DeadFish::process(State &state){
 void DeadFish::render(const Renderer &renderer,const std::vector<DeadFish*> &fish_list){
 	glBindTexture(GL_TEXTURE_2D,renderer.assets.texture[TID_DEAD_FISH].object);
 
-	for(const DeadFish *f:fish_list)
+	for(const DeadFish *f:fish_list){
+		float r,g,b;
+		State::fill_color(f->colorid,&r,&g,&b);
+		glUniform4f(renderer.uniform.rgba,r,g,b,1.0f);
 		renderer.draw(*f);
+	}
+
+	glUniform4f(renderer.uniform.rgba,1.0f,1.0f,1.0f,1.0f);
 }
