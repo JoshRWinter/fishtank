@@ -114,13 +114,14 @@ void Match::recv_data(State &state){
 	}
 
 	// collect state updates from the server
-	uint32_t platform_status;
+	uint32_t platform_status[2];
 	while(udp.peek()>=SIZEOF_TO_CLIENT_HEARTBEAT){
 		to_client_heartbeat tch;
 		udp.recv(&tch,SIZEOF_TO_CLIENT_HEARTBEAT);
 		int32_t *server_state=tch.state+SERVER_STATE_GLOBAL_FIELDS;
 
-		platform_status=ntohl(tch.state[SERVER_STATE_GLOBAL_PLATFORMS]);
+		platform_status[0]=ntohl(tch.state[SERVER_STATE_GLOBAL_PLATFORMS]);
+		platform_status[1]=ntohl(tch.state[SERVER_STATE_GLOBAL_PLATFORMS_EXT]);
 
 		int i=0;
 		for(Player &player:state.player_list){
@@ -146,15 +147,21 @@ void Match::recv_data(State &state){
 		}
 
 		// update the platforms
-		i=0;
-		for(Platform &platform:state.platform_list){
-			bool before=platform.active;
-			platform.active=((platform_status>>i)&1)==1;
-			if(before&&!platform.active){
+		for(i=0;i<32;++i){
+			bool before=state.platform_list[i].active;
+			state.platform_list[i].active=((platform_status[0]>>i)&1)==1;
+			if(before&&!state.platform_list[i].active){
 				// spawn particle effects
-				ParticlePlatform::spawn_destroy_platform(state,platform);
+				ParticlePlatform::spawn_destroy_platform(state,state.platform_list[i]);
 			}
-			++i;
+		}
+		for(i=0;i<32;++i){
+			bool before=state.platform_list[i+32].active;
+			state.platform_list[i+32].active=((platform_status[1]>>i)&1)==1;
+			if(before&&!state.platform_list[i+32].active){
+				// spawn particle effects
+				ParticlePlatform::spawn_destroy_platform(state,state.platform_list[i+32]);
+			}
 		}
 	}
 }

@@ -46,7 +46,8 @@ struct to_client_tcp{
 
 // absolute state update from server to client udp
 #define SERVER_STATE_GLOBAL_PLATFORMS 0
-#define SERVER_STATE_GLOBAL_FIELDS 1
+#define SERVER_STATE_GLOBAL_PLATFORMS_EXT 1
+#define SERVER_STATE_GLOBAL_FIELDS 2
 #define SERVER_STATE_HEALTH 0
 #define SERVER_STATE_XV 1
 #define SERVER_STATE_YV 2
@@ -86,7 +87,7 @@ struct to_client_heartbeat{
 #define GRAVITY 0.008f
 #define PLAYER_GRAVITY (GRAVITY/2.0f)
 
-#define PLATFORM_COUNT 32
+#define PLATFORM_COUNT 64
 #define PLATFORM_WIDTH 3.75f
 #define PLATFORM_HEIGHT 0.65f
 

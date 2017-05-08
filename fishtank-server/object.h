@@ -40,7 +40,7 @@ struct Platform:Base{
 	static void create_all(Match&);
 	static void process(const std::vector<Platform>&);
 
-	static uint32_t platform_status;
+	static uint32_t platform_status[2];
 	bool horiz; // flat or vertical
 	int health;
 };

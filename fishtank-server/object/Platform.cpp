@@ -1,6 +1,6 @@
 #include "../fishtank-server.h"
 
-uint32_t Platform::platform_status=0;
+uint32_t Platform::platform_status[2];
 
 Platform::Platform(bool horizontal,float xpos,float ypos){
 	horiz=horizontal;
@@ -21,11 +21,11 @@ Platform::Platform(bool horizontal,float xpos,float ypos){
 void Platform::create_all(Match &match){
 	match.platform_list.clear();
 	const float START_X=-12.0f;
-	float x=START_X,y=1.5f;
+	float x=START_X,y=-0.35f;
 
 	// create some horizontal lines
-	for(int j=0;j<3;++j){
-		for(int i=0;i<7;++i){
+	for(int j=0;j<4;++j){
+		for(int i=0;i<13;++i){
 			if(onein(5)){
 				x+=PLATFORM_WIDTH;
 				continue;
@@ -42,14 +42,12 @@ void Platform::create_all(Match &match){
 
 	// create some vertical lines
 	for(Platform &horiz:match.platform_list){
-		if(horiz.health<1)
-			break;
-		else if(onein(4))
+		if(onein(2))
 			continue;
 		else if(match.platform_list.size()==PLATFORM_COUNT)
 			break;
 
-		Platform p(false,horiz.x,horiz.y-PLATFORM_WIDTH);
+		Platform p(false,horiz.x,horiz.y+PLATFORM_HEIGHT);
 
 		match.platform_list.push_back(p);
 	}
@@ -74,14 +72,17 @@ void Platform::create_all(Match &match){
 }
 
 void Platform::process(const std::vector<Platform> &platform_list){
-	Platform::platform_status=0;
+	Platform::platform_status[0]=0;
+	Platform::platform_status[1]=0;
 	// pack all platform health status 1=alive 0=dead into uint32_t Platform::platform_status
-	uint32_t i=0;
-	for(const Platform &platform:platform_list){
+	for(int i=0;i<32&&i<platform_list.size();++i){
 		uint32_t status=platform_list[i].health>0;
 
-		Platform::platform_status|=status<<i;
+		Platform::platform_status[0]|=status<<i;
+	}
+	for(int i=0;i<32&&i<platform_list.size();++i){
+		uint32_t status=platform_list[i+32].health>0;
 
-		++i;
+		Platform::platform_status[1]|=status<<i;
 	}
 }
