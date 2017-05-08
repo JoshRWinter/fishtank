@@ -34,13 +34,13 @@ void Match::accept_new_clients(){
 			tmp.send(&i,sizeof(uint8_t));
 		}
 		else{
-			// accept the client
-			Client *c=new Client(connector_socket,connector_address);
-			client_list.push_back(c);
-
-			// if this is the only client, reset the level config
-			if(client_list.size()==1)
+			// if this is the first client, reset the level config
+			if(client_list.size()==0)
 				Platform::create_all(*this);
+
+			// accept the client
+			Client *c=new Client(connector_socket,connector_address,bounds);
+			client_list.push_back(c);
 
 			// send the level configuration to this client
 			send_level_config(*c);
@@ -79,11 +79,6 @@ void Match::step(){
 		if(win_timer<WIN_TIMER){
 			--win_timer;
 			if(win_timer<1){
-				// reset
-				win_timer=WIN_TIMER;
-				for(Client *client:client_list)
-					client->player.reset();
-
 				// construct a new level and send it
 				Platform::create_all(*this);
 				to_client_tcp tctcp;
@@ -95,6 +90,13 @@ void Match::step(){
 					// increment rounds_played
 					++client->stat.rounds_played;
 				}
+
+				// reset
+				win_timer=WIN_TIMER;
+				for(Client *client:client_list)
+					client->player.reset(bounds);
+
+
 			}
 		}
 		else{

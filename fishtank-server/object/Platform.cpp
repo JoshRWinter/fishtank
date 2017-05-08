@@ -62,6 +62,23 @@ void Platform::create_all(Match &match){
 		match.platform_list.push_back(p);
 	}
 
+	// fill in Match::bounds
+	match.bounds.left=match.bounds.right=match.bounds.bottom=match.bounds.top=0.0f;
+	for(const Platform &p:match.platform_list){
+		if(p.x<match.bounds.left)
+			match.bounds.left=p.x;
+		if(p.x>match.bounds.right)
+			match.bounds.right=p.x;
+		if(p.y<match.bounds.top)
+			match.bounds.top=y;
+		if(p.y>match.bounds.bottom)
+			match.bounds.bottom=p.y;
+	}
+	match.bounds.left-=2.0f;
+	match.bounds.right+=2.0f;
+	match.bounds.bottom+=2.0f;
+	match.bounds.top-=2.0f;
+
 	// just to check
 	if(match.platform_list.size()!=PLATFORM_COUNT){
 		std::cout<<"\033[31;1mERROR: platform_list.size() != PLATFORM_COUNT\033[0m"<<std::endl;

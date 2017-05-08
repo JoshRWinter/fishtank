@@ -1,14 +1,14 @@
 #include <math.h>
 #include "../fishtank-server.h"
 
-Player::Player(){
-	reset();
+Player::Player(const area_bounds &bounds){
+	reset(bounds);
 }
 
-void Player::reset(){
+void Player::reset(const area_bounds &bounds){
 	health=100;
-	x=randomint(-150,150)/10.0f;
-	y=randomint(-15*10,(FLOOR-PLAYER_HEIGHT)*10)/10.0f;
+	x=randomint(bounds.left*10.0f,bounds.right*10.0f)/10.0f;
+	y=randomint((bounds.top-1.0f)*10.0f,bounds.bottom*10.0f)/10.0f;
 	xv=0.0f;
 	yv=0.0f;
 	angle=M_PI/2.0f;

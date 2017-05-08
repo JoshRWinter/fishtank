@@ -9,13 +9,14 @@
 #include "../jni/network.h"
 struct Match;
 struct Client;
+struct area_bounds;
 #include "object.h"
 
 #define onein(n) (randomint(0,n-1)==0)
 #define WIN_TIMER 300
 
 struct Client{
-	Client(int,const std::string&);
+	Client(int,const std::string&,const area_bounds&);
 	void kick(Match&);
 
 	socket_tcp tcp;
@@ -44,6 +45,10 @@ struct Client{
 	}stat;
 };
 
+struct area_bounds{
+	float left,right,bottom,top;
+};
+
 class Match{
 public:
 	Match();
@@ -67,6 +72,8 @@ public:
 	socket_udp_server udp;
 	long long last_nano_time;
 	int win_timer;
+	// bounds of the playing area
+	area_bounds bounds;
 };
 
 void get_nano_time(long long*);
