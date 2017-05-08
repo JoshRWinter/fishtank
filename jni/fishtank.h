@@ -49,7 +49,8 @@ struct State;
 #define TID_PLATFORM 4
 #define TID_PARTICLE_PLATFORM 5
 #define TID_PARTICLE_PLAYER 6
-#define TID_DEAD_FISH 7
+#define TID_PARTICLE_BUBBLE 7
+#define TID_DEAD_FISH 8
 
 // ui textures
 #define UITID_BACKGROUND 0
@@ -134,6 +135,7 @@ struct State{
 	std::vector<ParticleShell*> particle_shell_list;
 	std::vector<ParticlePlatform*> particle_platform_list;
 	std::vector<ParticlePlayer*> particle_player_list;
+	std::vector<ParticleBubble*> particle_bubble_list;
 	std::vector<DeadFish*> dead_fish_list;
 };
 

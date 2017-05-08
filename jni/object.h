@@ -118,6 +118,17 @@ struct ParticlePlayer:Base{
 	int colorid;
 };
 
+#define PARTICLE_BUBBLE_LARGE_SIZE 0.175f
+#define PARTICLE_BUBBLE_SIZE 0.12f
+struct ParticleBubble:Base{
+	ParticleBubble(const State &state,const Player&);
+	static void process(State&);
+	static void render(const Renderer&,const std::vector<ParticleBubble*>&);
+
+	float xv,yv;
+	float ttl;
+};
+
 #define FISH_WIDTH 0.9f
 #define FISH_HEIGHT 0.4f
 struct DeadFish:Base{

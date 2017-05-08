@@ -32,6 +32,9 @@ bool State::core(){
 	// process particle players
 	ParticlePlayer::process(*this);
 
+	// process particle bubbles
+	ParticleBubble::process(*this);
+
 	// process dead fish
 	DeadFish::process(*this);
 
@@ -82,6 +85,10 @@ void State::render()const{
 	// draw dead fish
 	if(dead_fish_list.size()!=0)
 		DeadFish::render(renderer,dead_fish_list);
+
+	// draw particle bubbles
+	if(particle_bubble_list.size()!=0.0f)
+		ParticleBubble::render(renderer,particle_bubble_list);
 
 	// draw shells
 	if(shell_list.size()!=0)
@@ -208,6 +215,10 @@ void State::reset(){
 	for(ParticlePlayer *p:particle_player_list)
 		delete p;
 	particle_player_list.clear();
+	// clear particle bubbles
+	for(ParticleBubble *p:particle_bubble_list)
+		delete p;
+	particle_bubble_list.clear();
 	// clear dead fish
 	for(DeadFish *f:dead_fish_list)
 		delete f;

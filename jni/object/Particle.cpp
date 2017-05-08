@@ -280,3 +280,91 @@ void ParticlePlayer::render(const Renderer &renderer,const std::vector<ParticleP
 	}
 	glUniform4f(renderer.uniform.rgba,1.0f,1.0f,1.0f,1.0f);
 }
+
+// intense: larger bubbles
+ParticleBubble::ParticleBubble(const State &state,const Player &player){
+	w=PARTICLE_BUBBLE_LARGE_SIZE;
+	h=PARTICLE_BUBBLE_LARGE_SIZE;
+
+	// pick a side of the player to spawn this bubble on
+	const float inward=0.3f;
+	int left_side=randomint(0,1);
+	if(left_side)
+		x=player.x+inward-(w/2.0f);
+	else
+		x=(player.x+PLAYER_WIDTH)-inward-(w/2.0f);
+	y=player.y+PLAYER_HEIGHT-0.3f;
+
+	rot=randomint(1,360)*(M_PI/180.0);
+	xv=randomint(-3,3)/100.0f;
+	yv=(randomint(12,14)/100.0f)*state.speed;
+	ttl=20.0f;
+	count=1;
+	frame=0;
+}
+
+void ParticleBubble::process(State &state){
+	for(std::vector<ParticleBubble*>::iterator it=state.particle_bubble_list.begin();it!=state.particle_bubble_list.end();){
+		ParticleBubble &particle=**it;
+		bool kill=false;
+
+		// slowly decrease yv
+		particle.yv*=0.995;
+
+		// update positions
+		particle.x+=particle.xv*state.speed;
+		particle.y+=particle.yv*state.speed;
+
+		// collides with level geometry
+		for(const Platform &platform:state.platform_list){
+			// skip inactive platforms
+			if(!platform.active)
+				continue;
+
+			int side=particle.correct(platform);
+			switch(side){
+			case 0: // ignore
+				break;
+			case COLLIDE_LEFT:
+			case COLLIDE_RIGHT:
+				particle.xv=-particle.xv;
+				break;
+			case COLLIDE_TOP:
+				if(onein(5))
+					kill=true;
+				particle.yv=-particle.yv*0.3f;
+				particle.xv*=-1.6f;
+				break;
+			}
+		}
+
+		// if ttl<=0.0f delete
+		particle.ttl-=state.speed;
+		if(particle.ttl<=0.0f){
+			// shrink it
+			float oldsize=particle.w;
+			particle.w-=0.01f;
+			particle.h=particle.w;
+			particle.x+=(oldsize/2.0f);
+			particle.y+=(oldsize/2.0f);
+
+			if(particle.w<=0.0f)
+				kill=true;
+		}
+
+		if(kill){
+			delete *it;
+			it=state.particle_bubble_list.erase(it);
+			continue;
+		}
+
+		++it;
+	}
+}
+
+void ParticleBubble::render(const Renderer &renderer,const std::vector<ParticleBubble*> &particle_list){
+	glBindTexture(GL_TEXTURE_2D,renderer.assets.texture[TID_PARTICLE_BUBBLE].object);
+
+	for(const ParticleBubble *p:particle_list)
+		renderer.draw(*p);
+}

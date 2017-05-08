@@ -23,12 +23,24 @@ Player::Player(){
 }
 
 void Player::process(State &state){
+	int index=0;
 	for(Player &player:state.player_list){
 		// handle firing the cannon
 		if(player.cue_fire>0.0f&&player.health>0){
 			state.shell_list.push_back(new Shell(state,player));
 			player.cue_fire=0.0f;
 		}
+
+		// spawn some bubble particles
+		if(player.health>0&&!onein(3)){
+			if(state.match.my_index==index){
+				if(state.input.up_l.active||state.input.up_r.active)
+					state.particle_bubble_list.push_back(new ParticleBubble(state,player));
+			}
+			else if(player.yv<0.0f)
+				state.particle_bubble_list.push_back(new ParticleBubble(state,player));
+		}
+
 		player.x+=player.xv*state.speed;
 		player.y+=player.yv*state.speed;
 
@@ -42,6 +54,8 @@ void Player::process(State &state){
 			state.renderer.player_x=player.x;
 			state.renderer.player_y=player.y;
 		}
+
+		++index;
 	}
 }
 
