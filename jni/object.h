@@ -103,8 +103,8 @@ struct ParticlePlatform:Base{
 	float ttl;
 };
 
-#define PARTICLE_PLAYER_SIZE 0.2f
-#define PARTICLE_PLAYER_LARGE_SIZE 0.525f
+#define PARTICLE_PLAYER_SIZE (randomint(15,28)/100.0f)
+#define PARTICLE_PLAYER_LARGE_SIZE (randomint(39,61)/100.0f)
 struct ParticlePlayer:Base{
 	ParticlePlayer(float,float,bool,int);
 	static void spawn(State&,const Player&);
