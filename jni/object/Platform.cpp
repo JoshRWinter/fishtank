@@ -20,8 +20,8 @@ Platform::Platform(bool platform_active,bool horiz,float xpos,float ypos){
 	visual.y=ypos-(PLATFORM_VIS_HEIGHT/2.0f);
 	visual.w=PLATFORM_VIS_WIDTH;
 	visual.h=PLATFORM_VIS_HEIGHT;
-	visual.count=1;
-	visual.frame=0;
+	visual.count=3;
+	visual.frame=randomint(0,2);
 }
 
 void Platform::render(const Renderer &renderer,const std::vector<Platform> &platform_list){

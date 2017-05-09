@@ -71,8 +71,8 @@ ParticlePlatform::ParticlePlatform(const Shell &shell){
 	rot=randomint(1,360)*(M_PI/180.0f);
 	x=shell.x+(SHELL_WIDTH/2.0f)-(PARTICLE_PLATFORM_SIZE/2.0f);
 	y=shell.y+(SHELL_HEIGHT/2.0f)-(PARTICLE_PLATFORM_SIZE/2.0f);
-	count=1;
-	frame=0;
+	count=2;
+	frame=randomint(0,1);
 
 	xv=-cosf(rot)*PARTICLE_PLATFORM_SPEED;
 	yv=-sinf(rot)*PARTICLE_PLATFORM_SPEED;
@@ -85,8 +85,8 @@ ParticlePlatform::ParticlePlatform(float xpos,float ypos){
 	rot=randomint(1,360)*(M_PI/180.0f);
 	x=xpos-(PARTICLE_PLATFORM_SIZE/2.0f);
 	y=ypos-(PARTICLE_PLATFORM_SIZE/2.0f);
-	count=1;
-	frame=0;
+	count=2;
+	frame=randomint(0,1);
 
 	xv=-cosf(rot)*PARTICLE_PLATFORM_SPEED/2.0f;
 	yv=-sinf(rot)*PARTICLE_PLATFORM_SPEED/2.0f;

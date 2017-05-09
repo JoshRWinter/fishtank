@@ -9,5 +9,11 @@ for f in *.png; do
 	convert $f -compress none ${f%%.png}.tga
 done
 
+# combine platform textures
+convert platform_1.tga platform_2.tga platform_3.tga +append platform.tga
+
+# combine particle platform textures
+convert particle_platform_1.tga particle_platform_2.tga +append particle_platform.tga
+
 rm *.png
 
