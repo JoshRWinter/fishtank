@@ -38,6 +38,17 @@ bool State::core(){
 	// process dead fish
 	DeadFish::process(*this);
 
+	// process server messages
+	if(announcement.size()>0){
+		if(announcement.size()==1)
+			announcement[0].timer-=speed;
+		else if(announcement.size()>1)
+			announcement[0].timer-=speed*2.0f;
+
+		if(announcement[0].timer<=0.0f)
+			announcement.erase(announcement.begin());
+	}
+
 	// process ui buttons
 	const float UI_TOLERANCE=-0.25f;
 	input.left.process(pointer,UI_TOLERANCE);
@@ -61,18 +72,6 @@ bool State::core(){
 	else
 		firepower=0.0f;
 
-	return true;
-}
-
-bool State::process()const{
-	int events;
-	android_poll_source *source;
-	while(ALooper_pollAll(running?0:-1,NULL,&events,(void**)&source)>=0){
-		if(source)
-			source->process(app,source);
-		if(app->destroyRequested)
-			return false;
-	}
 	return true;
 }
 
@@ -136,6 +135,13 @@ void State::render()const{
 	input.aim_left.render_text(renderer);
 	input.aim_right.render_text(renderer);
 
+	// draw server and chat messages
+	if(announcement.size()>0){
+		glBindTexture(GL_TEXTURE_2D,renderer.font.main->atlas);
+		glUniform4f(renderer.uniform.rgba,1.0f,1.0f,0.0f,1.0f);
+		drawtextcentered(renderer.font.main,0.0f,-2.25f,announcement[0].msg.c_str());
+	}
+
 	// fps
 #ifdef SHOW_FPS
 	{
@@ -155,6 +161,18 @@ void State::render()const{
 		drawtext(renderer.font.main,renderer.view.left+0.1f,renderer.view.top+0.1f,fps_string);
 	}
 #endif // SHOW_FPS
+}
+
+bool State::process()const{
+	int events;
+	android_poll_source *source;
+	while(ALooper_pollAll(running?0:-1,NULL,&events,(void**)&source)>=0){
+		if(source)
+			source->process(app,source);
+		if(app->destroyRequested)
+			return false;
+	}
+	return true;
 }
 
 State::State(){

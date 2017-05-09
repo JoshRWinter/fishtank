@@ -102,7 +102,14 @@ void Match::recv_data(State &state){
 			// ignore;
 			break;
 		case TYPE_CHAT:
-			logcat("%s says %s",tctcp.name,tctcp.msg);
+			if(!strcmp((const char*)tctcp.name,"server")){ // message from the server
+				ServerMessage sm((const char*)tctcp.name,(const char*)tctcp.msg);
+				state.announcement.push_back(sm);
+			}
+			else{
+				ChatMessage cm((const char*)tctcp.name,(const char*)tctcp.msg);
+				state.chat.push_back(cm);
+			}
 			break;
 		case TYPE_NEW_LEVEL:
 			get_level_config(state);

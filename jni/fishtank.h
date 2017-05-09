@@ -60,6 +60,19 @@ struct State;
 
 #define FIREPOWER_INCREMENT 0.008f
 
+struct ChatMessage{
+	ChatMessage(const char *name,const char *content):
+	from(name),msg(content){}
+
+	std::string from;
+	std::string msg;
+};
+struct ServerMessage:ChatMessage{
+	ServerMessage(const char *name,const char *content):ChatMessage(name,content),timer(350.0f){}
+
+	float timer;
+};
+
 struct Renderer{
 	Renderer();
 	void init(android_app&);
@@ -126,6 +139,10 @@ struct State{
 	struct{
 		ButtonBasic left,right,up_l,up_r,fire,aim_left,aim_right;
 	}input;
+
+	// chat message
+	std::vector<ChatMessage> chat;
+	std::vector<ServerMessage> announcement; // messages from the server
 
 	// objects
 	Base background;
