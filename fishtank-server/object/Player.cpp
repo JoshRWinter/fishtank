@@ -1,6 +1,22 @@
 #include <math.h>
 #include "../fishtank-server.h"
 
+static float shell_dmg(float f){
+	if(f<0.4)
+		return 0.2f;
+	if(f<0.5)
+		return 0.35f;
+	if(f<0.6)
+		return 0.7f;
+	if(f<0.7)
+		return 0.85f;
+	if(f<0.8)
+		return 0.9f;
+	if(f<0.9)
+		return 0.97f;
+	return 1.85f;
+}
+
 Player::Player(const area_bounds &bounds){
 	reset(bounds);
 }
@@ -24,7 +40,7 @@ void Player::process(Match &match){
 
 		// handle firing the cannon
 		if(client.input.fire>0.0f&&client.player.health>0){
-			Shell *s=new Shell(match,client);
+			Shell *s=new Shell(match,client,shell_dmg(client.input.fire));
 			match.shell_list.push_back(s);
 			client.input.fire=0.0f;
 			// launch the player backwards a bit

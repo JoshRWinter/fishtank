@@ -26,12 +26,13 @@ struct Player:Base{
 
 };
 
-#define SHELL_DMG 11,20
+#define SHELL_DMG 61,80
 struct Shell:Base{
-	Shell(const Match&,Client&);
+	Shell(const Match&,Client&,float);
 	static void process(Match&);
 
 	float xv,yv;
+	const float power;
 	Client &owner;
 };
 

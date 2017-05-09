@@ -1,7 +1,7 @@
 #include <math.h>
 #include "../fishtank-server.h"
 
-Shell::Shell(const Match &match,Client &client):owner(client){
+Shell::Shell(const Match &match,Client &client,float firepower):owner(client),power(firepower){
 	w=SHELL_WIDTH;
 	h=SHELL_HEIGHT;
 	float turretx=client.player.x+(PLAYER_WIDTH/2.0f)-(TURRET_WIDTH/2.0f);
@@ -38,7 +38,7 @@ void Shell::process(Match &match){
 			if(client.player.collide(shell)){
 				// push the player back and subtract health
 				client.player.xv+=shell.xv/2.5f;
-				client.player.health-=randomint(SHELL_DMG);
+				client.player.health-=randomint(SHELL_DMG)*shell.power;
 
 				// see if it killed the player
 				if(client.player.health<1){
