@@ -60,4 +60,16 @@ struct MenuConnect{
 	int connection_state;
 };
 
+struct MenuChat{
+	bool exec(State&);
+	void render(const Renderer&,const std::vector<ChatMessage>&)const;
+
+	float scrolltop;
+	bool drag; // currently draggin finger (scrolling)
+	float offset;
+	Base background;
+	Button button_say;
+	Button button_back;
+};
+
 #endif // MENU_H

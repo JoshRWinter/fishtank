@@ -11,6 +11,7 @@ public:
 	void recv_data(State&);
 	void get_level_config(State&);
 	bool connected();
+	void send_chat(const std::string&);
 	socket_tcp &get_tcp();
 
 	int my_index; // player's index into State::player_list

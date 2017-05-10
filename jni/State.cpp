@@ -49,6 +49,20 @@ bool State::core(){
 			announcement.erase(announcement.begin());
 	}
 
+	// check for upper left chat press
+	if(pointer[0].active&&pointer[0].x>renderer.view.left&&pointer[0].x<renderer.view.left+2.0f&&
+		pointer[0].y>renderer.view.top&&pointer[0].y<renderer.view.top+2.0f){
+		if(!menu.chat.exec(*this))
+			return false;
+	}
+
+	// chatpane timer
+	if(timer_chatpane>0.0f){
+		timer_chatpane-=speed;
+		if(timer_chatpane<0.0f)
+			timer_chatpane=0.0f;
+	}
+
 	// process ui buttons
 	const float UI_TOLERANCE=-0.25f;
 	input.left.process(pointer,UI_TOLERANCE);
@@ -142,6 +156,22 @@ void State::render()const{
 		glUniform4f(renderer.uniform.rgba,1.0f,1.0f,0.0f,1.0f);
 		drawtextcentered(renderer.font.main,0.0f,-2.25f,announcement[0].msg.c_str());
 	}
+	if(chat.size()>0&&timer_chatpane>0.0f){
+		glUniform4f(renderer.uniform.rgba,0.8f,0.5f,0.2f,1.0f);
+		glBindTexture(GL_TEXTURE_2D,renderer.font.main->atlas);
+
+		// draw the last 3 messages
+		int index=chat.size()-3;
+		if(index<0)
+			index=0;
+		float line=renderer.view.top+0.1f;
+		while(index<chat.size()){
+			std::string entry=chat[index].from+": "+chat[index].msg;
+			drawtext(renderer.font.main,renderer.view.left+0.1f,line,entry.c_str());
+			line+=0.6f;
+			++index;
+		}
+	}
 
 	// fps
 #ifdef SHOW_FPS
@@ -217,6 +247,8 @@ State::State(){
 }
 
 void State::reset(){
+	timer_chatpane=0.0f;
+
 	// clear shells
 	for(Shell *shell:shell_list)
 		delete shell;

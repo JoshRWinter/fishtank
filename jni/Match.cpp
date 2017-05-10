@@ -105,10 +105,13 @@ void Match::recv_data(State &state){
 			if(!strcmp((const char*)tctcp.name,"server")){ // message from the server
 				ServerMessage sm((const char*)tctcp.name,(const char*)tctcp.msg);
 				state.announcement.push_back(sm);
+				ChatMessage cm((const char*)tctcp.name,(const char*)tctcp.msg);
+				state.chat.push_back(cm);
 			}
 			else{
 				ChatMessage cm((const char*)tctcp.name,(const char*)tctcp.msg);
 				state.chat.push_back(cm);
+				state.timer_chatpane=TIMER_CHATPANE;
 			}
 			break;
 		case TYPE_NEW_LEVEL:
@@ -171,6 +174,17 @@ void Match::recv_data(State &state){
 			}
 		}
 	}
+}
+
+void Match::send_chat(const std::string &message){
+	to_server_tcp tstcp;
+
+	tstcp.type=TYPE_CHAT;
+	if(message.length()>MSG_LIMIT)
+		return;
+	strcpy((char*)tstcp.msg,message.c_str());
+
+	tcp.send(&tstcp,sizeof(tstcp));
 }
 
 void Match::get_level_config(State &state){

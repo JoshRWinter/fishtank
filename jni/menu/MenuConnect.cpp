@@ -2,7 +2,7 @@
 #include "../fishtank.h"
 
 bool MenuConnect::exec(State &state,const std::string &ip){
-	Base::init_background(background,state.renderer);
+	background.init_background(state.renderer);
 
 	socket_tcp &tcp=state.match.get_tcp();
 	button_cancel.init(-BUTTON_WIDTH/2.0f,0.5f,"Cancel");

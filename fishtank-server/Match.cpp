@@ -196,7 +196,7 @@ void Match::recv_data(){
 				// ignore
 				break;
 			case TYPE_CHAT:
-				std::cout<<client.name<<" says "<<tstcp.msg<<std::endl;
+				send_chat((char*)tstcp.msg,client.name);
 				break;
 			}
 		}

@@ -35,6 +35,7 @@
 
 struct Renderer;
 struct State;
+struct ChatMessage;
 #include "network.h"
 #include "fishnet.h"
 #include "object.h"
@@ -59,16 +60,18 @@ struct State;
 #define UITID_FIREPOWER_INDICATOR 3
 
 #define FIREPOWER_INCREMENT 0.008f
+#define TIMER_CHATPANE 400.0f
 
 struct ChatMessage{
 	ChatMessage(const char *name,const char *content):
-	from(name),msg(content){}
+		from(name),msg(content){}
 
 	std::string from;
 	std::string msg;
 };
 struct ServerMessage:ChatMessage{
-	ServerMessage(const char *name,const char *content):ChatMessage(name,content),timer(350.0f){}
+	ServerMessage(const char *name,const char *content):
+		ChatMessage(name,content),timer(350.0f){}
 
 	float timer;
 };
@@ -111,14 +114,15 @@ struct State{
 
 	Renderer renderer;
 
-	float speed;
+	float speed; // time delta
 	bool running;
 	bool show_menu; // show the main menu
 	std::string name; // the player's name
 	std::string connect_to; // connecting to address ...
-	Match match;
+	Match match; // manages the game
 	float firepower,final_firepower;
-	int colorid;
+	float timer_chatpane; // show the chat when active
+	int colorid; // my colorid
 
 	// menus
 	struct{
@@ -126,6 +130,7 @@ struct State{
 		MenuPlay play;
 		MenuConnect connect;
 		MenuInput input;
+		MenuChat chat;
 	}menu;
 
 	crosshair pointer[2];

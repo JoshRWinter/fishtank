@@ -11,7 +11,7 @@ struct Base{
 	bool collide(const Base&,float=0.0f)const;
 	int correct(const Base&);
 	bool pointing(const crosshair&,float=0.0f)const;
-	static void init_background(Base&,const Renderer&);
+	void init_background(const Renderer&);
 
 	float x,y,w,h,rot;
 	int frame,count;
