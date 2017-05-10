@@ -90,11 +90,7 @@ void MenuChat::render(const Renderer &renderer,const std::vector<ChatMessage> &c
 		if(line+0.6f>SCROLLPANE_BOTTOM)
 			break;
 		std::string m=cm.from+": "+cm.msg;
-		if(cm.from=="server")
-			glUniform4f(renderer.uniform.rgba,1.0f,1.0f,0.0f,1.0f);
 		drawtext(renderer.font.main,LEFT,line,m.c_str());
-		if(cm.from=="server")
-			glUniform4f(renderer.uniform.rgba,0.0f,0.0f,0.0f,1.0f);
 		line+=NEW_LINE_OFFSET;
 	}
 

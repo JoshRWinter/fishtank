@@ -50,7 +50,7 @@ bool State::core(){
 	}
 
 	// check for upper left chat press
-	if(pointer[0].active&&pointer[0].x>renderer.view.left&&pointer[0].x<renderer.view.left+2.0f&&
+	if(pointer[0].active&&pointer[0].x>renderer.view.left&&pointer[0].x<renderer.view.left+4.0f&&
 		pointer[0].y>renderer.view.top&&pointer[0].y<renderer.view.top+2.0f){
 		if(!menu.chat.exec(*this))
 			return false;
@@ -157,7 +157,7 @@ void State::render()const{
 		drawtextcentered(renderer.font.main,0.0f,-2.25f,announcement[0].msg.c_str());
 	}
 	if(chat.size()>0&&timer_chatpane>0.0f){
-		glUniform4f(renderer.uniform.rgba,0.8f,0.5f,0.2f,1.0f);
+		glUniform4f(renderer.uniform.rgba,0.0f,0.0f,0.0f,1.0f);
 		glBindTexture(GL_TEXTURE_2D,renderer.font.main->atlas);
 
 		// draw the last 3 messages

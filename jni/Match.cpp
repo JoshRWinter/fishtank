@@ -105,8 +105,6 @@ void Match::recv_data(State &state){
 			if(!strcmp((const char*)tctcp.name,"server")){ // message from the server
 				ServerMessage sm((const char*)tctcp.name,(const char*)tctcp.msg);
 				state.announcement.push_back(sm);
-				ChatMessage cm((const char*)tctcp.name,(const char*)tctcp.msg);
-				state.chat.push_back(cm);
 			}
 			else{
 				ChatMessage cm((const char*)tctcp.name,(const char*)tctcp.msg);
