@@ -219,7 +219,7 @@ State::State(){
 	memset(pointer,0,sizeof(crosshair)*2);
 	firepower=0.0f;
 	final_firepower=0.0f;
-	colorid=5;randomint(COLOR_RED,COLOR_PURPLE);
+	colorid=randomint(COLOR_RED,COLOR_PURPLE);
 
 	// players
 	Player dummy;
