@@ -107,14 +107,14 @@ struct State{
 	void reset();
 	bool core();
 	void render()const;
-	bool process()const;
+	bool process();
 	void write_config();
 	bool read_config();
 	static void fill_color(int,float*,float*,float*);
 
 	Renderer renderer;
 
-	float speed; // time delta
+	float last_time,speed; // time delta
 	bool running;
 	bool show_menu; // show the main menu
 	std::string name; // the player's name

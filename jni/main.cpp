@@ -42,18 +42,10 @@ extern "C" void android_main(android_app *app){
 	app->onAppCmd=cmdproc;
 	init_jni(app,&state.jni);
 
-	long long last_time=0;
-	get_nano_time(&last_time);
 	while(state.process()&&state.core()){
 		state.render();
 		eglSwapBuffers(state.renderer.display,state.renderer.surface);
 
-		// update state.speed, the time delta
-		long long current_time,diff;
-		get_nano_time(&current_time);
-		diff=current_time-last_time;
-		state.speed=diff/16666600.0f;
-		last_time=current_time;
 	};
 
 	term_jni(&state.jni);
