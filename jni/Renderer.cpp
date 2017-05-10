@@ -49,7 +49,7 @@ void Renderer::init(android_app &app){
 	// opengl state settings
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
-	glClearColor(0.0f,0.7f,0.75f,1.f);
+	glClearColor(0.2f,0.7f,0.75f,1.f);
 
 	// gameplay textures
 	if(!loadpack(&assets,app.activity->assetManager,"assets",NULL))
