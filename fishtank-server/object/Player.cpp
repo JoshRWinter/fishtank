@@ -53,10 +53,21 @@ void Player::process(Match &match){
 			zerof(&client.player.xv,ACCELERATE);
 
 		// handle velocities
+		bool in_air=client.player.yv!=0.0f; // player is flying around
+		float accel;
+		float max;
+		if(in_air){
+			accel=ACCELERATE*1.6f;
+			max=PLAYER_X_FAST_SPEED;
+		}
+		else{
+			accel=ACCELERATE;
+			max=PLAYER_X_SPEED;
+		}
 		if(client.input.left)
-			targetf(&client.player.xv,ACCELERATE,-PLAYER_X_SPEED);
+			targetf(&client.player.xv,accel,-max);
 		if(client.input.right)
-			targetf(&client.player.xv,ACCELERATE,PLAYER_X_SPEED);
+			targetf(&client.player.xv,accel,max);
 		if(client.input.up)
 			targetf(&client.player.yv,ACCELERATE,-PLAYER_Y_SPEED);
 

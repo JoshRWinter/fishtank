@@ -14,6 +14,7 @@ struct Base{
 
 #define PLAYER_X_SPEED 0.03f
 #define PLAYER_Y_SPEED 0.1f
+#define PLAYER_X_FAST_SPEED 0.035f
 #define PLAYER_ANGLE_INCREMENT 0.02f
 struct Player:Base{
 	Player(const area_bounds&);
