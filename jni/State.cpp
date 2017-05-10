@@ -194,14 +194,7 @@ void State::render()const{
 #endif // SHOW_FPS
 }
 
-bool State::process(){
-	// update state.speed, the time delta
-	long long current_time,diff;
-	get_nano_time(&current_time);
-	diff=current_time-last_time;
-	speed=diff/16666600.0f;
-	last_time=current_time;
-
+bool State::process()const{
 	// poll for events
 	int events;
 	android_poll_source *source;
@@ -221,7 +214,6 @@ State::State(){
 	}
 
 	speed=1.0f;
-	last_time=0.0f;
 	running=false;
 	show_menu=true;
 	memset(pointer,0,sizeof(crosshair)*2);
