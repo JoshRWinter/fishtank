@@ -11,6 +11,9 @@ Client::Client(int s,const std::string &addr,const area_bounds &bounds):tcp(s,ad
 	tcp.recv(string,MSG_LIMIT+1);
 	string[MSG_LIMIT]=0; // carefully
 	name=string;
+	// prevent the name "server"
+	if(name=="server")
+		name="server ";
 
 	// get the colorid
 	uint32_t colorid_tmp;
