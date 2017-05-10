@@ -5,9 +5,9 @@ static float shell_dmg(float f){
 	if(f<0.4)
 		return 0.2f;
 	if(f<0.5)
-		return 0.35f;
+		return 0.45f;
 	if(f<0.6)
-		return 0.7f;
+		return 0.75f;
 	if(f<0.7)
 		return 0.85f;
 	if(f<0.8)
