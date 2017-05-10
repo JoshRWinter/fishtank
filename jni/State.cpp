@@ -77,9 +77,10 @@ bool State::core(){
 
 void State::render()const{
 	glUniform4f(renderer.uniform.rgba,1.0f,1.0f,1.0f,1.0f);
-	// draw backdround
-	glBindTexture(GL_TEXTURE_2D,renderer.assets.texture[TID_BACKGROUND].object);
-	renderer.uidraw(background);
+	// draw backdrop
+	glClear(GL_COLOR_BUFFER_BIT);
+	glBindTexture(GL_TEXTURE_2D,renderer.assets.texture[TID_BACKDROP].object);
+	renderer.draw(backdrop);
 
 	// draw dead fish
 	if(dead_fish_list.size()!=0)
@@ -196,13 +197,13 @@ State::State(){
 	}
 
 	// background
-	background.x=renderer.view.left;
-	background.y=renderer.view.top;
-	background.w=renderer.view.right*2.0f;
-	background.h=renderer.view.bottom*2.0f;
-	background.rot=0.0f;
-	background.count=1;
-	background.frame=0;
+	backdrop.x=-13.5f;
+	backdrop.y=-14.6f;
+	backdrop.w=55.0f;
+	backdrop.h=19.0f;
+	backdrop.rot=0.0f;
+	backdrop.count=1;
+	backdrop.frame=0;
 
 	// ui buttons
 	const float DPAD_SIZE=1.1f;

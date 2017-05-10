@@ -42,7 +42,7 @@ struct State;
 #include "menu.h"
 
 // gameplay textures
-#define TID_BACKGROUND 0
+#define TID_BACKDROP 0
 #define TID_TANK 1
 #define TID_TURRET 2
 #define TID_SHELL 3
@@ -145,7 +145,7 @@ struct State{
 	std::vector<ServerMessage> announcement; // messages from the server
 
 	// objects
-	Base background;
+	Base backdrop;
 	std::vector<Player> player_list;
 	std::vector<Platform> platform_list;
 	std::vector<Shell*> shell_list;
