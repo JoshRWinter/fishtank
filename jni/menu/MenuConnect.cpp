@@ -5,8 +5,8 @@ bool MenuConnect::exec(State &state,const std::string &ip){
 	background.init_background(state.renderer);
 
 	socket_tcp &tcp=state.match.get_tcp();
-	button_cancel.init(-BUTTON_WIDTH/2.0f,0.5f,"Cancel");
-	button_ready.init(-BUTTON_WIDTH/2.0f,0.5f,"Ready!");
+	button_cancel.init(-BUTTON_WIDTH/2.0f,3.1f,"Cancel");
+	button_ready.init(-BUTTON_WIDTH/2.0f,3.1f,"Ready!");
 	address=ip;
 	connection_state=CONN_STATE_TRYING;
 	int initial_time=time(NULL);
@@ -95,6 +95,7 @@ void MenuConnect::render(const Renderer &renderer)const{
 
 	// button labels
 	glBindTexture(GL_TEXTURE_2D,renderer.font.main->atlas);
+	glUniform4f(renderer.uniform.rgba,BUTTON_TEXT_COLOR,1.0f);
 	if(connection_state!=CONN_STATE_READY)
 		button_cancel.render_text(renderer);
 	else

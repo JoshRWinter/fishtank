@@ -9,8 +9,8 @@ bool MenuMain::exec(State &state){
 	background.count=1;
 	background.frame=0;
 
-	button_play.init(-3.0f,1.0f,"play");
-	button_quit.init(3.0,1.0f,"quit");
+	button_play.init(-4.0f,3.1f,"Play");
+	button_quit.init(button_play.x+BUTTON_WIDTH+0.3f,3.1f,"Quit");
 
 	while(state.process()){
 		if(button_play.process(state.pointer)){
@@ -33,13 +33,8 @@ bool MenuMain::exec(State &state){
 void MenuMain::render(const Renderer &renderer)const{
 	glUniform4f(renderer.uniform.rgba,1.0f,1.0f,1.0f,1.0f);
 	// background
-	glBindTexture(GL_TEXTURE_2D,renderer.uiassets.texture[UITID_BACKGROUND].object);
+	glBindTexture(GL_TEXTURE_2D,renderer.uiassets.texture[UITID_FISHTANK].object);
 	renderer.uidraw(background);
-
-	// title text
-	glUniform4f(renderer.uniform.rgba,0.0f,0.0f,0.0f,1.0f);
-	glBindTexture(GL_TEXTURE_2D,renderer.font.main->atlas);
-	drawtextcentered(renderer.font.main,0.0f,-2.0f,"FISH TANK!");
 
 	// buttons
 	glBindTexture(GL_TEXTURE_2D,renderer.uiassets.texture[UITID_BUTTON].object);
@@ -47,7 +42,7 @@ void MenuMain::render(const Renderer &renderer)const{
 	button_quit.render(renderer);
 
 	// button label
-	glUniform4f(renderer.uniform.rgba,0.0f,0.0f,0.0f,1.0f);
+	glUniform4f(renderer.uniform.rgba,BUTTON_TEXT_COLOR,1.0f);
 	glBindTexture(GL_TEXTURE_2D,renderer.font.button->atlas);
 	button_play.render_text(renderer);
 	button_quit.render_text(renderer);

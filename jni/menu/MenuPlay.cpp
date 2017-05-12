@@ -9,9 +9,9 @@ bool MenuPlay::exec(State &state){
 	background.frame=0;
 	background.count=1;
 
-	button_name.init(-5.0f,1.5f,"Change\nName");
-	button_connect.init(-0.0f,1.5f,"Connect");
-	button_back.init(4.0f,1.5f,"Back");
+	button_name.init(-6.0f,3.1f,"Name");
+	button_connect.init(button_name.x+BUTTON_WIDTH+0.3f,3.1f,"Connect");
+	button_back.init(button_connect.x+BUTTON_WIDTH+0.3f,3.1f,"Back");
 
 	name=&state.name;
 
@@ -70,6 +70,7 @@ void MenuPlay::render(const Renderer &renderer)const{
 
 	// button text
 	glBindTexture(GL_TEXTURE_2D,renderer.font.button->atlas);
+	glUniform4f(renderer.uniform.rgba,BUTTON_TEXT_COLOR,1.0f);
 	button_name.render_text(renderer);
 	button_connect.render_text(renderer);
 	button_back.render_text(renderer);

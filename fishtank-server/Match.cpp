@@ -251,7 +251,7 @@ void Match::send_chat(const std::string &msg,const std::string &from){
 	if(from=="server")
 		std::cout<<"chat\033[36m[\033[31mserver: \033[36m";
 	else
-		std::cout<<"\033[36mchat["<<from<<": ";
+		std::cout<<"chat\033[36m["<<from<<": ";
 	std::cout<<msg<<"]\033[0m"<<std::endl;
 }
 

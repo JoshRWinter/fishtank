@@ -17,8 +17,9 @@ struct Base{
 	int frame,count;
 };
 
-#define BUTTON_WIDTH 3.0f
-#define BUTTON_HEIGHT BUTTON_WIDTH
+#define BUTTON_WIDTH 4.0f
+#define BUTTON_HEIGHT 1.0f
+#define BUTTON_TEXT_COLOR 0.775f,0.775f,0.775f
 struct Button:Base{
 	void init(float,float,const char*);
 	bool process(const crosshair*,float=0.0f);

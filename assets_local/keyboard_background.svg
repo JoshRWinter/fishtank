@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="210mm"
+   height="297mm"
+   viewBox="0 0 210 297"
+   version="1.1"
+   id="svg4211"
+   inkscape:export-filename="/home/josh/android/fishtank/assets_local/keyboard_background.png"
+   inkscape:export-xdpi="254"
+   inkscape:export-ydpi="254"
+   inkscape:version="0.92.1 r"
+   sodipodi:docname="keyboard_background.svg">
+  <defs
+     id="defs4205" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.4"
+     inkscape:cx="274.63224"
+     inkscape:cy="660.66789"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1918"
+     inkscape:window-height="1042"
+     inkscape:window-x="0"
+     inkscape:window-y="18"
+     inkscape:window-maximized="0" />
+  <metadata
+     id="metadata4208">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="fill:#54869c;fill-opacity:1;stroke:none;stroke-width:0.19737408;stroke-opacity:1"
+       id="rect4166"
+       width="128"
+       height="72"
+       x="41.833332"
+       y="112.83334" />
+    <rect
+       style="fill:#c8c8c8;fill-opacity:0.78500001;stroke:none;stroke-width:0.48100564;stroke-opacity:1"
+       id="rect3592"
+       width="128"
+       height="48.541031"
+       x="41.833332"
+       y="136.2923" />
+    <path
+       style="fill:none;stroke:#9d9d9d;stroke-width:0.26491201px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 41.841435,136.30517 H 169.82027"
+       id="path3594"
+       inkscape:connector-curvature="0" />
+  </g>
+</svg>

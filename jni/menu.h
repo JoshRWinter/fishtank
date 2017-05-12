@@ -25,7 +25,7 @@ struct MenuInput:Menu{
 	const char *header;
 	ButtonSmall alpha[28];
 	ButtonSmall numeric[10];
-	ButtonSmall backspace,space;
+	ButtonSmall backspace,clear,space;
 	Base background;
 	std::string *text;
 	ButtonSmall enter,cancel;

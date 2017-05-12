@@ -6,8 +6,8 @@ static const float NEW_LINE_OFFSET=0.55f;
 bool MenuChat::exec(State &state){
 	background.init_background(state.renderer);
 
-	button_say.init(-3.0f,1.25f,"Say...");
-	button_back.init(1.0,1.25f,"Back");
+	button_say.init(-4.0f,3.1f,"Say...");
+	button_back.init(button_say.x+BUTTON_WIDTH+0.3f,3.1f,"Back");
 
 	scrolltop=-4.0f;
 	drag=false;
@@ -39,7 +39,6 @@ bool MenuChat::exec(State &state){
 		// scrolling mechanism
 		if(state.chat.size()>0){
 			// scroll to the bottom on new chat
-
 			if(new_message&&scrolltop+(state.chat.size()*NEW_LINE_OFFSET)>SCROLLPANE_BOTTOM&&scrolltop+((state.chat.size()-2)*NEW_LINE_OFFSET)<SCROLLPANE_BOTTOM)
 				scrolltop=SCROLLPANE_BOTTOM-(state.chat.size()*NEW_LINE_OFFSET)-0.5f;
 
@@ -82,7 +81,7 @@ void MenuChat::render(const Renderer &renderer,const std::vector<ChatMessage> &c
 	renderer.uidraw(background);
 
 	// messages
-	glUniform4f(renderer.uniform.rgba,0.0f,0.0f,0.0f,1.0f);
+	glUniform4f(renderer.uniform.rgba,1.0f,1.0f,1.0f,1.0f);
 	glBindTexture(GL_TEXTURE_2D,renderer.font.main->atlas);
 	float line=scrolltop;
 	const float LEFT=-6.0f;
@@ -100,6 +99,7 @@ void MenuChat::render(const Renderer &renderer,const std::vector<ChatMessage> &c
 	button_back.render(renderer);
 
 	// button text
+	glUniform4f(renderer.uniform.rgba,BUTTON_TEXT_COLOR,1.0f);
 	glBindTexture(GL_TEXTURE_2D,renderer.font.main->atlas);
 	button_say.render_text(renderer);
 	button_back.render_text(renderer);

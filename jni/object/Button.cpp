@@ -31,17 +31,13 @@ bool Button::process(const crosshair *ch,float tolerance){
 
 void Button::render(const Renderer &renderer)const{
 	if(active)
-		glUniform4f(renderer.uniform.rgba,0.0f,0.5f,0.8f,1.0f);
+		glUniform4f(renderer.uniform.rgba,0.8f,0.8f,0.8f,1.0f);
 	else
-		glUniform4f(renderer.uniform.rgba,0.0f,0.0f,0.0f,1.0f);
+		glUniform4f(renderer.uniform.rgba,1.0f,1.0f,1.0f,1.0f);
 	renderer.uidraw(*this);
 }
 
 void Button::render_text(const Renderer &renderer)const{
-	if(active)
-		glUniform4f(renderer.uniform.rgba,0.0f,0.5f,0.8f,1.0f);
-	else
-		glUniform4f(renderer.uniform.rgba,0.0f,0.0f,0.0f,1.0f);
 	drawtextcentered(renderer.font.button,x+(BUTTON_WIDTH/2.0f),y+(BUTTON_HEIGHT/2.0f)-0.3f,label);
 }
 
@@ -58,10 +54,6 @@ void ButtonSmall::init(float xpos,float ypos,const char *button_label){
 }
 
 void ButtonSmall::render_text(const Renderer &renderer)const{
-	if(active)
-		glUniform4f(renderer.uniform.rgba,0.0f,0.5f,0.8f,1.0f);
-	else
-		glUniform4f(renderer.uniform.rgba,0.0f,0.0f,0.0f,1.0f);
 	drawtextcentered(renderer.font.button_small,x+(BUTTON_SMALL_SIZE/2.0f),y+(BUTTON_SMALL_SIZE/2.0f)-0.2f,label);
 }
 
@@ -79,16 +71,12 @@ void ButtonBasic::init(float xpos,float ypos,float size,const char *name){
 
 void ButtonBasic::render(const Renderer &renderer)const{
 	if(active)
-		glUniform4f(renderer.uniform.rgba,0.0f,0.5f,0.8f,1.0f);
+		glUniform4f(renderer.uniform.rgba,0.8f,0.8f,0.8f,0.45f);
 	else
-		glUniform4f(renderer.uniform.rgba,0.0f,0.0f,0.0f,0.45f);
+		glUniform4f(renderer.uniform.rgba,1.0f,1.0f,1.0f,0.45f);
 	renderer.uidraw(*this);
 }
 
 void ButtonBasic::render_text(const Renderer &renderer)const{
-	if(active)
-		glUniform4f(renderer.uniform.rgba,0.0f,0.5f,0.8f,1.0f);
-	else
-		glUniform4f(renderer.uniform.rgba,0.0f,0.0f,0.0f,0.45f);
 	drawtextcentered(renderer.font.button_small,x+(w/2.0f),y+(h/2.0f)-(renderer.font.button_small->fontsize/2.0f),label);
 }
