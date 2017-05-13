@@ -32,6 +32,13 @@ int Base::correct(const Base &b){
 		side=COLLIDE_BOTTOM;
 	}
 
+	// check for corner collision
+	const float tolerance=0.01f;
+	if(side==COLLIDE_RIGHT||side==COLLIDE_LEFT){
+		if(fabsf(rdiff-tdiff)<tolerance||fabsf(ldiff-tdiff)<tolerance)
+			side=COLLIDE_TOP;
+	}
+
 	switch(side){
 	case COLLIDE_RIGHT:
 		x=b.x+b.w;
