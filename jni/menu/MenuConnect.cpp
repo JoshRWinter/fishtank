@@ -18,7 +18,8 @@ bool MenuConnect::exec(State &state,const std::string &ip){
 
 	while(state.process()){
 		if(connection_state!=CONN_STATE_READY){
-			if(button_cancel.process(state.pointer)){
+			if(button_cancel.process(state.pointer)||state.back){
+				state.back=false;
 				tcp.close();
 				return true;
 			}

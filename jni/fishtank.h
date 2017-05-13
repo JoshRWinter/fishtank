@@ -63,6 +63,8 @@ struct ChatMessage;
 #define UITID_COLORBLOB 6
 #define UITID_UIBUTTON 7
 #define UITID_FBUTTON 8
+#define UITID_BACKGROUND_TRANSPARENT 9
+#define UITID_FULL_WHITE 10
 
 #define FIREPOWER_INCREMENT 0.008f
 #define TIMER_CHATPANE 400.0f
@@ -120,7 +122,7 @@ struct State{
 	Renderer renderer;
 
 	float speed; // time delta
-	bool running;
+	bool running,back,pause_menu;
 	bool show_menu; // show the main menu
 	std::string name; // the player's name
 	std::string connect_to; // connecting to address ...
@@ -135,6 +137,7 @@ struct State{
 		MenuPlay play;
 		MenuConnect connect;
 		MenuInput input;
+		MenuPause pause;
 		MenuChat chat;
 	}menu;
 

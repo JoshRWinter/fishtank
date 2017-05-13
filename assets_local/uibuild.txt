@@ -1,1 +1,1 @@
-fishtank.tga background.tga keyboard_background.tga button.tga button_small.tga firepower_indicator.tga colorblob.tga uibutton.tga fbutton.tga -o ../assets/uiassets
+fishtank.tga background.tga keyboard_background.tga button.tga button_small.tga firepower_indicator.tga colorblob.tga uibutton.tga fbutton.tga background_transparent.tga full_white.tga -o ../assets/uiassets

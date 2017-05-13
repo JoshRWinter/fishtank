@@ -62,6 +62,16 @@ struct MenuConnect{
 	int connection_state;
 };
 
+struct MenuPause{
+	bool exec(State&);
+	virtual void render(const Renderer&)const;
+
+	Base background,black_background;
+	Button button_quit;
+	Button button_settings;
+	Button button_back;
+};
+
 struct MenuChat{
 	bool exec(State&);
 	void render(const Renderer&,const std::vector<ChatMessage>&)const;

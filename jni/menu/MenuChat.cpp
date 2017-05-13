@@ -1,7 +1,7 @@
 #include "../fishtank.h"
 
 static const float SCROLLPANE_BOTTOM=1.0f;
-static const float NEW_LINE_OFFSET=0.55f;
+static const float NEW_LINE_OFFSET=0.7f;
 
 bool MenuChat::exec(State &state){
 	background.init_background(state.renderer);
@@ -9,7 +9,7 @@ bool MenuChat::exec(State &state){
 	button_say.init(-4.0f,3.1f,"Say...");
 	button_back.init(button_say.x+BUTTON_WIDTH+0.3f,3.1f,"Back");
 
-	scrolltop=-4.0f;
+	scrolltop=SCROLLPANE_BOTTOM-(state.chat.size()*NEW_LINE_OFFSET)-0.5f;
 	drag=false;
 	offset=0.0f;
 
@@ -32,7 +32,8 @@ bool MenuChat::exec(State &state){
 				ChatMessage cm(state.name.c_str(),chat.c_str());
 			}
 		}
-		if(button_back.process(state.pointer)){
+		if(button_back.process(state.pointer)||state.back){
+			state.back=false;
 			return true;
 		}
 
@@ -46,7 +47,6 @@ bool MenuChat::exec(State &state){
 				if(drag){
 					// already scrolling
 					scrolltop=state.pointer[0].y-offset;
-
 				}
 				else{
 					// set the anchor

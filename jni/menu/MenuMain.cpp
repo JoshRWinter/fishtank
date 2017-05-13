@@ -19,7 +19,8 @@ bool MenuMain::exec(State &state){
 			if(state.match.connected())
 				return true;
 		}
-		if(button_quit.process(state.pointer)){
+		if(button_quit.process(state.pointer)||state.back){
+			state.back=false;
 			ANativeActivity_finish(state.app->activity);
 		}
 

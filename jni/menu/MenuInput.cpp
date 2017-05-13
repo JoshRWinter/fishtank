@@ -71,7 +71,8 @@ bool MenuInput::exec(State &state,const char *header_text,std::string *menu_text
 			text->clear();
 		if(enter.process(state.pointer,BUTTON_TOLERANCE))
 			return true;
-		if(cancel.process(state.pointer,BUTTON_TOLERANCE)){
+		if(cancel.process(state.pointer,BUTTON_TOLERANCE)||state.back){
+			state.back=false;
 			text->clear();
 			return true;
 		}

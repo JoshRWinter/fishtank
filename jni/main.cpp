@@ -28,6 +28,14 @@ int32_t inputproc(android_app *app,AInputEvent *event){
 	int32_t type=AInputEvent_getType(event);
 	if(type==AINPUT_EVENT_TYPE_MOTION)
 		return retrieve_touchscreen_input(event,state->pointer,state->renderer.dev.w,state->renderer.dev.h,state->renderer.view.right*2.0f,state->renderer.view.bottom*2.0f);
+	else if(type==AINPUT_EVENT_TYPE_KEY){
+		int32_t code=AKeyEvent_getKeyCode(event);
+		int32_t action=AKeyEvent_getAction(event);
+		if(code==AKEYCODE_BACK&&action==AKEY_EVENT_ACTION_UP){
+			state->back=true;
+			return true;
+		}
+	}
 	return false;
 }
 

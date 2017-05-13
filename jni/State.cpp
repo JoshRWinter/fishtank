@@ -49,42 +49,52 @@ bool State::core(){
 			announcement.erase(announcement.begin());
 	}
 
-	// check for upper left chat press
-	if(pointer[0].active&&pointer[0].x>renderer.view.left&&pointer[0].x<renderer.view.left+4.0f&&
-		pointer[0].y>renderer.view.top&&pointer[0].y<renderer.view.top+2.0f){
-		if(!menu.chat.exec(*this))
-			return false;
+	if(!pause_menu){
+		// check for upper left chat press
+		if(pointer[0].active&&pointer[0].x>renderer.view.left&&pointer[0].x<renderer.view.left+4.0f&&
+			pointer[0].y>renderer.view.top&&pointer[0].y<renderer.view.top+2.0f){
+			if(!menu.chat.exec(*this))
+				return false;
+		}
+
+		// chatpane timer
+		if(timer_chatpane>0.0f){
+			timer_chatpane-=speed;
+			if(timer_chatpane<0.0f)
+				timer_chatpane=0.0f;
+		}
+
+		// process ui buttons
+		const float UI_TOLERANCE=-0.25f;
+		input.left.process(pointer,UI_TOLERANCE);
+		input.right.process(pointer,UI_TOLERANCE);
+		input.up_r.process(pointer,UI_TOLERANCE);
+		input.up_l.process(pointer,UI_TOLERANCE);
+		input.aim_left.process(pointer,UI_TOLERANCE);
+		input.aim_right.process(pointer,UI_TOLERANCE);
+		if(input.fire.process(pointer,UI_TOLERANCE)){
+			const float minimum=0.35f;
+			if(firepower<minimum)
+				firepower=minimum;
+			final_firepower=firepower;
+			firepower=0.0f;
+		}
+		else if(input.fire.active){
+			firepower+=FIREPOWER_INCREMENT*speed;
+			if(firepower>1.0f)
+				firepower=1.0f;
+		}
+		else
+			firepower=0.0f;
 	}
 
-	// chatpane timer
-	if(timer_chatpane>0.0f){
-		timer_chatpane-=speed;
-		if(timer_chatpane<0.0f)
-			timer_chatpane=0.0f;
+	// pause menu
+	if(back){
+		back=false;
+		pause_menu=true;
+		menu.pause.exec(*this);
+		pause_menu=false;
 	}
-
-	// process ui buttons
-	const float UI_TOLERANCE=-0.25f;
-	input.left.process(pointer,UI_TOLERANCE);
-	input.right.process(pointer,UI_TOLERANCE);
-	input.up_r.process(pointer,UI_TOLERANCE);
-	input.up_l.process(pointer,UI_TOLERANCE);
-	input.aim_left.process(pointer,UI_TOLERANCE);
-	input.aim_right.process(pointer,UI_TOLERANCE);
-	if(input.fire.process(pointer,UI_TOLERANCE)){
-		const float minimum=0.35f;
-		if(firepower<minimum)
-			firepower=minimum;
-		final_firepower=firepower;
-		firepower=0.0f;
-	}
-	else if(input.fire.active){
-		firepower+=FIREPOWER_INCREMENT*speed;
-		if(firepower>1.0f)
-			firepower=1.0f;
-	}
-	else
-		firepower=0.0f;
 
 	return true;
 }
@@ -217,6 +227,8 @@ State::State(){
 
 	speed=1.0f;
 	running=false;
+	back=false;
+	pause_menu=false;
 	show_menu=true;
 	memset(pointer,0,sizeof(crosshair)*2);
 	firepower=0.0f;

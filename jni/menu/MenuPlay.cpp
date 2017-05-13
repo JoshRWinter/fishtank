@@ -69,7 +69,8 @@ bool MenuPlay::exec(State &state){
 		}
 
 		// cancel
-		if(button_back.process(state.pointer)){
+		if(button_back.process(state.pointer)||state.back){
+			state.back=false;
 			return true;
 		}
 
