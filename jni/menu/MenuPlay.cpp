@@ -48,9 +48,11 @@ bool MenuPlay::exec(State &state){
 
 		// connect the player
 		if(button_connect.process(state.pointer)){
-			if(!state.menu.input.exec(state,"Connect to a server",&state.connect_to))
+			std::string addr=state.connect_to;
+			if(!state.menu.input.exec(state,"Connect to a server",&addr))
 				return false;
-			if(state.connect_to.length()>0){
+			if(addr.length()>0){
+				state.connect_to=addr;
 				if(!state.menu.connect.exec(state,state.connect_to))
 					return false;
 				if(state.match.connected())
