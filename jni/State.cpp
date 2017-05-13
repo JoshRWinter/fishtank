@@ -155,7 +155,7 @@ void State::render()const{
 	if(announcement.size()>0){
 		glBindTexture(GL_TEXTURE_2D,renderer.font.main->atlas);
 		glUniform4f(renderer.uniform.rgba,0.701f,0.71f,0.3f,1.0f);
-		drawtextcentered(renderer.font.main,0.0f,-2.25f,announcement[0].msg.c_str());
+		drawtextcentered(renderer.font.main,0.0f,-3.15f,announcement[0].msg.c_str());
 	}
 	if(chat.size()>0&&timer_chatpane>0.0f){
 		glUniform4f(renderer.uniform.rgba,BUTTON_TEXT_COLOR,1.0f);
