@@ -35,11 +35,13 @@ struct MenuPlay:Menu{
 	bool exec(State&);
 	virtual void render(const Renderer&)const;
 
+	int *colorid;
 	std::string *name;
 	Base background;
 	Button button_name;
 	Button button_connect;
 	Button button_back;
+	Base blob[5]; // color blobs
 };
 
 #define CONN_STATE_TRYING 1

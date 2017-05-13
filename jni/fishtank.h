@@ -25,7 +25,7 @@
 #define RGB_BLUE_B 0.85f
 #define RGB_CYAN_R 0.2289f
 #define RGB_CYAN_G 0.5445f
-#define RGB_CYAN_B 0.54f
+#define RGB_CYAN_B 0.64f
 #define RGB_GREEN_R 0.35f
 #define RGB_GREEN_G 0.6f
 #define RGB_GREEN_B 0.42f
@@ -60,6 +60,9 @@ struct ChatMessage;
 #define UITID_BUTTON 3
 #define UITID_BUTTON_SMALL 4
 #define UITID_FIREPOWER_INDICATOR 5
+#define UITID_COLORBLOB 6
+#define UITID_UIBUTTON 7
+#define UITID_FBUTTON 8
 
 #define FIREPOWER_INCREMENT 0.008f
 #define TIMER_CHATPANE 400.0f

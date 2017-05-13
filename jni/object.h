@@ -2,6 +2,7 @@
 #define OBJECT_H
 
 #define FIRE_BUTTON_SIZE 1.8f
+#define TEXT_COLOR 0.2f,0.2f,0.2f
 
 #define COLLIDE_LEFT 1
 #define COLLIDE_RIGHT 2
@@ -19,7 +20,7 @@ struct Base{
 
 #define BUTTON_WIDTH 4.0f
 #define BUTTON_HEIGHT 1.0f
-#define BUTTON_TEXT_COLOR 0.775f,0.775f,0.775f
+#define BUTTON_TEXT_COLOR 0.675f,0.675f,0.675f
 struct Button:Base{
 	void init(float,float,const char*);
 	bool process(const crosshair*,float=0.0f);

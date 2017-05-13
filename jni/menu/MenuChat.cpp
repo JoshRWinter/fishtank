@@ -81,7 +81,7 @@ void MenuChat::render(const Renderer &renderer,const std::vector<ChatMessage> &c
 	renderer.uidraw(background);
 
 	// messages
-	glUniform4f(renderer.uniform.rgba,1.0f,1.0f,1.0f,1.0f);
+	glUniform4f(renderer.uniform.rgba,TEXT_COLOR,1.0f);
 	glBindTexture(GL_TEXTURE_2D,renderer.font.main->atlas);
 	float line=scrolltop;
 	const float LEFT=-6.0f;

@@ -113,7 +113,7 @@ void MenuInput::render(const Renderer &renderer)const{
 	enter.render_text(renderer);
 	cancel.render_text(renderer);
 
-	glUniform4f(renderer.uniform.rgba,BUTTON_TEXT_COLOR,1.0f);
+	glUniform4f(renderer.uniform.rgba,TEXT_COLOR,1.0f);
 	// render what's in the string
 	drawtextcentered(renderer.font.button_small,0.0f,-2.5f,(*text+"|").c_str());
 	// draw the header text

@@ -60,7 +60,7 @@ void Renderer::init(android_app &app){
 
 	// fonts
 	set_ftfont_params(screen.w,screen.h,view.right*2.0f,view.bottom*2.0f,uniform.vector,uniform.size,uniform.texcoords);
-	font.main=create_ftfont(app.activity->assetManager,0.5f,"arial.ttf");
+	font.main=create_ftfont(app.activity->assetManager,0.6f,"arial.ttf");
 	font.button=create_ftfont(app.activity->assetManager,0.5f,"arial.ttf");
 	font.button_small=create_ftfont(app.activity->assetManager,0.4f,"arial.ttf");
 }

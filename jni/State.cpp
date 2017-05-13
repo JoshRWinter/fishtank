@@ -132,14 +132,15 @@ void State::render()const{
 		renderer.uidraw(fpi);
 	}
 	// draw ui buttons
-	glBindTexture(GL_TEXTURE_2D,renderer.uiassets.texture[UITID_BUTTON_SMALL].object);
+	glBindTexture(GL_TEXTURE_2D,renderer.uiassets.texture[UITID_UIBUTTON].object);
 	input.left.render(renderer);
 	input.right.render(renderer);
 	input.up_r.render(renderer);
 	input.up_l.render(renderer);
-	input.fire.render(renderer);
 	input.aim_left.render(renderer);
 	input.aim_right.render(renderer);
+	glBindTexture(GL_TEXTURE_2D,renderer.uiassets.texture[UITID_FBUTTON].object);
+	input.fire.render(renderer);
 	// ui button text
 	glBindTexture(GL_TEXTURE_2D,renderer.font.button_small->atlas);
 	input.left.render_text(renderer);
@@ -211,6 +212,7 @@ State::State(){
 	if(!read_config()){
 		name="basil fawlty";
 		connect_to="";
+		colorid=COLOR_RED;
 	}
 
 	speed=1.0f;
@@ -219,7 +221,6 @@ State::State(){
 	memset(pointer,0,sizeof(crosshair)*2);
 	firepower=0.0f;
 	final_firepower=0.0f;
-	colorid=randomint(COLOR_RED,COLOR_PURPLE);
 
 	// players
 	Player dummy;
@@ -286,6 +287,7 @@ bool State::read_config(){
 	char name_tmp[MSG_LIMIT+1];
 	fread(connect_to_tmp,1,MSG_LIMIT+1,file);
 	fread(name_tmp,1,MSG_LIMIT+1,file);
+	fread(&colorid,sizeof(int),1,file);
 	name=name_tmp;
 	connect_to=connect_to_tmp;
 
@@ -306,6 +308,7 @@ void State::write_config(){
 	strncpy(name_tmp,name.c_str(),MSG_LIMIT+1);
 	fwrite(connect_to_tmp,1,MSG_LIMIT+1,file);
 	fwrite(name_tmp,1,MSG_LIMIT+1,file);
+	fwrite(&colorid,sizeof(int),1,file);
 
 	fclose(file);
 }

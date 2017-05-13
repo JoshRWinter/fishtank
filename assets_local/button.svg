@@ -29,7 +29,7 @@
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
      inkscape:zoom="11.313708"
-     inkscape:cx="492.62959"
+     inkscape:cx="476.67549"
      inkscape:cy="438.09562"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
@@ -48,7 +48,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -65,7 +65,7 @@
        x="117.34895"
        y="175.71735" />
     <path
-       style="fill:#54869c;fill-opacity:1;stroke:none;stroke-width:0.9753617;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:#327c9d;fill-opacity:1;stroke:none;stroke-width:0.9753617;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        d="M 445.38867 337.11719 L 445.38867 354.0918 L 526.70703 354.0918 L 526.70703 337.11719 L 445.38867 337.11719 z M 446.99219 338.59961 L 453.04297 342.23633 L 459.01367 345.82617 L 452.96289 349.46484 L 446.99219 353.05469 L 446.99219 345.7793 L 446.99219 338.59961 z M 525.10156 338.59961 L 525.10156 345.7793 L 525.10156 353.05469 L 519.13281 349.46484 L 513.08008 345.82617 L 519.05078 342.23633 L 525.10156 338.59961 z "
        transform="matrix(0.26458333,0,0,0.26458333,0,87)"
        id="rect4970" />

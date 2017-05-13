@@ -64,24 +64,24 @@ void MenuConnect::render(const Renderer &renderer)const{
 	renderer.uidraw(background);
 
 	// main text
-	glUniform4f(renderer.uniform.rgba,0.0f,0.0f,0.0f,1.0f);
+	glUniform4f(renderer.uniform.rgba,TEXT_COLOR,1.0f);
 	glBindTexture(GL_TEXTURE_2D,renderer.font.main->atlas);
 	char connecting_to[MSG_LIMIT+250];
 	switch(connection_state){
 	case CONN_STATE_TRYING:
-		sprintf(connecting_to,"connecting to\n%s",address.c_str());
+		sprintf(connecting_to,"Connecting to\n%s",address.c_str());
 		break;
 	case CONN_STATE_DEAD:
-		sprintf(connecting_to,"Could not resolve\n\"%s\"\nMake sure that it is a valid IPv4 or IPv6 address or domain name.",address.c_str());
+		sprintf(connecting_to,"Could not resolve\n\"%s\"\nMake sure it is a valid IP address or domain name",address.c_str());
 		break;
 	case CONN_STATE_READY:
-		sprintf(connecting_to,"connected to\n%s",connected_address.c_str());
+		sprintf(connecting_to,"%s\nConnected and ready",connected_address.c_str());
 		break;
 	case CONN_STATE_TIMEOUT:
-		sprintf(connecting_to,"TIMEOUT:\ncould not connect to\n%s",address.c_str());
+		sprintf(connecting_to,"TIMEOUT:\nCould not connect to\n%s",address.c_str());
 		break;
 	case CONN_STATE_KICKED:
-		sprintf(connecting_to,"ERROR:\nsorry, the server is full at the moment");
+		sprintf(connecting_to,"ERROR:\nServer at capacity");
 		break;
 	}
 	drawtextcentered(renderer.font.main,0.0f,-3.0f,connecting_to);
