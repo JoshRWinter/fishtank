@@ -283,8 +283,8 @@ void ParticlePlayer::render(const Renderer &renderer,const std::vector<ParticleP
 
 // intense: larger bubbles
 ParticleBubble::ParticleBubble(const State &state,const Player &player){
-	w=PARTICLE_BUBBLE_LARGE_SIZE;
-	h=PARTICLE_BUBBLE_LARGE_SIZE;
+	w=PARTICLE_BUBBLE_SIZE;
+	h=PARTICLE_BUBBLE_SIZE;
 
 	// pick a side of the player to spawn this bubble on
 	const float inward=0.3f;

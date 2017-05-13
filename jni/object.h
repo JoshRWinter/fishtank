@@ -120,8 +120,7 @@ struct ParticlePlayer:Base{
 	int colorid;
 };
 
-#define PARTICLE_BUBBLE_LARGE_SIZE 0.175f
-#define PARTICLE_BUBBLE_SIZE 0.12f
+#define PARTICLE_BUBBLE_SIZE 0.175f
 struct ParticleBubble:Base{
 	ParticleBubble(const State &state,const Player&);
 	static void process(State&);
