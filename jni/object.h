@@ -43,11 +43,20 @@ struct ButtonBasic:Button{
 	void render_text(const Renderer&)const;
 };
 
+#define BEACON_FRAME_TIMER 18
+struct Beacon:Base{
+	Beacon();
+
+	float xv,yv;
+	float ttl;
+	float timer_frame;
+};
 struct Player:Base{
 	Player();
 	static void process(State&);
 	static void render(const Renderer&,const std::vector<Player>&);
 
+	Beacon beacon;
 	float xv,yv;
 	Base turret;
 	int colorid; // zero if empty player
@@ -70,11 +79,23 @@ struct Shell:Base{
 #define PLATFORM_VIS_WIDTH PLATFORM_WIDTH
 #define PLATFORM_VIS_HEIGHT 0.85f
 struct Platform:Base{
-	Platform(bool,bool,float,float);
+	Platform(bool,bool,float,float,unsigned);
 	static void render(const Renderer&,const std::vector<Platform>&);
 
 	Base visual;
 	bool active;
+	unsigned seed; // serves to sync random interactions between client and server
+};
+
+#define ARTILLERY_WIDTH 0.35f
+#define ARTILLERY_HEIGHT 0.1375f
+struct Artillery:Base{
+	Artillery(float,float);
+	static void process(State&);
+	static void render(const Renderer&,const std::vector<Artillery*>&);
+
+	Base visual; // the visible artillery. inherited Base is for collision purposes only
+	float xv;
 };
 
 #define PARTICLE_SHELL_HEIGHT 0.1333f
@@ -96,8 +117,10 @@ struct ParticleShell:Base{
 struct ParticlePlatform:Base{
 	ParticlePlatform(const Shell&);
 	ParticlePlatform(float,float);
+	ParticlePlatform(const Artillery&);
 	static void spawn(State&,const Shell&,int);
 	static void spawn_destroy_platform(State&,const Platform&);
+	static void spawn(State&,const Artillery&);
 	static void process(State&);
 	static void render(const Renderer&,const std::vector<ParticlePlatform*>&);
 
@@ -122,7 +145,8 @@ struct ParticlePlayer:Base{
 
 #define PARTICLE_BUBBLE_SIZE 0.175f
 struct ParticleBubble:Base{
-	ParticleBubble(const State &state,const Player&);
+	ParticleBubble(const State&,const Player&);
+	ParticleBubble(const Artillery&);
 	static void process(State&);
 	static void render(const Renderer&,const std::vector<ParticleBubble*>&);
 

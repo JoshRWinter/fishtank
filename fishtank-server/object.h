@@ -9,9 +9,19 @@ struct Base{
 	bool collide(const Base&,float=0.0f)const;
 	int correct(const Base&);
 
-	float x,y,w,h,rot;
+	float x,y,w,h;
 };
 
+struct Beacon:Base{
+	Beacon();
+	void reset();
+	void fire(const Client&);
+
+	float rot;
+	float rotv;
+	float xv,yv;
+	float ttl;
+};
 #define PLAYER_X_SPEED 0.03f
 #define PLAYER_Y_SPEED 0.1f
 #define PLAYER_X_FAST_SPEED 0.035f
@@ -21,6 +31,8 @@ struct Player:Base{
 	static void process(Match&);
 	void reset(const area_bounds&);
 
+	Beacon beacon;
+	bool avail_airstrike; // player is allowed to call an airstrike
 	int health;
 	float angle; // angle of the turret
 	float xv,yv;
@@ -45,6 +57,31 @@ struct Platform:Base{
 	static uint32_t platform_status[2];
 	bool horiz; // flat or vertical
 	int health;
+	unsigned seed; // serves to synchronize random interactions between clients and server
+};
+
+#define ARTILLERY_SPLASH_RADIUS 5.2f
+#define ARTILLERY_INITIAL_TIMER 110
+#define ARTILLERY_TIMER 32,55
+#define ARTILLERY_COUNT 5
+struct Artillery:Base{
+	Artillery(const Beacon &beacon,int);
+	void explode(std::vector<Client*>&);
+	static int dmg(float);
+
+	int client_id; // client id who called in the artillery
+	bool processed; // process by Match::send_data()
+	float xv;
+};
+struct Airstrike{
+	Airstrike(const Client&);
+	~Airstrike();
+	static void process(Match&);
+
+	const Client &client;
+	int timer; // timer till next artillery
+	int count; // artillery left
+	std::vector<Artillery*> arty_list;
 };
 
 #endif // OBJECT_H

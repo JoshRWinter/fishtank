@@ -30,6 +30,8 @@ void Player::reset(const area_bounds &bounds){
 	angle=M_PI/2.0f;
 	w=PLAYER_WIDTH;
 	h=PLAYER_HEIGHT;
+	avail_airstrike=true;
+	beacon.y=FLOOR+10.0f;
 }
 
 void Player::process(Match &match){
@@ -45,6 +47,65 @@ void Player::process(Match &match){
 			client.input.fire=0.0f;
 			// launch the player backwards a bit
 			client.player.xv=-s->xv/5.0f;
+		}
+
+		// handle firing a beacon (airstrike)
+		if(client.player.avail_airstrike&&client.input.astrike>0.0f&&client.player.health>0){
+			client.player.avail_airstrike=false;
+			client.player.beacon.fire(client);
+			client.input.astrike=0.0f;
+			match.airstrike_list.push_back(new Airstrike(client));
+		}
+		else
+			client.input.astrike=0.0f;
+
+		// process the beacon
+		// inactive if below FLOOR+3.0f
+		if(client.player.beacon.y<FLOOR+3.0f){
+			client.player.beacon.yv+=GRAVITY;
+
+			float speed=sqrtf((client.player.beacon.xv*client.player.beacon.xv)+(client.player.beacon.yv*client.player.beacon.yv));
+
+			client.player.beacon.x+=client.player.beacon.xv;
+			client.player.beacon.y+=client.player.beacon.yv;
+			client.player.beacon.rot+=client.player.beacon.rotv;
+
+			// collides with platforms
+			for(const Platform &platform:match.platform_list){
+				if(platform.health<1)
+					continue;
+
+				int side;
+				side=client.player.beacon.correct(platform);
+				switch(side){
+				case COLLIDE_TOP:
+					if(speed>0.1f)
+						client.player.beacon.rotv=client.player.beacon.xv*1.8f;
+					else
+						client.player.beacon.rotv*=0.79f;
+					client.player.beacon.yv=-client.player.beacon.yv*0.3f;
+					client.player.beacon.xv*=0.7f;
+					break;
+				case COLLIDE_LEFT:
+				case COLLIDE_RIGHT:
+					client.player.beacon.xv=-client.player.beacon.xv*0.4f;
+					break;
+				case COLLIDE_BOTTOM:
+					client.player.beacon.yv=0.0f;
+					break;
+				}
+			}
+
+			// stop if below FLOOR
+			if(client.player.beacon.y+BEACON_HEIGHT>FLOOR){
+				if(speed>0.1f)
+					client.player.beacon.rotv=client.player.beacon.xv*1.8f;
+				else
+					client.player.beacon.rotv*=0.79f;
+				client.player.beacon.yv=-client.player.beacon.yv*0.3f;
+				client.player.beacon.xv*=0.7f;
+				client.player.beacon.y=FLOOR-BEACON_HEIGHT;
+			}
 		}
 
 		// bring velocities down to zero
@@ -121,5 +182,82 @@ void Player::process(Match &match){
 				break;
 			}
 		}
+
+		// process dead clients
+		if(client.kill_reason!=0){
+			// find the client responsible for this
+			Client *perp=NULL;
+			for(Client *x:match.client_list){
+				if(x->id==client.killed_by_id){
+					perp=x;
+					break;
+				}
+			}
+
+			if(perp==NULL){
+				// if the murderer disconnected, then perp could be NULL
+				client.kill_reason=0;
+				client.player.health=1; // reanimate the victim
+			}
+			else{ // most common
+				std::string msg;
+				// send a message if there is more than one left alive
+				if(match.living_clients()>1){
+					switch(client.kill_reason){
+					case KILLED_BY_AIRSTRIKE:
+						msg=perp->name+" bombed "+client.name+"!";
+						break;
+					case KILLED_BY_SHELL:
+						msg=perp->name+" destroyed "+client.name+"!";
+						break;
+					}
+					match.send_chat(msg,"server");
+				}
+				else{
+					// either there are more players left in the match, Match::check_win() will handle that, or
+					if(match.living_clients()==0&&match.client_list.size()==0){
+						// one player killed himself with airstrike, reset the level
+						match.ready_next_round();
+					}
+				}
+
+				// update the stats for the perp and the victim
+				if(perp!=&client)
+					++perp->stat.victories;
+				++client.stat.deaths;
+			}
+
+			// prevent this code path from being triggered again
+			client.kill_reason=0;
+		}
 	}
+}
+
+Beacon::Beacon(){
+	reset();
+}
+
+void Beacon::reset(){
+	w=BEACON_WIDTH;
+	h=BEACON_HEIGHT;
+	x=0.0f;
+	y=FLOOR+10.0f;
+}
+
+void Beacon::fire(const Client &client){
+	float turretx=client.player.x+(PLAYER_WIDTH/2.0f)-(TURRET_WIDTH/2.0f);
+	float turrety=client.player.y+(PLAYER_HEIGHT/2.0f)-(TURRET_HEIGHT*2.5f);
+	x=turretx+(TURRET_WIDTH/2.0f)-(BEACON_WIDTH/2.0f);
+	y=turrety+(TURRET_HEIGHT/2.0f)-(BEACON_HEIGHT/2.0f);
+
+	const float speed=client.input.astrike/2.4f;
+	float xvel=-cosf(client.player.angle);
+	float yvel=-sinf(client.player.angle);
+	xv=xvel*speed;
+	yv=yvel*speed;
+	x+=xvel*0.6f;
+	y+=yvel*0.6f;
+
+	rot=client.player.angle;
+	rotv=0.0f;
 }

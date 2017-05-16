@@ -93,6 +93,21 @@ ParticlePlatform::ParticlePlatform(float xpos,float ypos){
 	ttl=PARTICLE_PLATFORM_TTL;
 }
 
+ParticlePlatform::ParticlePlatform(const Artillery &arty){
+	w=PARTICLE_PLATFORM_SIZE;
+	h=PARTICLE_PLATFORM_SIZE;
+	rot=randomint(1,360)*(M_PI/180.0f);
+	x=arty.x+(ARTILLERY_WIDTH/2.0f)-(PARTICLE_PLATFORM_SIZE/2.0f);
+	y=arty.y+(ARTILLERY_HEIGHT/2.0f)-(PARTICLE_PLATFORM_SIZE/2.0f);
+	count=2;
+	frame=randomint(0,1);
+
+	const float speed=randomint(10,17)/100.0f;
+	xv=-cosf(rot)*speed;
+	yv=-sinf(rot)*speed;
+	ttl=PARTICLE_PLATFORM_TTL;
+}
+
 void ParticlePlatform::spawn(State &state,const Shell &shell,int count){
 	for(int i=0;i<count;++i){
 		state.particle_platform_list.push_back(new ParticlePlatform(shell));
@@ -107,6 +122,12 @@ void ParticlePlatform::spawn_destroy_platform(State &state,const Platform &platf
 
 		state.particle_platform_list.push_back(new ParticlePlatform(x,y));
 	}
+}
+
+void ParticlePlatform::spawn(State &state,const Artillery &arty){
+	int count=randomint(22,29);
+	for(int i=0;i<count;++i)
+		state.particle_platform_list.push_back(new ParticlePlatform(arty));
 }
 
 void ParticlePlatform::process(State &state){
@@ -303,6 +324,20 @@ ParticleBubble::ParticleBubble(const State &state,const Player &player){
 	frame=0;
 }
 
+ParticleBubble::ParticleBubble(const Artillery &arty){
+	w=PARTICLE_BUBBLE_SIZE;
+	h=PARTICLE_BUBBLE_SIZE;
+	x=arty.x+(ARTILLERY_WIDTH/2.0f)-(PARTICLE_BUBBLE_SIZE/2.0f);
+	y=arty.y+(ARTILLERY_HEIGHT/2.0f)-(PARTICLE_BUBBLE_SIZE/2.0f);
+	rot=randomint(1,360)*(M_PI/180.0);
+	ttl=30.0f;
+	count=1;
+	frame=0;
+
+	xv=randomint(-1,1)/90.0f;
+	yv=randomint(-1,1)/90.0f;
+}
+
 void ParticleBubble::process(State &state){
 	for(std::vector<ParticleBubble*>::iterator it=state.particle_bubble_list.begin();it!=state.particle_bubble_list.end();){
 		ParticleBubble &particle=**it;
@@ -330,9 +365,9 @@ void ParticleBubble::process(State &state){
 				particle.xv=-particle.xv;
 				break;
 			case COLLIDE_TOP:
-				if(onein(5))
+				if(onein(4))
 					kill=true;
-				particle.yv=-particle.yv*0.3f;
+				particle.yv=-particle.yv*0.1f;
 				particle.xv*=-1.6f;
 				break;
 			}
@@ -345,8 +380,8 @@ void ParticleBubble::process(State &state){
 			float oldsize=particle.w;
 			particle.w-=0.01f;
 			particle.h=particle.w;
-			particle.x+=(oldsize/2.0f);
-			particle.y+=(oldsize/2.0f);
+			particle.x+=(oldsize-particle.w)/2.0f;
+			particle.y+=(oldsize-particle.h)/2.0f;
 
 			if(particle.w<=0.0f)
 				kill=true;

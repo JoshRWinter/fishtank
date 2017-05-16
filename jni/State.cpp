@@ -23,6 +23,9 @@ bool State::core(){
 	// process shells
 	Shell::process(*this);
 
+	// process artillery
+	Artillery::process(*this);
+
 	// process particle shells
 	ParticleShell::process(*this);
 
@@ -72,11 +75,18 @@ bool State::core(){
 		input.up_l.process(pointer,UI_TOLERANCE);
 		input.aim_left.process(pointer,UI_TOLERANCE);
 		input.aim_right.process(pointer,UI_TOLERANCE);
+		if(input.strike.process(pointer,UI_TOLERANCE))
+			strike_mode=!strike_mode;
 		if(input.fire.process(pointer,UI_TOLERANCE)){
 			const float minimum=0.35f;
 			if(firepower<minimum)
 				firepower=minimum;
-			final_firepower=firepower;
+			if(strike_mode){
+				strike_mode=false;
+				final_strokepower=firepower;
+			}
+			else
+				final_firepower=firepower;
 			firepower=0.0f;
 		}
 		else if(input.fire.active){
@@ -122,13 +132,19 @@ void State::render()const{
 	Player::render(renderer,player_list);
 
 	// draw particles players
-	ParticlePlayer::render(renderer,particle_player_list);
+	if(particle_player_list.size()!=0)
+		ParticlePlayer::render(renderer,particle_player_list);
 
 	// draw particle platforms
-	ParticlePlatform::render(renderer,particle_platform_list);
+	if(particle_platform_list.size()!=0)
+		ParticlePlatform::render(renderer,particle_platform_list);
 
 	// draw platforms
 	Platform::render(renderer,platform_list);
+
+	// draw artillery
+	if(arty_list.size()!=0)
+		Artillery::render(renderer,arty_list);
 
 	// draw particle shells
 	if(particle_shell_list.size()!=0)
@@ -151,8 +167,18 @@ void State::render()const{
 	input.aim_right.render(renderer);
 	glBindTexture(GL_TEXTURE_2D,renderer.uiassets.texture[UITID_FBUTTON].object);
 	input.fire.render(renderer);
+	glBindTexture(GL_TEXTURE_2D,renderer.uiassets.texture[UITID_BUTTON_AS].object);
+	// artillery strike button
+	if(strike_mode)
+		glUniform4f(renderer.uniform.rgba,0.9f,0.15f,0.21f,0.18f);
+	else if(!input.strike.active)
+		glUniform4f(renderer.uniform.rgba,1.0f,1.0f,1.0f,0.18f);
+	else
+		glUniform4f(renderer.uniform.rgba,0.7f,0.7f,0.7f,0.18f);
+	renderer.uidraw(input.strike);
 	// ui button text
 	glBindTexture(GL_TEXTURE_2D,renderer.font.button_small->atlas);
+	glUniform4f(renderer.uniform.rgba,1.0f,1.0f,1.0f,0.4f);
 	input.left.render_text(renderer);
 	input.right.render_text(renderer);
 	input.up_r.render_text(renderer);
@@ -233,6 +259,7 @@ State::State(){
 	memset(pointer,0,sizeof(crosshair)*2);
 	firepower=0.0f;
 	final_firepower=0.0f;
+	final_strokepower=0.0f;
 
 	// players
 	Player dummy;
@@ -258,10 +285,12 @@ State::State(){
 	input.fire.init(4.625f,2.0f,FIRE_BUTTON_SIZE,"FIRE");
 	input.aim_left.init(3.3f,2.5f,DPAD_SIZE,"L");
 	input.aim_right.init(6.75f,2.5f,DPAD_SIZE,"R");
+	input.strike.init(-DPAD_SIZE/2.0f,3.25f,DPAD_SIZE,"");
 }
 
 void State::reset(){
 	timer_chatpane=0.0f;
+	strike_mode=false;
 
 	// clear shells
 	for(Shell *shell:shell_list)
@@ -272,6 +301,10 @@ void State::reset(){
 	for(ParticleShell *p:particle_shell_list)
 		delete p;
 	particle_shell_list.clear();
+	// clear artillery
+	for(Artillery *a:arty_list)
+		delete a;
+	arty_list.clear();
 	// clear particle platforms
 	for(ParticlePlatform *p:particle_platform_list)
 		delete p;

@@ -52,6 +52,8 @@ struct ChatMessage;
 #define TID_PARTICLE_PLAYER 6
 #define TID_PARTICLE_BUBBLE 7
 #define TID_DEAD_FISH 8
+#define TID_BEACON 9
+#define TID_ARTILLERY 10
 
 // ui textures
 #define UITID_FISHTANK 0
@@ -65,6 +67,7 @@ struct ChatMessage;
 #define UITID_FBUTTON 8
 #define UITID_BACKGROUND_TRANSPARENT 9
 #define UITID_FULL_WHITE 10
+#define UITID_BUTTON_AS 11
 
 #define FIREPOWER_INCREMENT 0.008f
 #define TIMER_CHATPANE 400.0f
@@ -87,7 +90,6 @@ struct Renderer{
 	Renderer();
 	void init(android_app&);
 	void term();
-	void draw(const Base&,bool)const;
 	void draw(const Base&)const;
 	void uidraw(const Base&)const;
 
@@ -124,10 +126,11 @@ struct State{
 	float speed; // time delta
 	bool running,back,pause_menu;
 	bool show_menu; // show the main menu
+	bool strike_mode; // next shot will be artillery strike
 	std::string name; // the player's name
 	std::string connect_to; // connecting to address ...
 	Match match; // manages the game
-	float firepower,final_firepower;
+	float firepower,final_firepower,final_strokepower;
 	float timer_chatpane; // show the chat when active
 	int colorid; // my colorid
 
@@ -150,7 +153,7 @@ struct State{
 
 	// ui buttons
 	struct{
-		ButtonBasic left,right,up_l,up_r,fire,aim_left,aim_right;
+		ButtonBasic left,right,up_l,up_r,fire,aim_left,aim_right,strike;
 	}input;
 
 	// chat message
@@ -162,6 +165,7 @@ struct State{
 	std::vector<Player> player_list;
 	std::vector<Platform> platform_list;
 	std::vector<Shell*> shell_list;
+	std::vector<Artillery*> arty_list;
 	std::vector<ParticleShell*> particle_shell_list;
 	std::vector<ParticlePlatform*> particle_platform_list;
 	std::vector<ParticlePlayer*> particle_player_list;

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="210mm"
+   height="297mm"
+   viewBox="0 0 210 297"
+   version="1.1"
+   id="svg4848"
+   inkscape:version="0.92.1 r"
+   sodipodi:docname="beacon.svg"
+   inkscape:export-filename="/home/josh/android/fishtank/assets_local/beacon.png"
+   inkscape:export-xdpi="7.1007996"
+   inkscape:export-ydpi="7.1007996">
+  <defs
+     id="defs4842" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.98994949"
+     inkscape:cx="162.61402"
+     inkscape:cy="386.57173"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1918"
+     inkscape:window-height="1042"
+     inkscape:window-x="0"
+     inkscape:window-y="18"
+     inkscape:window-maximized="0" />
+  <metadata
+     id="metadata4845">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="fill:#6e6e6e;fill-opacity:0.94117647;stroke:#191919;stroke-width:2.652;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect8339"
+       width="198.56314"
+       height="33.721977"
+       x="4.2838936"
+       y="144.06758"
+       ry="12.262536"
+       rx="24.537271"
+       inkscape:export-xdpi="7.1007996"
+       inkscape:export-ydpi="7.1007996" />
+    <circle
+       style="fill:#424242;fill-opacity:1;stroke:#2d2d2d;stroke-width:2.69999981;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="path8333"
+       cx="103.56548"
+       cy="160.92857"
+       r="29.430723" />
+    <circle
+       style="fill:#cd5d4a;fill-opacity:1;stroke:none;stroke-width:2.23770475;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="path8341"
+       cx="103.56548"
+       cy="160.92857"
+       r="16.169806" />
+    <g
+       id="g4821"
+       transform="matrix(1,0,0,1.1804603,-1.9786377,-29.04118)"
+       style="stroke-width:0.92039514">
+      <rect
+         y="147.59915"
+         x="36.752453"
+         height="26.658783"
+         width="26.458332"
+         id="rect4815"
+         style="fill:#3a3a3a;fill-opacity:1;stroke:none;stroke-width:1.3805927;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <rect
+         style="fill:#3a3a3a;fill-opacity:1;stroke:none;stroke-width:1.3805927;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         id="rect4817"
+         width="26.458332"
+         height="26.658783"
+         x="147.87746"
+         y="147.59915" />
+    </g>
+  </g>
+</svg>

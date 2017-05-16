@@ -15,5 +15,11 @@ convert platform_1.tga platform_2.tga platform_3.tga +append platform.tga
 # combine particle platform textures
 convert particle_platform_1.tga particle_platform_2.tga +append particle_platform.tga
 
+# combine beacon textures
+convert beacon_1.tga beacon_2.tga +append beacon.tga
+
+# combine tank textures
+convert tank_base.tga tank_dmg.tga +append tank.tga
+
 rm *.png
 

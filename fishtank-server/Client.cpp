@@ -32,12 +32,16 @@ Client::Client(int s,const std::string &addr,const area_bounds &bounds):tcp(s,ad
 	uint32_t id_tmp=htonl(last_id);
 	tcp.send(&id_tmp,sizeof(id_tmp));
 
+	killed_by_id=0;
+	kill_reason=0;
+
 	input.left=false;
 	input.right=false;
 	input.up=false;
 	input.aim_left=false;
 	input.aim_right=false;
 	input.fire=0.0f;
+	input.astrike=0.0f;
 
 	stat.join_time=0;
 	stat.match_victories=0;
@@ -58,5 +62,14 @@ void Client::kick(Match &match){
 		}
 
 		++it;
+	}
+
+	// delete all airstrikes associated with this client
+	for(std::vector<Airstrike*>::iterator it=match.airstrike_list.begin();it!=match.airstrike_list.end();){
+		if(&(*it)->client==this){
+			delete *it;
+			it=match.airstrike_list.erase(it);
+			continue;
+		}
 	}
 }

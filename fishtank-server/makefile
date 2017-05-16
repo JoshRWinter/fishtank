@@ -1,7 +1,7 @@
 CPPFLAGS := -g -c -std=c++11
 LFLAGS := -lrt
 
-OBJS := ../jni/network.o main.o Match.o Client.o object/Base.o object/Player.o object/Shell.o object/Platform.o
+OBJS := ../jni/network.o main.o Match.o Client.o object/Base.o object/Player.o object/Shell.o object/Platform.o object/Airstrike.o
 
 fishtank-server: $(OBJS)
 	g++ -o $@ $(OBJS) $(LFLAGS)

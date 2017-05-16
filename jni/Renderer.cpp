@@ -80,7 +80,7 @@ void Renderer::term(){
 	eglTerminate(display);
 }
 
-void Renderer::draw(const Base &b,bool xflip)const{
+void Renderer::draw(const Base &b)const{
 	const float size=1.0f/b.count;
 	const float left=b.frame*size;
 	const float right=left+size;
@@ -88,10 +88,7 @@ void Renderer::draw(const Base &b,bool xflip)const{
 	float new_x=b.x-(player_x+(PLAYER_WIDTH/2.0f));
 	float new_y=b.y-(player_y+(PLAYER_HEIGHT/2.0f));
 
-	if(xflip)
-		glUniform4f(uniform.texcoords,right,left,0.0f,1.0f);
-	else
-		glUniform4f(uniform.texcoords,left,right,0.0f,1.0f);
+	glUniform4f(uniform.texcoords,left,right,0.0f,1.0f);
 	glUniform2f(uniform.vector,new_x,new_y);
 	glUniform2f(uniform.size,b.w,b.h);
 	glUniform1f(uniform.rot,b.rot);
@@ -100,16 +97,16 @@ void Renderer::draw(const Base &b,bool xflip)const{
 }
 
 void Renderer::uidraw(const Base &b)const{
-	glUniform4f(uniform.texcoords,0.0f,1.0f,0.0f,1.0f);
+	const float size=1.0f/b.count;
+	const float left=b.frame*size;
+	const float right=left+size;
+
+	glUniform4f(uniform.texcoords,left,right,0.0f,1.0f);
 	glUniform2f(uniform.vector,b.x,b.y);
 	glUniform2f(uniform.size,b.w,b.h);
 	glUniform1f(uniform.rot,b.rot);
 
 	glDrawArrays(GL_TRIANGLE_STRIP,0,4);
-}
-
-void Renderer::draw(const Base &b)const{
-	draw(b,false);
 }
 
 Renderer::Renderer(){

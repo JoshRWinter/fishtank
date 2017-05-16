@@ -77,6 +77,7 @@ void Match::send_data(const State &state){
 	tsh.state[CLIENT_STATE_PRESS_RIGHT]=htonl(state.input.right.active);
 	tsh.state[CLIENT_STATE_PRESS_UP]=htonl(state.input.up_r.active||state.input.up_l.active);
 	tsh.state[CLIENT_STATE_PRESS_FIRE]=htonl(state.final_firepower*FLOAT_MULTIPLIER);
+	tsh.state[CLIENT_STATE_PRESS_ASTRIKE]=htonl(state.final_strokepower*FLOAT_MULTIPLIER);
 	tsh.state[CLIENT_STATE_PRESS_AIMLEFT]=htonl(state.input.aim_left.active);
 	tsh.state[CLIENT_STATE_PRESS_AIMRIGHT]=htonl(state.input.aim_right.active);
 	tsh.state[CLIENT_STATE_UDP_SECRET]=htonl(udp_secret);
@@ -130,6 +131,9 @@ void Match::recv_data(State &state){
 
 		platform_status[0]=ntohl(tch.state[SERVER_STATE_GLOBAL_PLATFORMS]);
 		platform_status[1]=ntohl(tch.state[SERVER_STATE_GLOBAL_PLATFORMS_EXT]);
+		bool arty_new=ntohl(tch.state[SERVER_STATE_GLOBAL_AIRSTRIKE_NEW]);
+		float arty_xpos=(int)ntohl(tch.state[SERVER_STATE_GLOBAL_AIRSTRIKE_XPOS])/FLOAT_MULTIPLIER;
+		float arty_xv=(int)ntohl(tch.state[SERVER_STATE_GLOBAL_AIRSTRIKE_XV])/FLOAT_MULTIPLIER;
 
 		int i=0;
 		for(Player &player:state.player_list){
@@ -140,6 +144,11 @@ void Match::recv_data(State &state){
 			player.yv=(int)ntohl(server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_YV])/FLOAT_MULTIPLIER;
 			player.x=(int)ntohl(server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_XPOS])/FLOAT_MULTIPLIER;
 			player.y=(int)ntohl(server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_YPOS])/FLOAT_MULTIPLIER;
+			player.beacon.xv=(int)ntohl(server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_BEACON_XV])/FLOAT_MULTIPLIER;
+			player.beacon.yv=(int)ntohl(server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_BEACON_YV])/FLOAT_MULTIPLIER;
+			player.beacon.x=(int)ntohl(server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_BEACON_XPOS])/FLOAT_MULTIPLIER;
+			player.beacon.y=(int)ntohl(server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_BEACON_YPOS])/FLOAT_MULTIPLIER;
+			player.beacon.rot=(int)ntohl(server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_BEACON_ROT])/FLOAT_MULTIPLIER;
 			player.turret.rot=(int)ntohl(server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_ANGLE])/FLOAT_MULTIPLIER;
 			player.colorid=ntohl(server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_COLORID]);
 			if(player.cue_fire==0.0f)
@@ -171,6 +180,10 @@ void Match::recv_data(State &state){
 				ParticlePlatform::spawn_destroy_platform(state,state.platform_list[i+32]);
 			}
 		}
+
+		// maybe new artillery
+		if(arty_new)
+			state.arty_list.push_back(new Artillery(arty_xpos,arty_xv));
 	}
 }
 
@@ -192,18 +205,21 @@ void Match::get_level_config(State &state){
 		int32_t x;
 		int32_t y;
 		int32_t health;
+		uint32_t seed;
 
 		tcp.recv(&horiz,sizeof(horiz));
 		tcp.recv(&x,sizeof(x));
 		tcp.recv(&y,sizeof(y));
 		tcp.recv(&health,sizeof(health));
+		tcp.recv(&seed,sizeof(seed));
 
 		horiz=ntohl(horiz);
 		x=ntohl(x);
 		y=ntohl(y);
 		health=ntohl(health);
+		seed=ntohl(seed);
 
-		Platform p(health>0,horiz,x/FLOAT_MULTIPLIER,y/FLOAT_MULTIPLIER);
+		Platform p(health>0,horiz,x/FLOAT_MULTIPLIER,y/FLOAT_MULTIPLIER,seed);
 
 		state.platform_list.push_back(p);
 	}

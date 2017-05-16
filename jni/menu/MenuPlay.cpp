@@ -137,6 +137,8 @@ void MenuPlay::render(const Renderer &renderer)const{
 		player.turret.rot=2.85f;
 		player.turret.x=-0.8f;
 		player.turret.y=-2.0f;
+		player.count=2;
+		player.frame=0;
 		// turret
 		glBindTexture(GL_TEXTURE_2D,renderer.assets.texture[TID_TURRET].object);
 		renderer.uidraw(player.turret);

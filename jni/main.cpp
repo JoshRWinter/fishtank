@@ -44,6 +44,7 @@ extern "C" void android_main(android_app *app){
 	app_dummy();
 	srand48(time(NULL));
 	State state;
+	state.reset();
 	state.app=app;
 	app->userData=&state;
 	app->onInputEvent=inputproc;

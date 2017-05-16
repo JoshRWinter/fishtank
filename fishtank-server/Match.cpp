@@ -15,6 +15,11 @@ Match::~Match(){
 	for(std::vector<Shell*>::iterator it=shell_list.begin();it!=shell_list.end();++it)
 		delete *it;
 	shell_list.clear();
+
+	// clear the airstrike list
+	for(Airstrike *as:airstrike_list)
+		delete as;
+	airstrike_list.clear();
 }
 
 bool Match::setup(){
@@ -73,30 +78,16 @@ void Match::step(){
 	Shell::process(*this);
 	// process platforms
 	Platform::process(platform_list);
+	// process airstrikes
+	Airstrike::process(*this);
 
 	// check for a win
-	if(client_list.size()>1&&shell_list.size()==0){
+	if(client_list.size()>1&&shell_list.size()==0&&airstrike_list.size()==0){
 		if(win_timer<WIN_TIMER){
 			--win_timer;
 			if(win_timer<1){
-				// construct a new level and send it
-				Platform::create_all(*this);
-				to_client_tcp tctcp;
-				memset(&tctcp,0,sizeof(tctcp));
-				tctcp.type=TYPE_NEW_LEVEL;
-				for(Client *client:client_list){
-					client->tcp.send(&tctcp,sizeof(tctcp));
-					send_level_config(*client);
-					// increment rounds_played
-					++client->stat.rounds_played;
-				}
-
-				// reset
-				win_timer=WIN_TIMER;
-				for(Client *client:client_list)
-					client->player.reset(bounds);
-
-
+				// initialize the next round
+				ready_next_round();
 			}
 		}
 		else{
@@ -144,12 +135,37 @@ void Match::send_data(){
 		}
 	}
 
+	// data about a possible new artillery
+	float arty_xpos=0.0f;
+	float arty_xv=0.0f;
+	bool arty_new=false;
+	for(Airstrike *strike:airstrike_list){
+		bool out=false; // break control, since everybody's so scared of goto
+		for(Artillery *arty:strike->arty_list){
+			if(!arty->processed){
+				arty->processed=true;
+
+				arty_new=true;
+				arty_xpos=arty->x;
+				arty_xv=arty->xv;
+
+				out=true;
+				break;
+			}
+		}
+		if(out)
+			break;
+	}
+
 	// send data to all connected clients
 	to_client_heartbeat tch;
 	int32_t *server_state=tch.state+SERVER_STATE_GLOBAL_FIELDS;
 	memset(&tch,0,sizeof(to_client_heartbeat));
 	tch.state[SERVER_STATE_GLOBAL_PLATFORMS]=htonl(Platform::platform_status[0]);
 	tch.state[SERVER_STATE_GLOBAL_PLATFORMS_EXT]=htonl(Platform::platform_status[1]);
+	tch.state[SERVER_STATE_GLOBAL_AIRSTRIKE_NEW]=htonl(arty_new);
+	tch.state[SERVER_STATE_GLOBAL_AIRSTRIKE_XPOS]=shtonl(arty_xpos*FLOAT_MULTIPLIER);
+	tch.state[SERVER_STATE_GLOBAL_AIRSTRIKE_XV]=shtonl(arty_xv*FLOAT_MULTIPLIER);
 	int i=0;
 
 	// initialize tch with state data
@@ -161,6 +177,11 @@ void Match::send_data(){
 		server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_YV]=shtonl(client.player.yv*FLOAT_MULTIPLIER);
 		server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_XPOS]=shtonl((client.player.x-client.player.xv)*FLOAT_MULTIPLIER);
 		server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_YPOS]=shtonl((client.player.y-client.player.yv)*FLOAT_MULTIPLIER);
+		server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_BEACON_XV]=shtonl(client.player.beacon.xv*FLOAT_MULTIPLIER);
+		server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_BEACON_YV]=shtonl(client.player.beacon.yv*FLOAT_MULTIPLIER);
+		server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_BEACON_XPOS]=shtonl((client.player.beacon.x-client.player.beacon.xv)*FLOAT_MULTIPLIER);
+		server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_BEACON_YPOS]=shtonl((client.player.beacon.y-client.player.beacon.yv)*FLOAT_MULTIPLIER);
+		server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_BEACON_ROT]=shtonl(client.player.beacon.rot*FLOAT_MULTIPLIER);
 		server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_ANGLE]=shtonl(client.player.angle*FLOAT_MULTIPLIER);
 		server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_COLORID]=htonl(client.colorid);
 		server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_ID]=htonl(client.id);
@@ -227,6 +248,8 @@ void Match::recv_data(){
 		client->input.aim_right=ntohl(tsh.state[CLIENT_STATE_PRESS_AIMRIGHT]);
 		if(client->input.fire==0.0f)
 			client->input.fire=(int)ntohl(tsh.state[CLIENT_STATE_PRESS_FIRE])/FLOAT_MULTIPLIER;
+		if(client->input.astrike==0.0f)
+			client->input.astrike=(int)ntohl(tsh.state[CLIENT_STATE_PRESS_ASTRIKE])/FLOAT_MULTIPLIER;
 	}
 }
 
@@ -270,43 +293,81 @@ void Match::send_level_config(Client &client){
 		int32_t x=(platform.x+(platform.w/2.0f))*FLOAT_MULTIPLIER;
 		int32_t y=(platform.y+(platform.h/2.0f))*FLOAT_MULTIPLIER;
 		int32_t health=platform.health;
+		uint32_t seed=platform.seed;
 
 		horiz=htonl(horiz);
 		x=htonl(x);
 		y=htonl(y);
 		health=htonl(health);
+		seed=htonl(seed);
 
 		client.tcp.send(&horiz,sizeof(horiz));
 		client.tcp.send(&x,sizeof(x));
 		client.tcp.send(&y,sizeof(y));
 		client.tcp.send(&health,sizeof(health));
+		client.tcp.send(&seed,sizeof(seed));
 	}
 }
 
 bool Match::check_win(){
-	int alive=0;
-	std::string *string_winner;
-
-	for(Client *c:client_list){
-		if(c->player.health>0){
-			++alive;
-			string_winner=&c->name;
-		}
-	}
-
+	int alive=living_clients();
 	std::string win_message;
+
 	if(alive==1){
-		win_message=*string_winner + " wins!";
+		Client *winner=last_man_standing();
+		if(winner==NULL)
+			return true;
+		win_message=winner->name+" wins!";
 		send_chat(win_message,"server");
+		++winner->stat.match_victories;
 		return true;
 	}
 	else if(alive==0){
-		win_message="Nobody wins! hurray";
+		win_message="Nobody wins! Hurray!";
 		send_chat(win_message,"server");
 		return true;
 	}
 
 	return false;
+}
+
+// how many players are alive
+int Match::living_clients()const{
+	int alive=0;
+	for(const Client *c:client_list)
+		if(c->player.health>0)
+			++alive;
+
+	return alive;
+}
+
+// gets name of first living client found in the list
+// check Match::living_clients()==1 before calling, otherwise this function is useless
+Client *Match::last_man_standing(){
+	for(Client *c:client_list){
+		if(c->player.health>0){
+			return c;
+		}
+	}
+	return NULL;
+}
+
+// construct a new level and send it
+void Match::ready_next_round(){
+	Platform::create_all(*this);
+	to_client_tcp tctcp;
+	memset(&tctcp,0,sizeof(tctcp));
+	tctcp.type=TYPE_NEW_LEVEL;
+	for(Client *client:client_list){
+		client->tcp.send(&tctcp,sizeof(tctcp));
+		send_level_config(*client);
+		// increment rounds_played
+		++client->stat.rounds_played;
+	}
+	// reset
+	win_timer=WIN_TIMER;
+	for(Client *client:client_list)
+		client->player.reset(bounds);
 }
 
 void Match::wait_next_step(){

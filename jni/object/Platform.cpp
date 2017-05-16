@@ -1,7 +1,7 @@
 #include <math.h>
 #include "../fishtank.h"
 
-Platform::Platform(bool platform_active,bool horiz,float xpos,float ypos){
+Platform::Platform(bool platform_active,bool horiz,float xpos,float ypos,unsigned s){
 	if(horiz){
 		w=PLATFORM_WIDTH;
 		h=PLATFORM_HEIGHT;
@@ -22,6 +22,8 @@ Platform::Platform(bool platform_active,bool horiz,float xpos,float ypos){
 	visual.h=PLATFORM_VIS_HEIGHT;
 	visual.count=3;
 	visual.frame=randomint(0,2);
+
+	seed=s;
 }
 
 void Platform::render(const Renderer &renderer,const std::vector<Platform> &platform_list){

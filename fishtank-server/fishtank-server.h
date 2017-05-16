@@ -5,6 +5,7 @@
 #include <cstdint>
 #include <unistd.h>
 #include <iostream>
+#include <math.h>
 #include "../jni/fishnet.h"
 #include "../jni/network.h"
 struct Match;
@@ -12,8 +13,13 @@ struct Client;
 struct area_bounds;
 #include "object.h"
 
+#define distance(x1,x2,y1,y2) (sqrtf(powf((x2)-(x1),2)+powf((y2)-(y1),2)))
+
 #define onein(n) (randomint(0,n-1)==0)
 #define WIN_TIMER 300
+
+#define KILLED_BY_AIRSTRIKE 1
+#define KILLED_BY_SHELL 2
 
 struct Client{
 	Client(int,const std::string&,const area_bounds&);
@@ -29,10 +35,12 @@ struct Client{
 	// gameplay related
 	int colorid;
 	Player player;
+	int killed_by_id; // killed by client id
+	int kill_reason; // KILLED_BY_AIRSTRIKE etc
 
 	struct{
 		bool left,right,up,aim_left,aim_right;
-		float fire;
+		float fire,astrike;
 	}input;
 
 	// some stats to keep track of
@@ -63,11 +71,15 @@ public:
 	Client *get_client_by_secret(int32_t);
 	void send_level_config(Client&);
 	bool check_win();
+	int living_clients()const;
+	Client *last_man_standing();
+	void ready_next_round();
 	void wait_next_step();
 
 	std::vector<Client*> client_list;
 	std::vector<Shell*> shell_list;
 	std::vector<Platform> platform_list;
+	std::vector<Airstrike*> airstrike_list;
 	socket_tcp_server tcp;
 	socket_udp_server udp;
 	long long last_nano_time;

@@ -34,8 +34,12 @@ int Base::correct(const Base &b){
 
 	// check for corner collision
 	const float tolerance=0.01f;
-	if(side==COLLIDE_RIGHT||side==COLLIDE_LEFT){
-		if(fabsf(rdiff-tdiff)<tolerance||fabsf(ldiff-tdiff)<tolerance)
+	if(side==COLLIDE_RIGHT){
+		if(fabsf(rdiff-tdiff)<tolerance)
+			side=COLLIDE_TOP;
+	}
+	else if(side==COLLIDE_LEFT){
+		if(fabsf(ldiff-tdiff)<tolerance)
 			side=COLLIDE_TOP;
 	}
 

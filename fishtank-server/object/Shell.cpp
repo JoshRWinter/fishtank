@@ -1,4 +1,3 @@
-#include <math.h>
 #include "../fishtank-server.h"
 
 Shell::Shell(const Match &match,Client &client,float firepower):owner(client),power(firepower){
@@ -8,7 +7,6 @@ Shell::Shell(const Match &match,Client &client,float firepower):owner(client),po
 	float turrety=client.player.y+(PLAYER_HEIGHT/2.0f)-(TURRET_HEIGHT*2.5f);
 	x=turretx+(TURRET_WIDTH/2.0f)-(SHELL_WIDTH/2.0f);
 	y=turrety+(TURRET_HEIGHT/2.0f)-(SHELL_HEIGHT/2.0f);
-	rot=0.0f;
 
 	const float speed=client.input.fire/2.4f;
 	float xvel=-cosf(client.player.angle);
@@ -42,23 +40,9 @@ void Shell::process(Match &match){
 
 				// see if it killed the player
 				if(client.player.health<1){
-					++shell.owner.stat.victories;
-					++client.stat.deaths;
-					// send a chat message, if there are still at least two players still alive
-					int alive_count=0;
-					for(const Client *t:match.client_list){
-						if(t->player.health>0)
-							++alive_count;
-					}
-					if(alive_count>=2){
-						// send chat message
-						std::string msg=shell.owner.name+" destroyed "+c->name+"!";
-						match.send_chat(msg,"server");
-					}
-					else{
-						// shell.owner won
-						++shell.owner.stat.match_victories;
-					}
+					// take credit for the kill
+					client.killed_by_id=shell.owner.id;
+					client.kill_reason=KILLED_BY_SHELL;
 				}
 
 				delete *it;

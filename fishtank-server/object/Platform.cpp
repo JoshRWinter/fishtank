@@ -14,8 +14,9 @@ Platform::Platform(bool horizontal,float xpos,float ypos){
 	}
 	x=xpos;
 	y=ypos;
-	rot=0.0f;
 	health=100;
+
+	seed=rand()%100;
 }
 
 void Platform::create_all(Match &match){
