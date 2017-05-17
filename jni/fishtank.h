@@ -54,6 +54,7 @@ struct ChatMessage;
 #define TID_DEAD_FISH 8
 #define TID_BEACON 9
 #define TID_ARTILLERY 10
+#define TID_GROUND 11
 
 // ui textures
 #define UITID_FISHTANK 0
@@ -161,7 +162,7 @@ struct State{
 	std::vector<ServerMessage> announcement; // messages from the server
 
 	// objects
-	Base backdrop;
+	Base backdrop,ground;
 	std::vector<Player> player_list;
 	std::vector<Platform> platform_list;
 	std::vector<Shell*> shell_list;

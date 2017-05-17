@@ -157,6 +157,14 @@ void Player::process(Match &match){
 				client.player.y=FLOOR-PLAYER_HEIGHT;
 				client.player.yv=0.0f;
 			}
+			if(client.player.x<LEFT){
+				client.player.x=LEFT;
+				client.player.xv=0.0f;
+			}
+			else if(client.player.x+PLAYER_WIDTH>RIGHT){
+				client.player.x=RIGHT-PLAYER_WIDTH;
+				client.player.xv=0.0f;
+			}
 		}
 		else{
 			client.player.xv=0.0f;
@@ -215,7 +223,7 @@ void Player::process(Match &match){
 				}
 				else{
 					// either there are more players left in the match, Match::check_win() will handle that, or
-					if(match.living_clients()==0&&match.client_list.size()==0){
+					if(match.living_clients()==0&&match.client_list.size()==1){
 						// one player killed himself with airstrike, reset the level
 						match.ready_next_round();
 					}

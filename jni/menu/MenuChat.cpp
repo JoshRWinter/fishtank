@@ -84,12 +84,12 @@ void MenuChat::render(const Renderer &renderer,const std::vector<ChatMessage> &c
 	glUniform4f(renderer.uniform.rgba,TEXT_COLOR,1.0f);
 	glBindTexture(GL_TEXTURE_2D,renderer.font.main->atlas);
 	float line=scrolltop;
-	const float LEFT=-6.0f;
+	const float LEFT_MARGIN=-6.0f;
 	for(const ChatMessage &cm:chat_list){
 		if(line+0.6f>SCROLLPANE_BOTTOM)
 			break;
 		std::string m=cm.from+": "+cm.msg;
-		drawtext(renderer.font.main,LEFT,line,m.c_str());
+		drawtext(renderer.font.main,LEFT_MARGIN,line,m.c_str());
 		line+=NEW_LINE_OFFSET;
 	}
 

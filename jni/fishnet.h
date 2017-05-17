@@ -99,6 +99,8 @@ struct to_client_heartbeat{
 #define SHELL_HEIGHT 0.5f
 
 #define FLOOR 4.0f
+#define LEFT -15.0f
+#define RIGHT 40.0f
 #define GRAVITY 0.008f
 #define PLAYER_GRAVITY (GRAVITY/2.0f)
 

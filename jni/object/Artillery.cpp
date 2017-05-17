@@ -54,6 +54,8 @@ void Artillery::process(State &state){
 
 		// delete if below FLOOR
 		if(arty.y+ARTILLERY_SIZE>FLOOR){
+			// particles
+			ParticlePlatform::spawn(state,arty);
 			delete *it;
 			it=state.arty_list.erase(it);
 			continue;

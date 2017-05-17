@@ -150,6 +150,8 @@ void ParticlePlatform::process(State &state){
 
 			int side=particle.correct(platform);
 			switch(side){
+			case 0:
+				break;
 			case COLLIDE_LEFT:
 			case COLLIDE_RIGHT:
 				particle.xv*=0.6f;
@@ -162,6 +164,14 @@ void ParticlePlatform::process(State &state){
 				particle.yv=-particle.yv;
 				break;
 			}
+		}
+
+		// check if below FLOOR
+		if(particle.y+PARTICLE_PLATFORM_SIZE>FLOOR){
+			particle.y=FLOOR-PARTICLE_PLATFORM_SIZE;
+			on_ground=true;
+			particle.yv*=0.4f;
+			particle.yv=-particle.yv;
 		}
 
 		// slow down horizontally
@@ -283,6 +293,12 @@ void ParticlePlayer::process(State &state){
 			particle.h=particle.w;
 			particle.x+=(oldsize-particle.w)/2.0f;
 			particle.y+=(oldsize-particle.h)/2.0f;
+			if(particle.w<0.0f){
+				// delete
+				delete *it;
+				it=state.particle_player_list.erase(it);
+				continue;
+			}
 		}
 
 		++it;
@@ -371,6 +387,15 @@ void ParticleBubble::process(State &state){
 				particle.xv*=-1.6f;
 				break;
 			}
+		}
+
+		// interact with ground
+		if(particle.y+PARTICLE_BUBBLE_SIZE>FLOOR){
+			particle.y=FLOOR-PARTICLE_BUBBLE_SIZE;
+			if(onein(4))
+				kill=true;
+			particle.yv=-particle.yv*0.1f;
+			particle.xv*=-1.6f;
 		}
 
 		// if ttl<=0.0f delete

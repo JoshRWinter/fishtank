@@ -86,7 +86,9 @@ void Shell::process(State &state){
 			continue;
 
 		// check for shell going below screen
-		if(shell.y>state.renderer.view.bottom){
+		if(shell.y>FLOOR-0.4f){
+			// particles
+			ParticlePlatform::spawn(state,shell,randomint(3,4));
 			delete *it;
 			it=state.shell_list.erase(it);
 			continue;

@@ -116,6 +116,7 @@ void State::render()const{
 	glBindTexture(GL_TEXTURE_2D,renderer.assets.texture[TID_BACKDROP].object);
 	renderer.draw(backdrop);
 
+
 	// draw dead fish
 	if(dead_fish_list.size()!=0)
 		DeadFish::render(renderer,dead_fish_list);
@@ -149,6 +150,11 @@ void State::render()const{
 	// draw particle shells
 	if(particle_shell_list.size()!=0)
 		ParticleShell::render(renderer,particle_shell_list);
+
+	glUniform4f(renderer.uniform.rgba,1.0f,1.0f,1.0f,1.0f);
+	// draw the ground
+	glBindTexture(GL_TEXTURE_2D,renderer.assets.texture[TID_GROUND].object);
+	renderer.draw(ground);
 
 	// firepower indicator
 	if(firepower>0.0f){
@@ -275,6 +281,15 @@ State::State(){
 	backdrop.rot=0.0f;
 	backdrop.count=1;
 	backdrop.frame=0;
+
+	// ground
+	ground.x=-26.0f;
+	ground.y=FLOOR-0.2f;
+	ground.h=4.4f;
+	ground.w=75.0f;
+	ground.rot=0.0f;
+	ground.frame=0;
+	ground.count=1;
 
 	// ui buttons
 	const float DPAD_SIZE=1.1f;
