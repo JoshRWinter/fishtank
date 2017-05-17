@@ -200,7 +200,7 @@ void State::render()const{
 		drawtextcentered(renderer.font.main,0.0f,-3.15f,announcement[0].msg.c_str());
 	}
 	if(chat.size()>0&&timer_chatpane>0.0f){
-		glUniform4f(renderer.uniform.rgba,BUTTON_TEXT_COLOR,1.0f);
+		glUniform4f(renderer.uniform.rgba,TEXT_COLOR,1.0f);
 		glBindTexture(GL_TEXTURE_2D,renderer.font.main->atlas);
 
 		// draw the last 3 messages

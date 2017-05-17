@@ -49,7 +49,7 @@ bool MenuInput::exec(State &state,const char *header_text,std::string *menu_text
 
 	while(state.process()){
 		// process buttons
-		const float BUTTON_TOLERANCE=-0.1;
+		const float BUTTON_TOLERANCE=-0.05f;
 		for(int i=0;i<28;++i){
 			if(alpha[i].process(state.pointer,BUTTON_TOLERANCE))
 				if(text->length()!=MSG_LIMIT)
