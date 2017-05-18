@@ -143,6 +143,7 @@ struct State{
 		MenuInput input;
 		MenuPause pause;
 		MenuChat chat;
+		MenuMessage message;
 	}menu;
 
 	crosshair pointer[2];

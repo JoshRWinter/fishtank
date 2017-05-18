@@ -84,4 +84,14 @@ struct MenuChat{
 	Button button_back;
 };
 
+struct MenuMessage:Menu{
+	bool exec(State&,const char*,const char* =NULL);
+	virtual void render(const Renderer&)const;
+
+	const char *msg;
+	const char *header;
+	Button button_ok;
+	Base background;
+};
+
 #endif // MENU_H
