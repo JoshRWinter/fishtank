@@ -36,6 +36,7 @@
 struct Renderer;
 struct State;
 struct ChatMessage;
+struct Config;
 #include "network.h"
 #include "fishnet.h"
 #include "object.h"
@@ -87,6 +88,10 @@ struct ServerMessage:ChatMessage{
 	float timer;
 };
 
+struct Config{
+	bool music,sounds,vibrate;
+};
+
 struct Renderer{
 	Renderer();
 	void init(android_app&);
@@ -135,9 +140,13 @@ struct State{
 	float timer_chatpane; // show the chat when active
 	int colorid; // my colorid
 
+	// configuration
+	Config config;
+
 	// menus
 	struct{
 		MenuMain main;
+		MenuConfig config;
 		MenuPlay play;
 		MenuConnect connect;
 		MenuInput input;

@@ -15,7 +15,21 @@ struct MenuMain:Menu{
 
 	Button button_play;
 	Button button_quit;
+	Button button_config;
 	Base background;
+};
+
+struct MenuConfig:Menu{
+	bool exec(State&);
+	virtual void render(const Renderer&)const;
+
+	Base background;
+	Button button_music;
+	Button button_sounds;
+	Button button_vibrate;
+	Button button_about;
+	Button button_back;
+	Config *config;
 };
 
 struct MenuInput:Menu{

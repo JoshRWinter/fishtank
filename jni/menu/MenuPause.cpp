@@ -11,6 +11,8 @@ bool MenuPause::exec(State &state){
 	while(state.process()){
 		// buttons
 		if(button_settings.process(state.pointer)){
+			if(!state.menu.config.exec(state))
+				return false;
 		}
 		if(button_quit.process(state.pointer)){
 			state.match.quit();

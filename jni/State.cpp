@@ -255,6 +255,9 @@ State::State(){
 		name="basil fawlty";
 		connect_to="";
 		colorid=COLOR_RED;
+		config.music=true;
+		config.sounds=true;
+		config.vibrate=true;
 	}
 
 	speed=1.0f;
@@ -350,6 +353,13 @@ bool State::read_config(){
 	fread(&colorid,sizeof(int),1,file);
 	name=name_tmp;
 	connect_to=connect_to_tmp;
+	char music,sounds,vibrate;
+	fread(&music,sizeof(char),1,file);
+	fread(&sounds,sizeof(char),1,file);
+	fread(&vibrate,sizeof(char),1,file);
+	config.music=music!=0;
+	config.sounds=sounds!=0;
+	config.vibrate=vibrate!=0;
 
 	fclose(file);
 	return true;
@@ -369,6 +379,12 @@ void State::write_config(){
 	fwrite(connect_to_tmp,1,MSG_LIMIT+1,file);
 	fwrite(name_tmp,1,MSG_LIMIT+1,file);
 	fwrite(&colorid,sizeof(int),1,file);
+	char music=config.music;
+	char sounds=config.sounds;
+	char vibrate=config.vibrate;
+	fwrite(&music,sizeof(char),1,file);
+	fwrite(&sounds,sizeof(char),1,file);
+	fwrite(&vibrate,sizeof(char),1,file);
 
 	fclose(file);
 }
