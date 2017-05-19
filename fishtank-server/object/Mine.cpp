@@ -113,6 +113,9 @@ void Mine::explode(std::vector<Platform> &platform_list,std::vector<Client*> &cl
 	for(Client *c:client_list){
 		Client &client=*c;
 
+		if(client.player.health<1)
+			continue;
+
 		float d=distance(x+(MINE_SIZE/2.0f),client.player.x+(PLAYER_WIDTH/2.0f),y+(MINE_SIZE/2.0f),client.player.y+(PLAYER_HEIGHT/2.0f));
 		client.player.health-=Mine::dmg(d);
 		if(client.player.health<1){
