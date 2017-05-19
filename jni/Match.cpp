@@ -124,6 +124,7 @@ void Match::recv_data(State &state){
 
 	// collect state updates from the server
 	uint32_t platform_status[2];
+	uint32_t mine_status;
 	while(udp.peek()>=SIZEOF_TO_CLIENT_HEARTBEAT){
 		to_client_heartbeat tch;
 		udp.recv(&tch,SIZEOF_TO_CLIENT_HEARTBEAT);
@@ -131,6 +132,7 @@ void Match::recv_data(State &state){
 
 		platform_status[0]=ntohl(tch.state[SERVER_STATE_GLOBAL_PLATFORMS]);
 		platform_status[1]=ntohl(tch.state[SERVER_STATE_GLOBAL_PLATFORMS_EXT]);
+		mine_status=ntohl(tch.state[SERVER_STATE_GLOBAL_MINES]);
 		bool arty_new=ntohl(tch.state[SERVER_STATE_GLOBAL_AIRSTRIKE_NEW]);
 		float arty_xpos=(int)ntohl(tch.state[SERVER_STATE_GLOBAL_AIRSTRIKE_XPOS])/FLOAT_MULTIPLIER;
 		float arty_xv=(int)ntohl(tch.state[SERVER_STATE_GLOBAL_AIRSTRIKE_XV])/FLOAT_MULTIPLIER;
@@ -181,6 +183,15 @@ void Match::recv_data(State &state){
 			}
 		}
 
+		// update the mines
+		for(int i=0;i<state.mine_list.size();++i){
+			bool before=state.mine_list[i].armed;
+			state.mine_list[i].armed=((mine_status>>i)&1)==1;
+			if(before&&!state.mine_list[i].armed){
+				ParticleBubble::spawn(state,state.mine_list[i]);
+			}
+		}
+
 		// maybe new artillery
 		if(arty_new)
 			state.arty_list.push_back(new Artillery(arty_xpos,arty_xv));
@@ -199,6 +210,7 @@ void Match::send_chat(const std::string &message){
 }
 
 void Match::get_level_config(State &state){
+	// get platforms
 	state.platform_list.clear();
 	for(int i=0;i<PLATFORM_COUNT;++i){
 		int32_t horiz;
@@ -222,5 +234,22 @@ void Match::get_level_config(State &state){
 		Platform p(health>0,horiz,x/FLOAT_MULTIPLIER,y/FLOAT_MULTIPLIER,seed);
 
 		state.platform_list.push_back(p);
+	}
+
+	// get mines
+	state.mine_list.clear();
+	uint32_t count;
+	tcp.recv(&count,sizeof(count));
+	count=ntohl(count);
+	for(int i=0;i<count;++i){
+		uint32_t platform_index;
+		uint32_t armed;
+		tcp.recv(&platform_index,sizeof(platform_index));
+		tcp.recv(&armed,sizeof(armed));
+		platform_index=ntohl(platform_index);
+		armed=ntohl(armed);
+
+		Mine mine(state.platform_list,platform_index,armed);
+		state.mine_list.push_back(mine);
 	}
 }

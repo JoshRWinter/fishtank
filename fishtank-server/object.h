@@ -57,6 +57,7 @@ struct Platform:Base{
 	static uint32_t platform_status[2];
 	bool horiz; // flat or vertical
 	int health;
+	int killed_by_id; // destroyed by playerid
 	unsigned seed; // serves to synchronize random interactions between clients and server
 };
 
@@ -82,6 +83,21 @@ struct Airstrike{
 	int timer; // timer till next artillery
 	int count; // artillery left
 	std::vector<Artillery*> arty_list;
+};
+
+#define MINE_BLAST_RADIUS 4.5f
+struct Mine:Base{
+	Mine(const std::vector<Platform>&,int);
+	void explode(std::vector<Platform>&,std::vector<Client*>&);
+	static void create_all(Match&);
+	static void process(Match &match);
+	static int dmg(float);
+	static uint32_t mine_status;
+
+	int platform_index;
+	int disturbed_by; // player id who last disturbed the mine
+	bool armed;
+	float yv;
 };
 
 #endif // OBJECT_H

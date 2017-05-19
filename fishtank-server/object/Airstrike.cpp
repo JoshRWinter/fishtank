@@ -43,6 +43,7 @@ void Airstrike::process(Match &match){
 				// maybe delete the projectile
 				if(arty.collide(platform)){
 					platform.health=0;
+					platform.killed_by_id=arty.client_id;
 					arty.explode(match.client_list);
 					if(platform.seed%2==0){
 						// delete the arty

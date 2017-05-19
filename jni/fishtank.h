@@ -56,6 +56,8 @@ struct Config;
 #define TID_BEACON 9
 #define TID_ARTILLERY 10
 #define TID_GROUND 11
+#define TID_MINE 12
+#define TID_MINE_CHAIN 13
 
 // ui textures
 #define UITID_FISHTANK 0
@@ -175,6 +177,7 @@ struct State{
 	Base backdrop,ground;
 	std::vector<Player> player_list;
 	std::vector<Platform> platform_list;
+	std::vector<Mine> mine_list;
 	std::vector<Shell*> shell_list;
 	std::vector<Artillery*> arty_list;
 	std::vector<ParticleShell*> particle_shell_list;

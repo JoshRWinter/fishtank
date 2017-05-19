@@ -61,8 +61,27 @@ void Shell::process(Match &match){
 
 			if(shell.collide(platform)){
 				platform.health-=25;
-				if(platform.health<0)
+				if(platform.health<1){
+					platform.killed_by_id=shell.owner.id;
 					platform.health=0;
+				}
+				delete *it;
+				it=match.shell_list.erase(it);
+				stop=true;
+				break;
+			}
+		}
+		if(stop)
+			continue;
+
+		// check for shells colliding with mines
+		for(Mine &mine:match.mine_list){
+			if(!mine.armed)
+				continue;
+
+			if(shell.collide(mine,0.25f)){
+				mine.disturbed_by=shell.owner.id;
+				mine.explode(match.platform_list,match.client_list);
 				delete *it;
 				it=match.shell_list.erase(it);
 				stop=true;

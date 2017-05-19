@@ -171,6 +171,17 @@ void Player::process(Match &match){
 			client.player.yv=0.0f;
 		}
 
+		// check for player colliding with mines
+		for(Mine &mine:match.mine_list){
+			if(!mine.armed)
+				continue;
+
+			if(client.player.collide(mine,0.15f)){
+				mine.disturbed_by=client.id;
+				mine.explode(match.platform_list,match.client_list);
+			}
+		}
+
 		// check for player colliding with platform
 		for(const Platform &platform:match.platform_list){
 			if(platform.health<1)
@@ -218,13 +229,16 @@ void Player::process(Match &match){
 					case KILLED_BY_SHELL:
 						msg=perp->name+" destroyed "+client.name+"!";
 						break;
+					case KILLED_BY_MINE:
+						msg=perp->name+" mined "+client.name+"!";
+						break;
 					}
 					match.send_chat(msg,"server");
 				}
 				else{
 					// either there are more players left in the match, Match::check_win() will handle that, or
 					if(match.living_clients()==0&&match.client_list.size()==1){
-						// one player killed himself with airstrike, reset the level
+						// one player killed himself, reset the level
 						match.ready_next_round();
 					}
 				}

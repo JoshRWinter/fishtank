@@ -318,7 +318,6 @@ void ParticlePlayer::render(const Renderer &renderer,const std::vector<ParticleP
 	glUniform4f(renderer.uniform.rgba,1.0f,1.0f,1.0f,1.0f);
 }
 
-// intense: larger bubbles
 ParticleBubble::ParticleBubble(const State &state,const Player &player){
 	w=PARTICLE_BUBBLE_SIZE;
 	h=PARTICLE_BUBBLE_SIZE;
@@ -352,6 +351,35 @@ ParticleBubble::ParticleBubble(const Artillery &arty){
 
 	xv=randomint(-1,1)/90.0f;
 	yv=randomint(-1,1)/90.0f;
+}
+
+ParticleBubble::ParticleBubble(const Mine &mine){
+	w=PARTICLE_BUBBLE_SIZE;
+	h=PARTICLE_BUBBLE_SIZE;
+	x=mine.x+(MINE_SIZE/2.0f)-(PARTICLE_BUBBLE_SIZE/2.0f);
+	y=mine.y+(MINE_SIZE/2.0f)-(PARTICLE_BUBBLE_SIZE/2.0f);
+	count=1;
+	frame=0;
+	ttl=40.0f;
+	if(!onein(3))
+		rot=randomint(0.0f,M_PI*10.0f)/10.0f;
+	else
+		rot=randomint(1,360)*(M_PI/180.0);
+
+	const float speed=randomint(10,45)/1000.0f;
+	xv=-cosf(rot)*speed;
+	yv=-sinf(rot)*speed;
+	const float head_start=randomint(0,400)/10.0f;
+	x+=xv*head_start;
+	y+=yv*head_start;
+	yv=randomint(-3,3)/100.0f;
+	xv=randomint(-3,3)/100.0f;
+}
+
+void ParticleBubble::spawn(State &state,const Mine &mine){
+	const int count=randomint(79,99);
+	for(int i=0;i<count;++i)
+		state.particle_bubble_list.push_back(new ParticleBubble(mine));
 }
 
 void ParticleBubble::process(State &state){

@@ -26,6 +26,9 @@ bool State::core(){
 	// process artillery
 	Artillery::process(*this);
 
+	// process mines
+	Mine::process(*this);
+
 	// process particle shells
 	ParticleShell::process(*this);
 
@@ -116,7 +119,6 @@ void State::render()const{
 	glBindTexture(GL_TEXTURE_2D,renderer.assets.texture[TID_BACKDROP].object);
 	renderer.draw(backdrop);
 
-
 	// draw dead fish
 	if(dead_fish_list.size()!=0)
 		DeadFish::render(renderer,dead_fish_list);
@@ -128,6 +130,10 @@ void State::render()const{
 	// draw shells
 	if(shell_list.size()!=0)
 		Shell::render(renderer,shell_list);
+
+	// draw mines
+	if(mine_list.size()!=0)
+		Mine::render(renderer,mine_list);
 
 	// draw players
 	Player::render(renderer,player_list);
@@ -315,6 +321,7 @@ void State::reset(){
 		delete shell;
 	shell_list.clear();
 	// platforms are cleared in Match::get_level_config
+	// mines are cleared in Match::get_level_config
 	// clear particle shells
 	for(ParticleShell *p:particle_shell_list)
 		delete p;

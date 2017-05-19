@@ -85,6 +85,20 @@ void Shell::process(State &state){
 		if(stop)
 			continue;
 
+		// check for shells colliding with mines
+		for(const Mine &mine:state.mine_list){
+			if(shell.collide(mine)){
+				// particles
+				ParticleShell::spawn(state,shell,randomint(3,4));
+				delete *it;
+				it=state.shell_list.erase(it);
+				stop=true;
+				break;
+			}
+		}
+		if(stop)
+			continue;
+
 		// check for shell going below screen
 		if(shell.y>FLOOR-0.4f){
 			// particles
@@ -108,4 +122,5 @@ void Shell::render(const Renderer &renderer,const std::vector<Shell*> &shell_lis
 
 		renderer.draw(shell->visual);
 	}
+	glUniform4f(renderer.uniform.rgba,1.0f,1.0f,1.0f,1.0f);
 }

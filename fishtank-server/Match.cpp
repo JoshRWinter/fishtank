@@ -40,8 +40,10 @@ void Match::accept_new_clients(){
 		}
 		else{
 			// if this is the first client, reset the level config
-			if(client_list.size()==0)
+			if(client_list.size()==0){
 				Platform::create_all(*this);
+				Mine::create_all(*this);
+			}
 
 			// accept the client
 			Client *c=new Client(connector_socket,connector_address,bounds);
@@ -80,6 +82,8 @@ void Match::step(){
 	Platform::process(platform_list);
 	// process airstrikes
 	Airstrike::process(*this);
+	// process mines
+	Mine::process(*this);
 
 	// check for a win
 	if(client_list.size()>1&&shell_list.size()==0&&airstrike_list.size()==0){
@@ -163,6 +167,7 @@ void Match::send_data(){
 	memset(&tch,0,sizeof(to_client_heartbeat));
 	tch.state[SERVER_STATE_GLOBAL_PLATFORMS]=htonl(Platform::platform_status[0]);
 	tch.state[SERVER_STATE_GLOBAL_PLATFORMS_EXT]=htonl(Platform::platform_status[1]);
+	tch.state[SERVER_STATE_GLOBAL_MINES]=htonl(Mine::mine_status);
 	tch.state[SERVER_STATE_GLOBAL_AIRSTRIKE_NEW]=htonl(arty_new);
 	tch.state[SERVER_STATE_GLOBAL_AIRSTRIKE_XPOS]=shtonl(arty_xpos*FLOAT_MULTIPLIER);
 	tch.state[SERVER_STATE_GLOBAL_AIRSTRIKE_XV]=shtonl(arty_xv*FLOAT_MULTIPLIER);
@@ -288,6 +293,7 @@ Client *Match::get_client_by_secret(int32_t s){
 }
 
 void Match::send_level_config(Client &client){
+	// send platform
 	for(const Platform &platform:platform_list){
 		int32_t horiz=platform.horiz;
 		int32_t x=(platform.x+(platform.w/2.0f))*FLOAT_MULTIPLIER;
@@ -306,6 +312,17 @@ void Match::send_level_config(Client &client){
 		client.tcp.send(&y,sizeof(y));
 		client.tcp.send(&health,sizeof(health));
 		client.tcp.send(&seed,sizeof(seed));
+	}
+
+	// mines
+	uint32_t count=htonl(mine_list.size());
+	client.tcp.send(&count,sizeof(count));
+	for(const Mine &mine:mine_list){
+		uint32_t platform_index=htonl(mine.platform_index);
+		uint32_t armed=htonl(mine.armed);
+
+		client.tcp.send(&platform_index,sizeof(platform_index));
+		client.tcp.send(&armed,sizeof(armed));
 	}
 }
 
@@ -355,6 +372,7 @@ Client *Match::last_man_standing(){
 // construct a new level and send it
 void Match::ready_next_round(){
 	Platform::create_all(*this);
+	Mine::create_all(*this);
 	to_client_tcp tctcp;
 	memset(&tctcp,0,sizeof(tctcp));
 	tctcp.type=TYPE_NEW_LEVEL;

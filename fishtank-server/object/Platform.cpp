@@ -16,6 +16,7 @@ Platform::Platform(bool horizontal,float xpos,float ypos){
 	y=ypos;
 	health=100;
 
+	killed_by_id=0;
 	seed=rand()%100;
 }
 

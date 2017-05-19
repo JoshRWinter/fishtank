@@ -20,6 +20,7 @@ struct area_bounds;
 
 #define KILLED_BY_AIRSTRIKE 1
 #define KILLED_BY_SHELL 2
+#define KILLED_BY_MINE 3
 
 struct Client{
 	Client(int,const std::string&,const area_bounds&);
@@ -80,6 +81,7 @@ public:
 	std::vector<Shell*> shell_list;
 	std::vector<Platform> platform_list;
 	std::vector<Airstrike*> airstrike_list;
+	std::vector<Mine> mine_list;
 	socket_tcp_server tcp;
 	socket_udp_server udp;
 	long long last_nano_time;

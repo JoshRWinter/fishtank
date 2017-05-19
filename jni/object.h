@@ -98,6 +98,17 @@ struct Artillery:Base{
 	float xv;
 };
 
+struct Mine:Base{
+	Mine(const std::vector<Platform>&,int,bool);
+	static void process(State&);
+	static void render(const Renderer&,const std::vector<Mine>&);
+
+	int platform_index;
+	Base chain;
+	bool armed;
+	float yv;
+};
+
 #define PARTICLE_SHELL_HEIGHT 0.1333f
 #define PARTICLE_SHELL_TTL 6,11
 struct ParticleShell:Base{
@@ -147,6 +158,8 @@ struct ParticlePlayer:Base{
 struct ParticleBubble:Base{
 	ParticleBubble(const State&,const Player&);
 	ParticleBubble(const Artillery&);
+	ParticleBubble(const Mine&);
+	static void spawn(State&,const Mine&);
 	static void process(State&);
 	static void render(const Renderer&,const std::vector<ParticleBubble*>&);
 
