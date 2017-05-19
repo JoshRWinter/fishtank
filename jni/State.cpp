@@ -13,8 +13,9 @@ bool State::core(){
 	match.send_data(*this);
 	// see if an error happened with the above operations
 	if(!match.connected()){
-		logcat("error, disconnected");
 		show_menu=true;
+		if(!menu.message.exec(*this,"You were disconnected because\nthe server doesn't like you anymore.","Disconnected"))
+			return false;
 	}
 
 	// process players
