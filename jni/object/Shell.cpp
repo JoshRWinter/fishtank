@@ -87,6 +87,9 @@ void Shell::process(State &state){
 
 		// check for shells colliding with mines
 		for(const Mine &mine:state.mine_list){
+			if(!mine.armed)
+				continue;
+
 			if(shell.collide(mine)){
 				// particles
 				ParticleShell::spawn(state,shell,randomint(3,4));
