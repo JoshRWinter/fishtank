@@ -21,5 +21,8 @@ convert beacon_1.tga beacon_2.tga +append beacon.tga
 # combine tank textures
 convert tank_base.tga tank_dmg.tga +append tank.tga
 
+# combine particle player textures
+convert particle_player_1.tga particle_player_2.tga particle_player_3.tga particle_player_4.tga +append particle_player.tga
+
 rm *.png
 

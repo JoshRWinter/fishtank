@@ -213,14 +213,17 @@ ParticlePlayer::ParticlePlayer(float xpos,float ypos,bool large,int player_color
 	x=xpos-(w/2.0f);
 	y=ypos-(h/2.0f);
 	rot=randomint(1,360)*(M_PI/180.0f);
-	count=1;
-	frame=0;
+	count=4;
 
 	float speed;
-	if(large)
+	if(large){
+		frame=randomint(1,3);
 		speed=randomint(19,24)/100.0f;
-	else
+	}
+	else{
 		speed=randomint(10,14)/100.0f;
+		frame=0;
+	}
 	xv=-cosf(rot)*speed;
 	yv=-sinf(rot)*speed;
 	rotv=xv;
