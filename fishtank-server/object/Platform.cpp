@@ -78,8 +78,8 @@ void Platform::create_all(Match &match){
 	}
 	match.bounds.left-=2.0f;
 	match.bounds.right+=2.0f;
-	match.bounds.bottom+=2.0f;
-	match.bounds.top-=2.0f;
+	match.bounds.bottom+=3.0f;
+	match.bounds.top-=1.0f;
 
 	// just to check
 	if(match.platform_list.size()!=PLATFORM_COUNT){
