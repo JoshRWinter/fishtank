@@ -29,8 +29,8 @@
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
      inkscape:zoom="2.8"
-     inkscape:cx="509.59642"
-     inkscape:cy="522.0922"
+     inkscape:cx="515.13213"
+     inkscape:cy="524.23506"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -48,7 +48,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -58,7 +58,7 @@
      id="layer1"
      transform="translate(0,-87)">
     <path
-       style="fill:#0a5869;fill-opacity:1;stroke:#3a3a7e;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:#315c77;fill-opacity:1;stroke:#3a3a7e;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        d="M 903.82227 278.52344 C 888.09942 278.67686 875.35742 278.96875 875.35742 278.96875 C 851.25027 280.39715 792.85742 279.14648 792.85742 279.14648 C 768.39311 278.07506 721.96484 278.96875 721.96484 278.96875 C 716.96483 279.6827 659.28516 279.32617 659.28516 279.32617 C 651.07088 278.07636 599.46484 278.96875 599.46484 278.96875 C 566.96484 278.61143 516.96484 279.14648 516.96484 279.14648 C 497.67916 280.39649 439.10742 278.96875 439.10742 278.96875 C 413.21456 278.61143 382.14258 279.14648 382.14258 279.14648 C 341.07116 280.39649 335.89258 279.14648 335.89258 279.14648 C 323.92829 278.43219 306.60742 280.03906 306.60742 280.03906 L 295.97461 278.79883 L 295.97461 320.09766 L 1004.6367 320.09766 L 1004.6367 278.52344 L 1004.2852 278.52344 L 1004.2852 278.78906 C 988.03515 279.86052 957.14258 279.32617 957.14258 279.32617 C 951.79022 278.88749 944.12043 278.64294 935.61133 278.52344 L 903.82227 278.52344 z "
        id="rect6275"
        transform="matrix(0.26458333,0,0,0.26458333,0,87)" />
