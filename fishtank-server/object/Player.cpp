@@ -172,13 +172,15 @@ void Player::process(Match &match){
 		}
 
 		// check for player colliding with mines
-		for(Mine &mine:match.mine_list){
-			if(!mine.armed)
-				continue;
+		if(client.player.health>0){
+			for(Mine &mine:match.mine_list){
+				if(!mine.armed)
+					continue;
 
-			if(client.player.collide(mine,0.15f)){
-				mine.disturbed_by=client.id;
-				mine.explode(match.platform_list,match.client_list);
+				if(client.player.collide(mine,0.15f)){
+					mine.disturbed_by=client.id;
+					mine.explode(match.platform_list,match.client_list);
+				}
 			}
 		}
 
