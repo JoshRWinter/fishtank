@@ -179,7 +179,8 @@ void Player::process(Match &match){
 					continue;
 
 				if(client.player.collide(mine,0.15f)){
-					mine.disturbed_by=client.id;
+					if(mine.disturbed_by==-1)
+						mine.disturbed_by=client.id;
 					mine.explode(match.platform_list,match.client_list);
 				}
 			}

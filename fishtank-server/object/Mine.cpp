@@ -11,6 +11,7 @@ Mine::Mine(const std::vector<Platform> &platform_list,int platform_index){
 	this->platform_index=platform_index;
 	yv=0.0f;
 	armed=true;
+	disturbed_by=-1;
 }
 
 void Mine::create_all(Match &match){
