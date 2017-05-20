@@ -66,11 +66,11 @@ void ParticleShell::render(const Renderer &renderer,const std::vector<ParticleSh
 }
 
 ParticlePlatform::ParticlePlatform(const Shell &shell){
-	w=PARTICLE_PLATFORM_SIZE;
-	h=PARTICLE_PLATFORM_SIZE;
+	w=randomint(PARTICLE_PLATFORM_SIZE)/100.0f;
+	h=w;
 	rot=randomint(1,360)*(M_PI/180.0f);
-	x=shell.x+(SHELL_WIDTH/2.0f)-(PARTICLE_PLATFORM_SIZE/2.0f);
-	y=shell.y+(SHELL_HEIGHT/2.0f)-(PARTICLE_PLATFORM_SIZE/2.0f);
+	x=shell.x+(SHELL_WIDTH/2.0f)-(w/2.0f);
+	y=shell.y+(SHELL_HEIGHT/2.0f)-(h/2.0f);
 	count=2;
 	frame=randomint(0,1);
 
@@ -80,11 +80,11 @@ ParticlePlatform::ParticlePlatform(const Shell &shell){
 }
 
 ParticlePlatform::ParticlePlatform(float xpos,float ypos){
-	w=PARTICLE_PLATFORM_SIZE;
-	h=PARTICLE_PLATFORM_SIZE;
+	w=randomint(PARTICLE_PLATFORM_SIZE)/100.0f;
+	h=w;
 	rot=randomint(1,360)*(M_PI/180.0f);
-	x=xpos-(PARTICLE_PLATFORM_SIZE/2.0f);
-	y=ypos-(PARTICLE_PLATFORM_SIZE/2.0f);
+	x=xpos-(w/2.0f);
+	y=ypos-(h/2.0f);
 	count=2;
 	frame=randomint(0,1);
 
@@ -94,11 +94,11 @@ ParticlePlatform::ParticlePlatform(float xpos,float ypos){
 }
 
 ParticlePlatform::ParticlePlatform(const Artillery &arty){
-	w=PARTICLE_PLATFORM_SIZE;
-	h=PARTICLE_PLATFORM_SIZE;
+	w=randomint(PARTICLE_PLATFORM_SIZE)/100.0f;
+	h=w;
 	rot=randomint(1,360)*(M_PI/180.0f);
-	x=arty.x+(ARTILLERY_WIDTH/2.0f)-(PARTICLE_PLATFORM_SIZE/2.0f);
-	y=arty.y+(ARTILLERY_HEIGHT/2.0f)-(PARTICLE_PLATFORM_SIZE/2.0f);
+	x=arty.x+(ARTILLERY_WIDTH/2.0f)-(w/2.0f);
+	y=arty.y+(ARTILLERY_HEIGHT/2.0f)-(h/2.0f);
 	count=2;
 	frame=randomint(0,1);
 
@@ -167,8 +167,8 @@ void ParticlePlatform::process(State &state){
 		}
 
 		// check if below FLOOR
-		if(particle.y+PARTICLE_PLATFORM_SIZE>FLOOR){
-			particle.y=FLOOR-PARTICLE_PLATFORM_SIZE;
+		if(particle.y+particle.h>FLOOR){
+			particle.y=FLOOR-particle.h;
 			on_ground=true;
 			particle.yv*=0.4f;
 			particle.yv=-particle.yv;
