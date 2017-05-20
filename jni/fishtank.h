@@ -8,7 +8,7 @@
 #include <vector>
 #include "glesutil.h"
 
-#define SHOW_FPS
+// #define SHOW_FPS
 #define DATAPATH "/data/data/joshwinter.fishtank/files"
 
 #define RGB_RED RGB_RED_R,RGB_RED_G,RGB_RED_B,1.0f
