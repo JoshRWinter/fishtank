@@ -119,6 +119,15 @@ void Match::recv_data(State &state){
 		case TYPE_SCOREBOARD:
 			get_scoreboard(state.scoreboard);
 			break;
+		case TYPE_KILLER_INDEX:
+			{
+				uint32_t killer_index;
+				tcp.recv(&killer_index,sizeof(killer_index));
+				spectate_index=ntohl(killer_index);
+				if(spectate_index==my_index)
+					cycle_spectate(state.player_list);
+			}
+			break;
 		}
 	}
 
@@ -213,7 +222,31 @@ void Match::send_chat(const std::string &message){
 	tcp.send(&tstcp,sizeof(tstcp));
 }
 
+void Match::cycle_spectate(const std::vector<Player> &player_list){
+	// find a living player with higher index than spectate index
+	for(int i=0;i<player_list.size();++i){
+		if(player_list[i].health>0&&i>spectate_index){
+			spectate_index=i;
+			return;
+		}
+	}
+
+	// go to lowest alive player's index
+	for(int i=0;i<player_list.size();++i){
+		if(player_list[i].health<1)
+			continue;
+
+		spectate_index=i;
+		return;
+	}
+
+	// no living players, spectate self
+	spectate_index=my_index;
+}
+
 void Match::get_level_config(State &state){
+	dead_timer=DEAD_TIMER;
+	spectate_index=0;
 	// cleanup
 	for(ParticlePlayer *p:state.particle_player_list)
 		delete p;

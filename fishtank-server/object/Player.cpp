@@ -1,3 +1,4 @@
+#include <string.h>
 #include <math.h>
 #include "../fishtank-server.h"
 
@@ -44,10 +45,10 @@ void Player::process(Match &match){
 		if(client.input.fire>0.0f&&client.player.health>0){
 			Shell *s=new Shell(match,client,shell_dmg(client.input.fire));
 			match.shell_list.push_back(s);
-			client.input.fire=0.0f;
 			// launch the player backwards a bit
 			client.player.xv=-s->xv/5.0f;
 		}
+		client.input.fire=0.0f;
 
 		// handle firing a beacon (airstrike)
 		if(client.player.avail_airstrike&&client.input.astrike>0.0f&&client.player.health>0){
@@ -224,6 +225,17 @@ void Player::process(Match &match){
 				std::string msg;
 				// send a message if there is more than one left alive
 				if(match.living_clients()>1){
+					// tell the victim who killed them
+					to_client_tcp tctcp;
+					memset(&tctcp,0,sizeof(tctcp));
+					tctcp.type=TYPE_KILLER_INDEX;
+					client.tcp.send(&tctcp.type,sizeof(tctcp.type));
+					client.tcp.send(tctcp.msg,sizeof(tctcp.msg));
+					client.tcp.send(tctcp.name,sizeof(tctcp.name));
+					uint32_t killer_index=htonl(match.get_client_index(client.killed_by_id));
+					client.tcp.send(&killer_index,sizeof(killer_index));
+
+					// send a server message
 					switch(client.kill_reason){
 					case KILLED_BY_AIRSTRIKE:
 						msg=perp->name+" bombed "+client.name+"!";

@@ -301,6 +301,15 @@ Client *Match::get_client_by_secret(int32_t s){
 	return NULL;
 }
 
+int Match::get_client_index(int id)const{
+	int index=0;
+	for(const Client *c:client_list){
+		if(c->id==id)
+			return index;
+		++index;
+	}
+}
+
 void Match::send_level_config(Client &client){
 	// send round id
 	uint32_t round_id_tmp=htonl(round_id);

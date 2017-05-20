@@ -16,6 +16,7 @@
 #define TYPE_HEARTBEAT 1
 #define TYPE_NEW_LEVEL 2
 #define TYPE_SCOREBOARD 3
+#define TYPE_KILLER_INDEX 4
 #define SIZEOF_TO_SERVER_TCP (1+MSG_LIMIT+1)
 struct to_server_tcp{
 	uint8_t type;

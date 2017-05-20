@@ -71,6 +71,7 @@ public:
 	void send_chat(const std::string&,const std::string&);
 	void send_scoreboard(Client&);
 	Client *get_client_by_secret(int32_t);
+	int get_client_index(int)const;
 	void send_level_config(Client&);
 	bool check_win();
 	int living_clients()const;

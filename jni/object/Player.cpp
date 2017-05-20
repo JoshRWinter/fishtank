@@ -25,9 +25,19 @@ Player::Player(){
 void Player::process(State &state){
 	int index=0;
 	for(Player &player:state.player_list){
+
+		if(&player==&state.player_list[state.match.my_index]&&player.health<1&&state.match.dead_timer>0){
+			--state.match.dead_timer;
+			if(state.match.dead_timer<0)
+				state.match.dead_timer=0;
+		}
+
 		// handle firing the cannon
-		if(player.cue_fire>0.0f&&player.health>0){
-			state.shell_list.push_back(new Shell(state,player));
+		if(player.cue_fire>0.0f){
+			if(player.health>0)
+				state.shell_list.push_back(new Shell(state,player));
+			else
+				state.match.cycle_spectate(state.player_list); // cycle the spectated player
 			player.cue_fire=0.0f;
 		}
 
@@ -64,8 +74,17 @@ void Player::process(State &state){
 
 		// tell the renderer the player's position
 		if(&player==&state.player_list[state.match.my_index]){
-			state.renderer.player_x=player.x;
-			state.renderer.player_y=player.y;
+			if(state.match.dead_timer==0){
+				// spectating
+				if(state.player_list[state.match.spectate_index].colorid==0||state.player_list[state.match.spectate_index].health<1)
+					state.match.cycle_spectate(state.player_list);
+				state.renderer.player_x=state.player_list[state.match.spectate_index].x;
+				state.renderer.player_y=state.player_list[state.match.spectate_index].y;
+			}
+			else{
+				state.renderer.player_x=player.x;
+				state.renderer.player_y=player.y;
+			}
 		}
 
 		++index;
