@@ -90,7 +90,8 @@ void Platform::create_all(Match &match){
 	std::cout<<"constructed new playing area ("<<unused<<" unused)"<<std::endl;
 }
 
-void Platform::process(const std::vector<Platform> &platform_list){
+// fill in platform_status
+void Platform::update(const std::vector<Platform> &platform_list){
 	Platform::platform_status[0]=0;
 	Platform::platform_status[1]=0;
 	// pack all platform health status 1=alive 0=dead into uint32_t Platform::platform_status
@@ -104,4 +105,8 @@ void Platform::process(const std::vector<Platform> &platform_list){
 
 		Platform::platform_status[1]|=status<<i;
 	}
+}
+
+void Platform::process(const std::vector<Platform> &platform_list){
+	Platform::update(platform_list);
 }

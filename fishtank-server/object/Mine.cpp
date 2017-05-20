@@ -52,20 +52,25 @@ void Mine::create_all(Match &match){
 	}
 }
 
-void Mine::process(Match &match){
+// fill in mine_status
+void Mine::update(const std::vector<Mine> &mine_list){
 	// populate Mine::mine_status
 	Mine::mine_status=0;
 
 	int i=0;
 	// fill the status variable
-	for(Mine &mine:match.mine_list){
+	for(const Mine &mine:mine_list){
 		uint32_t status=mine.armed;
 
 		Mine::mine_status|=status<<i;
 
 		++i;
+	}
+}
 
-		// regular processing
+void Mine::process(Match &match){
+	Mine::update(match.mine_list);
+	for(Mine &mine:match.mine_list){
 		if(mine.armed){
 			// update ypos
 			mine.y+=mine.yv;

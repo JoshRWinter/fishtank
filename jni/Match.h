@@ -17,6 +17,7 @@ public:
 	socket_tcp &get_tcp();
 
 	int my_index; // player's index into State::player_list
+	int round_id;
 
 private:
 	int32_t udp_secret;

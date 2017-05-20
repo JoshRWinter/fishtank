@@ -87,6 +87,7 @@ public:
 	socket_udp_server udp;
 	long long last_nano_time;
 	int win_timer;
+	int round_id;
 	// bounds of the playing area
 	area_bounds bounds;
 };

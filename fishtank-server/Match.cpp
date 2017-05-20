@@ -4,6 +4,7 @@
 Match::Match(){
 	last_nano_time=0;
 	win_timer=WIN_TIMER;
+	round_id=0;
 }
 Match::~Match(){
 	// clear the clients
@@ -165,6 +166,8 @@ void Match::send_data(){
 	to_client_heartbeat tch;
 	int32_t *server_state=tch.state+SERVER_STATE_GLOBAL_FIELDS;
 	memset(&tch,0,sizeof(to_client_heartbeat));
+	// SERVER_STATE_GLOBAL_INDEX is set just before sending to client
+	tch.state[SERVER_STATE_GLOBAL_ROUND_ID]=htonl(round_id);
 	tch.state[SERVER_STATE_GLOBAL_PLATFORMS]=htonl(Platform::platform_status[0]);
 	tch.state[SERVER_STATE_GLOBAL_PLATFORMS_EXT]=htonl(Platform::platform_status[1]);
 	tch.state[SERVER_STATE_GLOBAL_MINES]=htonl(Mine::mine_status);
@@ -189,19 +192,22 @@ void Match::send_data(){
 		server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_BEACON_ROT]=shtonl(client.player.beacon.rot*FLOAT_MULTIPLIER);
 		server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_ANGLE]=shtonl(client.player.angle*FLOAT_MULTIPLIER);
 		server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_COLORID]=htonl(client.colorid);
-		server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_ID]=htonl(client.id);
 		server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_FIRE]=shtonl(client.input.fire*FLOAT_MULTIPLIER);
 
 		++i;
 	}
 
 	// dispatch state data
+	i=0;
 	for(Client *c:client_list){
 		Client &client=*c;
 		if(!client.udpid.initialized)
 			continue;
 
+		tch.state[SERVER_STATE_GLOBAL_INDEX]=htonl(i);
 		udp.send(&tch,SIZEOF_TO_CLIENT_HEARTBEAT,client.udpid);
+
+		++i;
 	}
 }
 
@@ -296,6 +302,9 @@ Client *Match::get_client_by_secret(int32_t s){
 }
 
 void Match::send_level_config(Client &client){
+	// send round id
+	uint32_t round_id_tmp=htonl(round_id);
+	client.tcp.send(&round_id_tmp,sizeof(round_id_tmp));
 	// send platform
 	for(const Platform &platform:platform_list){
 		int32_t horiz=platform.horiz;
@@ -404,13 +413,18 @@ Client *Match::last_man_standing(){
 
 // construct a new level and send it
 void Match::ready_next_round(){
+	++round_id;
 	Platform::create_all(*this);
 	Mine::create_all(*this);
+	Platform::update(platform_list);
+	Mine::update(mine_list);
 	to_client_tcp tctcp;
 	memset(&tctcp,0,sizeof(tctcp));
 	tctcp.type=TYPE_NEW_LEVEL;
 	for(Client *client:client_list){
-		client->tcp.send(&tctcp,sizeof(tctcp));
+		client->tcp.send(&tctcp.type,sizeof(tctcp.type));
+		client->tcp.send(&tctcp.msg,sizeof(tctcp.msg));
+		client->tcp.send(&tctcp.name,sizeof(tctcp.name));
 		send_level_config(*client);
 		// increment rounds_played
 		++client->stat.rounds_played;

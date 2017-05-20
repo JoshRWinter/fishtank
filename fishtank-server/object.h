@@ -53,6 +53,7 @@ struct Platform:Base{
 	Platform(bool,float,float);
 	static void create_all(Match&);
 	static void process(const std::vector<Platform>&);
+	static void update(const std::vector<Platform>&);
 
 	static uint32_t platform_status[2];
 	bool horiz; // flat or vertical
@@ -91,6 +92,7 @@ struct Mine:Base{
 	void explode(std::vector<Platform>&,std::vector<Client*>&);
 	static void create_all(Match&);
 	static void process(Match &match);
+	static void update(const std::vector<Mine>&);
 	static int dmg(float);
 	static uint32_t mine_status;
 

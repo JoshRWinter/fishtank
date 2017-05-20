@@ -115,9 +115,6 @@ void Match::recv_data(State &state){
 			break;
 		case TYPE_NEW_LEVEL:
 			get_level_config(state);
-			for(ParticlePlayer *p:state.particle_player_list)
-				delete p;
-			state.particle_player_list.clear();
 			break;
 		case TYPE_SCOREBOARD:
 			get_scoreboard(state.scoreboard);
@@ -133,6 +130,13 @@ void Match::recv_data(State &state){
 		udp.recv(&tch,SIZEOF_TO_CLIENT_HEARTBEAT);
 		int32_t *server_state=tch.state+SERVER_STATE_GLOBAL_FIELDS;
 
+		uint32_t round_id_tmp=ntohl(tch.state[SERVER_STATE_GLOBAL_ROUND_ID]);
+		// make sure this datagram is for the current round
+		if(round_id_tmp!=round_id){
+			// discard
+			continue;
+		}
+		my_index=ntohl(tch.state[SERVER_STATE_GLOBAL_INDEX]);
 		platform_status[0]=ntohl(tch.state[SERVER_STATE_GLOBAL_PLATFORMS]);
 		platform_status[1]=ntohl(tch.state[SERVER_STATE_GLOBAL_PLATFORMS_EXT]);
 		mine_status=ntohl(tch.state[SERVER_STATE_GLOBAL_MINES]);
@@ -158,9 +162,6 @@ void Match::recv_data(State &state){
 			player.colorid=ntohl(server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_COLORID]);
 			if(player.cue_fire==0.0f)
 				player.cue_fire=(int)ntohl(server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_FIRE])/FLOAT_MULTIPLIER;
-			int cid=ntohl(server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_ID]);
-			if(id==cid)
-				my_index=i;
 			if(before_health>0&&player.health<1&&player.colorid!=0){
 				ParticlePlayer::spawn(state,player);
 			}
@@ -213,6 +214,17 @@ void Match::send_chat(const std::string &message){
 }
 
 void Match::get_level_config(State &state){
+	// cleanup
+	for(ParticlePlayer *p:state.particle_player_list)
+		delete p;
+	state.particle_player_list.clear();
+	for(ParticlePlatform *p:state.particle_platform_list)
+		delete p;
+	state.particle_platform_list.clear();
+	// get round id
+	uint32_t round_id_tmp;
+	tcp.recv(&round_id_tmp,sizeof(round_id_tmp));
+	round_id=ntohl(round_id_tmp);
 	// get platforms
 	state.platform_list.clear();
 	for(int i=0;i<PLATFORM_COUNT;++i){
