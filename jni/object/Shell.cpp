@@ -69,13 +69,15 @@ void Shell::process(State &state){
 			continue;
 
 		// check for shells colliding with platform
-		for(const Platform &platform:state.platform_list){
+		for(Platform &platform:state.platform_list){
 			if(!platform.active)
 				continue;
 
 			if(shell.collide(platform)){
 				// generate some particles
 				ParticlePlatform::spawn(state,shell,randomint(3,5));
+				// estimate dmg
+				platform.health-=25;
 				delete *it;
 				it=state.shell_list.erase(it);
 				stop=true;

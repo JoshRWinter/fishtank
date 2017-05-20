@@ -20,8 +20,10 @@ Platform::Platform(bool platform_active,bool horiz,float xpos,float ypos,unsigne
 	visual.y=ypos-(PLATFORM_VIS_HEIGHT/2.0f);
 	visual.w=PLATFORM_VIS_WIDTH;
 	visual.h=PLATFORM_VIS_HEIGHT;
-	visual.count=3;
+	visual.count=4;
 	visual.frame=randomint(0,2);
+
+	health=100;
 
 	seed=s;
 }
@@ -33,5 +35,12 @@ void Platform::render(const Renderer &renderer,const std::vector<Platform> &plat
 			continue;
 
 		renderer.draw(platform.visual);
+		if(platform.health<100){
+			glUniform4f(renderer.uniform.rgba,1.0f,1.0f,1.0f,(100-platform.health)/100.0f);
+			Base dmg=platform.visual;
+			dmg.frame=3;
+			renderer.draw(dmg);
+			glUniform4f(renderer.uniform.rgba,1.0f,1.0f,1.0f,1.0f);
+		}
 	}
 }

@@ -84,6 +84,7 @@ struct Platform:Base{
 
 	Base visual;
 	bool active;
+	int health;
 	unsigned seed; // serves to sync random interactions between client and server
 };
 
