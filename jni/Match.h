@@ -10,6 +10,8 @@ public:
 	void send_data(const State&);
 	void recv_data(State&);
 	void get_level_config(State&);
+	void get_scoreboard(std::vector<stat>&);
+	void request_scoreboard();
 	bool connected();
 	void send_chat(const std::string&);
 	socket_tcp &get_tcp();

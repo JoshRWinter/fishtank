@@ -224,6 +224,9 @@ void Match::recv_data(){
 			case TYPE_CHAT:
 				send_chat((char*)tstcp.msg,client.name);
 				break;
+			case TYPE_SCOREBOARD:
+				send_scoreboard(client);
+				break;
 			}
 		}
 	}
@@ -323,6 +326,36 @@ void Match::send_level_config(Client &client){
 
 		client.tcp.send(&platform_index,sizeof(platform_index));
 		client.tcp.send(&armed,sizeof(armed));
+	}
+}
+
+void Match::send_scoreboard(Client &client){
+	to_client_tcp tctcp;
+	memset(&tctcp,0,sizeof(tctcp));
+	tctcp.type=TYPE_SCOREBOARD;
+	client.tcp.send(&tctcp.type,sizeof(tctcp.type));
+	client.tcp.send(&tctcp.msg,sizeof(tctcp.msg));
+	client.tcp.send(&tctcp.name,sizeof(tctcp.name));
+
+	uint32_t count=htonl(client_list.size());
+	client.tcp.send(&count,sizeof(count));
+	for(Client *c:client_list){
+		// send name
+		char name[MSG_LIMIT+1];
+		strncpy(name,c->name.c_str(),MSG_LIMIT+1);
+		client.tcp.send(name,MSG_LIMIT+1);
+
+		// send match victories
+		uint32_t mv=htonl(c->stat.match_victories);
+		client.tcp.send(&mv,sizeof(mv));
+
+		// send one-on-one victories
+		uint32_t ooo=htonl(c->stat.victories);
+		client.tcp.send(&ooo,sizeof(ooo));
+
+		// send deaths
+		uint32_t d=htonl(c->stat.deaths);
+		client.tcp.send(&d,sizeof(d));
 	}
 }
 

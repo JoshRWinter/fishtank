@@ -13,10 +13,9 @@
 
 // message from client to server tcp
 #define TYPE_CHAT 0
-#define TYPE_NEW_PLAYER 1
-#define TYPE_DELETE_PLAYER 2
-#define TYPE_HEARTBEAT 3
-#define TYPE_NEW_LEVEL 4
+#define TYPE_HEARTBEAT 1
+#define TYPE_NEW_LEVEL 2
+#define TYPE_SCOREBOARD 3
 #define SIZEOF_TO_SERVER_TCP (1+MSG_LIMIT+1)
 struct to_server_tcp{
 	uint8_t type;

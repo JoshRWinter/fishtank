@@ -119,6 +119,9 @@ void Match::recv_data(State &state){
 				delete p;
 			state.particle_player_list.clear();
 			break;
+		case TYPE_SCOREBOARD:
+			get_scoreboard(state.scoreboard);
+			break;
 		}
 	}
 
@@ -251,5 +254,53 @@ void Match::get_level_config(State &state){
 
 		Mine mine(state.platform_list,platform_index,armed);
 		state.mine_list.push_back(mine);
+	}
+}
+
+void Match::request_scoreboard(){
+	// send the request
+	to_server_tcp tstcp;
+	memset(&tstcp,0,sizeof(tstcp));
+	tstcp.type=TYPE_SCOREBOARD;
+	tcp.send(&tstcp.type,sizeof(tstcp.type));
+	tcp.send(&tstcp.msg,sizeof(tstcp.msg));
+}
+
+void Match::get_scoreboard(std::vector<stat> &stat_list){
+	int bytestr=0;
+	// get the count
+	uint32_t count;
+	tcp.recv(&count,sizeof(count));
+	count=ntohl(count);
+
+	for(int i=0;i<count;++i){
+		stat s;
+
+		// get the name
+		char name[MSG_LIMIT+1];
+		tcp.recv(name,MSG_LIMIT+1);
+		name[MSG_LIMIT]=0; // carefully
+
+		// get the match victories
+		uint32_t mv;
+		tcp.recv(&mv,sizeof(mv));
+		mv=ntohl(mv);
+
+		// get the one-on-one-victories
+		uint32_t ooo;
+		tcp.recv(&ooo,sizeof(ooo));
+		ooo=ntohl(ooo);
+
+		// get the deaths
+		uint32_t d;
+		tcp.recv(&d,sizeof(d));
+		d=ntohl(d);
+
+		s.name=name;
+		s.match_victories=mv;
+		s.victories=ooo;
+		s.deaths=d;
+
+		stat_list.push_back(s);
 	}
 }

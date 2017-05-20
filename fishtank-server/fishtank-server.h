@@ -69,6 +69,7 @@ public:
 	void send_data();
 	void recv_data();
 	void send_chat(const std::string&,const std::string&);
+	void send_scoreboard(Client&);
 	Client *get_client_by_secret(int32_t);
 	void send_level_config(Client&);
 	bool check_win();

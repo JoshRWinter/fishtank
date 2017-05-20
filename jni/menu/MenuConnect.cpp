@@ -25,10 +25,11 @@ bool MenuConnect::exec(State &state,const std::string &ip){
 			}
 		}
 		else{
-			if(button_ready.process(state.pointer)){
+			if(button_ready.process(state.pointer)||state.back){
 				state.pointer[0].active=false;
 				state.pointer[0].y=0.0f;
 				state.reset();
+				state.back=false;
 				return true;
 			}
 		}

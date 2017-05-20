@@ -37,6 +37,7 @@ struct Renderer;
 struct State;
 struct ChatMessage;
 struct Config;
+struct stat;
 #include "network.h"
 #include "fishnet.h"
 #include "object.h"
@@ -94,6 +95,13 @@ struct Config{
 	bool music,sounds,vibrate;
 };
 
+struct stat{
+	std::string name;
+	int match_victories;
+	int victories;
+	int deaths;
+};
+
 struct Renderer{
 	Renderer();
 	void init(android_app&);
@@ -141,6 +149,7 @@ struct State{
 	float firepower,final_firepower,final_strokepower;
 	float timer_chatpane; // show the chat when active
 	int colorid; // my colorid
+	std::vector<stat> scoreboard;
 
 	// configuration
 	Config config;
