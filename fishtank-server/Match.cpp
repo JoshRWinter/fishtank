@@ -233,6 +233,23 @@ void Match::recv_data(){
 			case TYPE_SCOREBOARD:
 				send_scoreboard(client);
 				break;
+			case TYPE_SPECTATED_NAME:
+				{
+					to_client_tcp tctcp;
+					memset(&tctcp,0,sizeof(tctcp));
+					uint32_t index;
+					client.tcp.recv(&index,sizeof(index));
+					index=ntohl(index);
+					if(index<client_list.size())
+						strncpy((char*)tctcp.name,client_list[index]->name.c_str(),MSG_LIMIT+1);
+					else
+						tctcp.name[0]=0;
+					tctcp.type=TYPE_SPECTATED_NAME;
+					client.tcp.send(&tctcp.type,sizeof(tctcp.type));
+					client.tcp.send(tctcp.msg,sizeof(tctcp.msg));
+					client.tcp.send(tctcp.name,sizeof(tctcp.name));
+				}
+				break;
 			}
 		}
 	}

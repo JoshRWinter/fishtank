@@ -223,6 +223,15 @@ void State::render()const{
 		}
 	}
 
+	// draw "spectating ..." string
+	if(match.dead_timer==0){
+		glUniform4f(renderer.uniform.rgba,0.701f,0.71f,0.3f,1.0f);
+		glBindTexture(GL_TEXTURE_2D,renderer.font.button->atlas);
+		std::string spectating;
+		spectating="Shadowing: "+match.spectate_name;
+		drawtextcentered(renderer.font.button,0.0f,2.25f,spectating.c_str());
+	}
+
 	// fps
 #ifdef SHOW_FPS
 	{

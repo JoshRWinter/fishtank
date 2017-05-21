@@ -17,12 +17,15 @@ public:
 	bool connected();
 	void send_chat(const std::string&);
 	void cycle_spectate(const std::vector<Player>&);
+	int find_new_spectate(const std::vector<Player>&)const;
+	void request_spectate_name(int);
 	socket_tcp &get_tcp();
 
 	int my_index; // player's index into State::player_list
 	int round_id;
 	int dead_timer; // after the player dies and is allowed to spectate
 	int spectate_index; // index of player whom is being spectated
+	std::string spectate_name;
 
 private:
 	int32_t udp_secret;

@@ -126,7 +126,12 @@ void Match::recv_data(State &state){
 				spectate_index=ntohl(killer_index);
 				if(spectate_index==my_index)
 					cycle_spectate(state.player_list);
+				else
+					request_spectate_name(spectate_index);
 			}
+			break;
+		case TYPE_SPECTATED_NAME:
+			spectate_name=(char*)tctcp.name;
 			break;
 		}
 	}
@@ -222,12 +227,27 @@ void Match::send_chat(const std::string &message){
 	tcp.send(&tstcp,sizeof(tstcp));
 }
 
+void Match::request_spectate_name(int i){
+	// ask the server what the spectated player's name is
+	to_server_tcp tstcp;
+	memset(&tstcp,0,sizeof(tstcp));
+	tstcp.type=TYPE_SPECTATED_NAME;
+	tcp.send(&tstcp.type,sizeof(tstcp.type));
+	tcp.send(&tstcp.msg,sizeof(tstcp.msg));
+	uint32_t index=htonl(i);
+	tcp.send(&index,sizeof(index));
+}
+
 void Match::cycle_spectate(const std::vector<Player> &player_list){
+	spectate_index=find_new_spectate(player_list);
+	request_spectate_name(spectate_index);
+}
+
+int Match::find_new_spectate(const std::vector<Player> &player_list)const{
 	// find a living player with higher index than spectate index
 	for(int i=0;i<player_list.size();++i){
 		if(player_list[i].health>0&&i>spectate_index){
-			spectate_index=i;
-			return;
+			return i;
 		}
 	}
 
@@ -236,12 +256,11 @@ void Match::cycle_spectate(const std::vector<Player> &player_list){
 		if(player_list[i].health<1)
 			continue;
 
-		spectate_index=i;
-		return;
+		return i;
 	}
 
 	// no living players, spectate self
-	spectate_index=my_index;
+	return my_index;
 }
 
 void Match::get_level_config(State &state){
