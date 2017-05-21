@@ -1,7 +1,7 @@
 #include "fishtank-server.h"
 
 int Client::last_id=0;
-Client::Client(int s,const std::string &addr,const area_bounds &bounds):tcp(s,addr),player(bounds){
+Client::Client(int s,const std::string &addr,const area_bounds &bounds,const std::vector<Mine> &mine_list):tcp(s,addr),player(bounds,mine_list){
 	// accept the client
 	uint8_t accepted=1;
 	tcp.send(&accepted,sizeof(uint8_t));

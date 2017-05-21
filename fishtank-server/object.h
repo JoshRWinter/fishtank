@@ -26,10 +26,12 @@ struct Beacon:Base{
 #define PLAYER_Y_SPEED 0.1f
 #define PLAYER_X_FAST_SPEED 0.035f
 #define PLAYER_ANGLE_INCREMENT 0.02f
+struct Mine;
 struct Player:Base{
-	Player(const area_bounds&);
+	Player(const area_bounds&,const std::vector<Mine>&);
+	bool near_mine(const std::vector<Mine>&)const;
+	void reset(const area_bounds&,const std::vector<Mine>&);
 	static void process(Match&);
-	void reset(const area_bounds&);
 
 	Beacon beacon;
 	bool avail_airstrike; // player is allowed to call an airstrike

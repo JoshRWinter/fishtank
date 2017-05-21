@@ -23,7 +23,7 @@ struct area_bounds;
 #define KILLED_BY_MINE 3
 
 struct Client{
-	Client(int,const std::string&,const area_bounds&);
+	Client(int,const std::string&,const area_bounds&,const std::vector<Mine>&);
 	void kick(Match&);
 
 	socket_tcp tcp;

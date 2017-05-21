@@ -47,7 +47,7 @@ void Match::accept_new_clients(){
 			}
 
 			// accept the client
-			Client *c=new Client(connector_socket,connector_address,bounds);
+			Client *c=new Client(connector_socket,connector_address,bounds,mine_list);
 			client_list.push_back(c);
 
 			// send the level configuration to this client
@@ -445,7 +445,7 @@ void Match::ready_next_round(){
 	// reset
 	win_timer=WIN_TIMER;
 	for(Client *client:client_list)
-		client->player.reset(bounds);
+		client->player.reset(bounds,mine_list);
 }
 
 void Match::wait_next_step(){

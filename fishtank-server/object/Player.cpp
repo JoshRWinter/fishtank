@@ -18,21 +18,34 @@ static float shell_dmg(float f){
 	return 1.85f;
 }
 
-Player::Player(const area_bounds &bounds){
-	reset(bounds);
+Player::Player(const area_bounds &bounds,const std::vector<Mine> &mine_list){
+	reset(bounds,mine_list);
 }
 
-void Player::reset(const area_bounds &bounds){
+void Player::reset(const area_bounds &bounds,const std::vector<Mine> &mine_list){
 	health=100;
-	x=randomint(bounds.left*10.0f,bounds.right*10.0f)/10.0f;
-	y=randomint((bounds.top-1.0f)*10.0f,bounds.bottom*10.0f)/10.0f;
+	w=PLAYER_WIDTH;
+	h=PLAYER_HEIGHT;
+	int tries=0;
+	do{
+		x=randomint(bounds.left*10.0f,bounds.right*10.0f)/10.0f;
+		y=randomint((bounds.top-1.0f)*10.0f,bounds.bottom*10.0f)/10.0f;
+		++tries;
+	}while(near_mine(mine_list)&&tries<40);
 	xv=0.0f;
 	yv=0.0f;
 	angle=M_PI/2.0f;
-	w=PLAYER_WIDTH;
-	h=PLAYER_HEIGHT;
 	avail_airstrike=true;
 	beacon.y=FLOOR+10.0f;
+}
+
+bool Player::near_mine(const std::vector<Mine> &mine_list)const{
+	for(const Mine &mine:mine_list){
+		if(collide(mine,-4.0f))
+			return true;
+	}
+
+	return false;
 }
 
 void Player::process(Match &match){
