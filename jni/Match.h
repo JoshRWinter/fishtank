@@ -1,7 +1,7 @@
 #ifndef MATCH_H
 #define MATCH_H
 
-#define DEAD_TIMER 400 // after the player dies and is allowed to spectate
+#define DEAD_TIMER 550 // after the player dies and is allowed to spectate
 
 class Match{
 public:
