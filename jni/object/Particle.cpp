@@ -363,7 +363,7 @@ ParticleBubble::ParticleBubble(const Mine &mine){
 	y=mine.y+(MINE_SIZE/2.0f)-(PARTICLE_BUBBLE_SIZE/2.0f);
 	count=1;
 	frame=0;
-	ttl=40.0f;
+	ttl=randomint(20,45);
 	if(!onein(3))
 		rot=randomint(0.0f,M_PI*10.0f)/10.0f;
 	else
@@ -372,15 +372,16 @@ ParticleBubble::ParticleBubble(const Mine &mine){
 	const float speed=randomint(10,45)/1000.0f;
 	xv=-cosf(rot)*speed;
 	yv=-sinf(rot)*speed;
-	const float head_start=randomint(0,400)/10.0f;
+	const float head_start=randomint(-50,300)/10.0f;
 	x+=xv*head_start;
 	y+=yv*head_start;
-	yv=randomint(-3,3)/100.0f;
-	xv=randomint(-3,3)/100.0f;
+	const float speed2=randomint(10,35)/1000.0f;
+	xv=-cosf(rot)*speed2;
+	yv=-sinf(rot)*speed2;
 }
 
 void ParticleBubble::spawn(State &state,const Mine &mine){
-	const int count=randomint(79,99);
+	const int count=randomint(89,115);
 	for(int i=0;i<count;++i)
 		state.particle_bubble_list.push_back(new ParticleBubble(mine));
 }
