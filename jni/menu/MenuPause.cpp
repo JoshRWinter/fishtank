@@ -97,7 +97,7 @@ void MenuPause::render(const Renderer &renderer)const{
 			glBindTexture(GL_TEXTURE_2D,renderer.uiassets.texture[UITID_SKULL].object);
 			glUniform4f(renderer.uniform.rgba,1.0f,1.0f,1.0f,1.0f);
 			Base skull;
-			skull.x=NAME_OFFSET+textlen(renderer.font.button,s.name.c_str())+0.25f;
+			skull.x=NAME_OFFSET-0.65f;
 			skull.y=yoffset+0.1f;
 			skull.w=SKULL_WIDTH;
 			skull.h=SKULL_HEIGHT;
