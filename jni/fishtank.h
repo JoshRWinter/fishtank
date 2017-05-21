@@ -73,6 +73,7 @@ struct stat;
 #define UITID_BACKGROUND_TRANSPARENT 9
 #define UITID_FULL_WHITE 10
 #define UITID_BUTTON_AS 11
+#define UITID_SKULL 12
 
 #define FIREPOWER_INCREMENT 0.008f
 #define TIMER_CHATPANE 400.0f
@@ -100,6 +101,7 @@ struct stat{
 	int match_victories;
 	int victories;
 	int deaths;
+	bool dead;
 };
 
 struct Renderer{

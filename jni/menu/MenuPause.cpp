@@ -92,6 +92,23 @@ void MenuPause::render(const Renderer &renderer)const{
 		drawtext(renderer.font.button,OOO_OFFSET,yoffset,str_ooo);
 		drawtext(renderer.font.button,D_OFFSET,yoffset,str_d);
 
+		// draw a skull if the player is dead
+		if(s.dead){
+			glBindTexture(GL_TEXTURE_2D,renderer.uiassets.texture[UITID_SKULL].object);
+			glUniform4f(renderer.uniform.rgba,1.0f,1.0f,1.0f,1.0f);
+			Base skull;
+			skull.x=NAME_OFFSET+textlen(renderer.font.button,s.name.c_str())+0.25f;
+			skull.y=yoffset+0.05f;
+			skull.w=SKULL_WIDTH;
+			skull.h=SKULL_HEIGHT;
+			skull.rot=0.0f;
+			skull.count=1;
+			skull.frame=0;
+			renderer.uidraw(skull);
+			glUniform4f(renderer.uniform.rgba,TEXT_COLOR,1.0f);
+			glBindTexture(GL_TEXTURE_2D,renderer.font.button->atlas);
+		}
+
 		yoffset+=0.6f;
 	}
 

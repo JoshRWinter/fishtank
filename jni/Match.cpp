@@ -326,6 +326,11 @@ void Match::get_scoreboard(std::vector<stat> &stat_list){
 		tcp.recv(name,MSG_LIMIT+1);
 		name[MSG_LIMIT]=0; // carefully
 
+		// get (boolean) currently dead
+		uint32_t dead;
+		tcp.recv(&dead,sizeof(dead));
+		dead=ntohl(dead);
+
 		// get the match victories
 		uint32_t mv;
 		tcp.recv(&mv,sizeof(mv));
@@ -345,6 +350,7 @@ void Match::get_scoreboard(std::vector<stat> &stat_list){
 		s.match_victories=mv;
 		s.victories=ooo;
 		s.deaths=d;
+		s.dead=dead!=0;
 
 		stat_list.push_back(s);
 	}

@@ -363,6 +363,10 @@ void Match::send_scoreboard(Client &client){
 		strncpy(name,c->name.c_str(),MSG_LIMIT+1);
 		client.tcp.send(name,MSG_LIMIT+1);
 
+		// send (boolean) currently dead
+		uint32_t dead=c->player.health<1;
+		client.tcp.send(&dead,sizeof(dead));
+
 		// send match victories
 		uint32_t mv=htonl(c->stat.match_victories);
 		client.tcp.send(&mv,sizeof(mv));

@@ -4,6 +4,9 @@
 #define FIRE_BUTTON_SIZE 1.8f
 #define TEXT_COLOR 0.1f,0.1f,0.1f
 
+#define SKULL_WIDTH 0.4f
+#define SKULL_HEIGHT 0.475f
+
 #define COLLIDE_LEFT 1
 #define COLLIDE_RIGHT 2
 #define COLLIDE_BOTTOM 3
