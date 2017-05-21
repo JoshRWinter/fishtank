@@ -72,7 +72,7 @@ bool State::core(){
 		}
 
 		// process ui buttons
-		const float UI_TOLERANCE=-0.25f;
+		const float UI_TOLERANCE=-0.35f;
 		input.left.process(pointer,UI_TOLERANCE);
 		input.right.process(pointer,UI_TOLERANCE);
 		input.up_r.process(pointer,UI_TOLERANCE);
@@ -183,15 +183,15 @@ void State::render()const{
 	glBindTexture(GL_TEXTURE_2D,renderer.uiassets.texture[UITID_BUTTON_AS].object);
 	// artillery strike button
 	if(strike_mode)
-		glUniform4f(renderer.uniform.rgba,0.9f,0.15f,0.21f,0.18f);
+		glUniform4f(renderer.uniform.rgba,0.9f,0.15f,0.21f,0.13f);
 	else if(!input.strike.active)
-		glUniform4f(renderer.uniform.rgba,1.0f,1.0f,1.0f,0.18f);
+		glUniform4f(renderer.uniform.rgba,1.0f,1.0f,1.0f,0.13f);
 	else
-		glUniform4f(renderer.uniform.rgba,0.7f,0.7f,0.7f,0.18f);
+		glUniform4f(renderer.uniform.rgba,0.7f,0.7f,0.7f,0.13f);
 	renderer.uidraw(input.strike);
 	// ui button text
 	glBindTexture(GL_TEXTURE_2D,renderer.font.button_small->atlas);
-	glUniform4f(renderer.uniform.rgba,1.0f,1.0f,1.0f,0.4f);
+	glUniform4f(renderer.uniform.rgba,1.0f,1.0f,1.0f,0.3f);
 	input.left.render_text(renderer);
 	input.right.render_text(renderer);
 	input.up_r.render_text(renderer);
@@ -302,15 +302,15 @@ State::State(){
 	ground.count=1;
 
 	// ui buttons
-	const float DPAD_SIZE=1.1f;
-	input.left.init(-7.0f,2.25f,DPAD_SIZE,"L");
-	input.right.init(-4.5f,2.25f,DPAD_SIZE,"R");
-	input.up_r.init(5.0f,0.7f,DPAD_SIZE,"U");
-	input.up_l.init(-5.75f,1.0f,DPAD_SIZE,"U");
-	input.fire.init(4.625f,2.0f,FIRE_BUTTON_SIZE,"FIRE");
-	input.aim_left.init(3.3f,2.5f,DPAD_SIZE,"L");
-	input.aim_right.init(6.75f,2.5f,DPAD_SIZE,"R");
-	input.strike.init(-DPAD_SIZE/2.0f,3.25f,DPAD_SIZE,"");
+	const float DPAD_SIZE=1.2f;
+	input.left.init(-7.1f,2.45f,DPAD_SIZE,"L");
+	input.right.init(-4.4f,2.45f,DPAD_SIZE,"R");
+	input.up_r.init(4.55f,0.8f,DPAD_SIZE,"U");
+	input.up_l.init(-5.75f,0.8f,DPAD_SIZE,"U");
+	input.fire.init(4.225f,2.3f,FIRE_BUTTON_SIZE,"FIRE");
+	input.aim_left.init(2.7f,2.5f,DPAD_SIZE,"L");
+	input.aim_right.init(6.35f,2.5f,DPAD_SIZE,"R");
+	input.strike.init(-DPAD_SIZE/2.0f,3.05f,DPAD_SIZE,"");
 }
 
 void State::reset(){

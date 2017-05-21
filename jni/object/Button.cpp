@@ -71,9 +71,9 @@ void ButtonBasic::init(float xpos,float ypos,float size,const char *name){
 
 void ButtonBasic::render(const Renderer &renderer)const{
 	if(active)
-		glUniform4f(renderer.uniform.rgba,0.8f,0.8f,0.8f,0.18f);
+		glUniform4f(renderer.uniform.rgba,0.8f,0.8f,0.8f,0.13f);
 	else
-		glUniform4f(renderer.uniform.rgba,1.0f,1.0f,1.0f,0.18f);
+		glUniform4f(renderer.uniform.rgba,1.0f,1.0f,1.0f,0.13f);
 	renderer.uidraw(*this);
 }
 
