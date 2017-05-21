@@ -98,7 +98,7 @@ void MenuPause::render(const Renderer &renderer)const{
 			glUniform4f(renderer.uniform.rgba,1.0f,1.0f,1.0f,1.0f);
 			Base skull;
 			skull.x=NAME_OFFSET+textlen(renderer.font.button,s.name.c_str())+0.25f;
-			skull.y=yoffset+0.05f;
+			skull.y=yoffset+0.1f;
 			skull.w=SKULL_WIDTH;
 			skull.h=SKULL_HEIGHT;
 			skull.rot=0.0f;
