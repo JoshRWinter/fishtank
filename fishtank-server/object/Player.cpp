@@ -219,6 +219,17 @@ void Player::process(Match &match){
 			}
 		}
 
+		// check for player going to high
+		if(client.player.health>0&&client.player.y<LOWER_CEILING){
+			const float dmg=((-client.player.y)-(-LOWER_CEILING))/25.0f;
+			client.player.health-=dmg;
+			if(client.player.health<1){
+				client.player.health=0;
+				client.kill_reason=KILLED_BY_DECOMPRESSION;
+				client.killed_by_id=client.id;
+			}
+		}
+
 		// process dead clients
 		if(client.kill_reason!=0){
 			// find the client responsible for this
@@ -263,6 +274,9 @@ void Player::process(Match &match){
 						break;
 					case KILLED_BY_MINE:
 						msg=perp->name+" mined "+client.name+"!";
+						break;
+					case KILLED_BY_DECOMPRESSION:
+						msg=client.name+" died of\ndecompression sickness :(";
 						break;
 					}
 					match.send_chat(msg,"server");

@@ -106,6 +106,8 @@ struct to_client_heartbeat{
 #define RIGHT 40.0f
 #define GRAVITY 0.008f
 #define PLAYER_GRAVITY (GRAVITY/2.0f)
+#define LOWER_CEILING -20.0f
+#define UPPER_CEILING LOWER_CEILING-18.0f
 
 #define PLATFORM_COUNT 64
 #define PLATFORM_WIDTH 3.75f

@@ -21,6 +21,7 @@ struct area_bounds;
 #define KILLED_BY_AIRSTRIKE 1
 #define KILLED_BY_SHELL 2
 #define KILLED_BY_MINE 3
+#define KILLED_BY_DECOMPRESSION 4
 
 struct Client{
 	Client(int,const std::string&,const area_bounds&,const std::vector<Mine>&);

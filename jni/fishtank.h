@@ -62,6 +62,7 @@ struct stat;
 #define TID_GROUND 14
 #define TID_MINE 15
 #define TID_MINE_CHAIN 16
+#define TID_UPPER_GRADIENT 17
 
 // ui textures
 #define UITID_FISHTANK 0

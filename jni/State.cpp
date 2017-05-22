@@ -50,7 +50,7 @@ bool State::core(){
 		if(announcement.size()==1)
 			announcement[0].timer-=speed;
 		else if(announcement.size()>1)
-			announcement[0].timer-=speed*4.0f;
+			announcement[0].timer-=speed*3.0f;
 
 		if(announcement[0].timer<=0.0f)
 			announcement.erase(announcement.begin());
@@ -119,6 +119,12 @@ void State::render()const{
 	glClear(GL_COLOR_BUFFER_BIT);
 	glBindTexture(GL_TEXTURE_2D,renderer.assets.texture[match.backdrop_index].object);
 	renderer.draw(backdrop);
+	// draw the upper gradient
+	if(renderer.player_y-4.5f<LOWER_CEILING){
+		glBindTexture(GL_TEXTURE_2D,renderer.assets.texture[TID_UPPER_GRADIENT].object);
+		Base gradient={renderer.player_x-8.0f+(PLAYER_WIDTH/2.0f),UPPER_CEILING,16.0f,18.0f,0.0f,0,1};
+		renderer.draw(gradient);
+	}
 
 	// draw dead fish
 	if(dead_fish_list.size()!=0)
@@ -356,6 +362,9 @@ void State::reset(){
 	for(DeadFish *f:dead_fish_list)
 		delete f;
 	dead_fish_list.clear();
+	// clear messages
+	chat.clear();
+	announcement.clear();
 }
 
 bool State::read_config(){
