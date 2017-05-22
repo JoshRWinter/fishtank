@@ -42,8 +42,7 @@ void Match::accept_new_clients(){
 		else{
 			// if this is the first client, reset the level config
 			if(client_list.size()==0){
-				Platform::create_all(*this);
-				Mine::create_all(*this);
+				ready_next_round();
 			}
 
 			// accept the client
@@ -75,8 +74,6 @@ void Match::player_summary(const Client &client)const{
 
 // execute one step
 void Match::step(){
-	// process players
-	Player::process(*this);
 	// process shells
 	Shell::process(*this);
 	// process platforms
@@ -85,12 +82,14 @@ void Match::step(){
 	Airstrike::process(*this);
 	// process mines
 	Mine::process(*this);
+	// process players
+	Player::process(*this);
 
 	// check for a win
 	if(client_list.size()>1&&shell_list.size()==0&&airstrike_list.size()==0){
 		if(win_timer<WIN_TIMER){
 			--win_timer;
-			if(win_timer<1){
+			if(win_timer<1&&sent_win_message){
 				// initialize the next round
 				ready_next_round();
 			}
@@ -411,12 +410,14 @@ bool Match::check_win(){
 			return true;
 		win_message=winner->name+" wins!";
 		send_chat(win_message,"server");
+		sent_win_message=true;
 		++winner->stat.match_victories;
 		return true;
 	}
 	else if(alive==0){
 		win_message="Nobody wins! Hurray!";
 		send_chat(win_message,"server");
+		sent_win_message=true;
 		return true;
 	}
 
@@ -446,6 +447,7 @@ Client *Match::last_man_standing(){
 
 // construct a new level and send it
 void Match::ready_next_round(){
+	sent_win_message=false;
 	++round_id;
 	backdrop_index=randomint(0,3);
 	Platform::create_all(*this);

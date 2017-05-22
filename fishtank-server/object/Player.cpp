@@ -236,9 +236,13 @@ void Player::process(Match &match){
 				client.player.health=1; // reanimate the victim
 			}
 			else{ // most common
-				std::string msg;
-				// send a message if there is more than one left alive
-				if(match.living_clients()>1){
+				if(match.living_clients()==0&&match.client_list.size()==1){
+					// one player killed himself, reset the level
+					match.ready_next_round();
+				}
+				else{
+					std::string msg;
+					// send a message describing who was killed and why
 					// tell the victim who killed them
 					to_client_tcp tctcp;
 					memset(&tctcp,0,sizeof(tctcp));
@@ -263,25 +267,19 @@ void Player::process(Match &match){
 					}
 					match.send_chat(msg,"server");
 				}
-				else{
-					// either there are more players left in the match, Match::check_win() will handle that, or
-					if(match.living_clients()==0&&match.client_list.size()==1){
-						// one player killed himself, reset the level
-						match.ready_next_round();
-					}
-				}
 
 				// update the stats for the perp and the victim
 				if(perp!=&client)
 					++perp->stat.victories;
 				++client.stat.deaths;
-			}
 
-			// prevent this code path from being triggered again
-			client.kill_reason=0;
+				// prevent this code path from being triggered again
+				client.kill_reason=0;
+			}
 		}
 	}
 }
+
 
 Beacon::Beacon(){
 	reset();

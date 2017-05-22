@@ -50,7 +50,7 @@ bool State::core(){
 		if(announcement.size()==1)
 			announcement[0].timer-=speed;
 		else if(announcement.size()>1)
-			announcement[0].timer-=speed*2.0f;
+			announcement[0].timer-=speed*4.0f;
 
 		if(announcement[0].timer<=0.0f)
 			announcement.erase(announcement.begin());

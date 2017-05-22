@@ -88,6 +88,7 @@ public:
 	socket_udp_server udp;
 	long long last_nano_time;
 	int win_timer;
+	bool sent_win_message;
 	int round_id;
 	int backdrop_index;
 	// bounds of the playing area
