@@ -411,6 +411,8 @@ bool Match::check_win(){
 		win_message=winner->name+" wins!";
 		send_chat(win_message,"server");
 		sent_win_message=true;
+		if(win_timer<100)
+			win_timer+=150;
 		++winner->stat.match_victories;
 		return true;
 	}
@@ -418,6 +420,8 @@ bool Match::check_win(){
 		win_message="Nobody wins! Hurray!";
 		send_chat(win_message,"server");
 		sent_win_message=true;
+		if(win_timer<100)
+			win_timer+=150;
 		return true;
 	}
 
