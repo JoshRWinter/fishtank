@@ -286,7 +286,7 @@ static unsigned create_font_atlas(ftfont *font,struct AAssetManager *mgr,const c
 	unsigned char *chunk=malloc(filesize);
 	AAsset_read(asset,chunk,filesize);
 	AAsset_close(asset);
-	
+
 	int error;
 	FT_Library library;
 	error=FT_Init_FreeType(&library);
@@ -294,12 +294,12 @@ static unsigned create_font_atlas(ftfont *font,struct AAssetManager *mgr,const c
 		logcat("%s: error initializing freetype",__func__);
 		return 0;
 	}
-	
+
 	FT_Face face;
 	error=FT_New_Memory_Face(library,chunk,filesize,0,&face);
 	if(error){
 		logcat("%s: error creating face",__func__);
-		
+
 		return 0;
 	}
 	error=FT_Set_Pixel_Sizes(face,0,pixelsize);
@@ -308,7 +308,7 @@ static unsigned create_font_atlas(ftfont *font,struct AAssetManager *mgr,const c
 	}
 	int adjustedsize=roundf(((face->bbox.yMax-face->bbox.yMin)/2048.0f)*face->size->metrics.y_ppem);
 	font->fontsize=((float)adjustedsize/ftglobal_iscreenwidth)*ftglobal_fscreenwidth;
-	
+
 	unsigned char *bitmap=malloc(adjustedsize*adjustedsize*rows*cols*4);
 	if(bitmap==NULL){
 		logcat("%s: error 'malloc' no memory",__func__);
@@ -364,7 +364,7 @@ static unsigned create_font_atlas(ftfont *font,struct AAssetManager *mgr,const c
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE);
 	glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA,adjustedsize*cols,adjustedsize*rows,0,GL_RGBA,GL_UNSIGNED_BYTE,bitmap);
 	free(bitmap);
-	
+
 	FT_Done_Face(face);
 	free(chunk);
 	FT_Done_FreeType(library);
@@ -405,9 +405,9 @@ void drawtext(ftfont *font,float xpos,float ypos,const char *output){
 		const float xnormal=1.0f/cols,ynormal=1.0/rows;
 		float x=(float)((output[character]-32)%16)*xnormal;
 		float y=(float)((output[character]-32)/16)*ynormal;
-		glUniform2f(ftglobal_vector,alignx(xpos)+xoffset,aligny(ypos)+yoffset);
+		glUniform2f(ftglobal_vector,alignx(xpos)+alignx(xoffset),aligny(ypos)+aligny(yoffset));
 		glUniform4f(ftglobal_texcoords,x,x+xnormal,(1.0f-y-ynormal),1.0f-y);
-		
+
 		glDrawArrays(GL_TRIANGLE_STRIP,0,4);
 		xoffset+=alignx(((struct kernvector*)font->kern)[output[character]-32].advance)-bitmap_left;
 		character++;
@@ -441,9 +441,9 @@ void drawtextcentered(ftfont *font,float xpos,float ypos,const char *output){
 		const float xnormal=1.0f/cols,ynormal=1.0/rows;
 		float x=(float)((output[character]-32)%16)*xnormal;
 		float y=(float)((output[character]-32)/16)*ynormal;
-		glUniform2f(ftglobal_vector,alignx(adjustedxpos)+xoffset,aligny(ypos)+yoffset);
+		glUniform2f(ftglobal_vector,alignx(adjustedxpos)+alignx(xoffset),aligny(ypos)+aligny(yoffset));
 		glUniform4f(ftglobal_texcoords,x,x+xnormal,(1.0f-y-ynormal),1.0f-y);
-		
+
 		glDrawArrays(GL_TRIANGLE_STRIP,0,4);
 		xoffset+=alignx(((struct kernvector*)font->kern)[output[character]-32].advance)-bitmap_left;
 		character++;
@@ -634,7 +634,7 @@ static int decodeogg(char *encoded,int filesize,short **decoded,unsigned *size,u
 	long long samplecount;
 	unsigned index=filesize-1;
 	while(!(encoded[index]=='S'&&encoded[index-1]=='g'&&encoded[index-2]=='g'&&encoded[index-3]=='O'))index--;
-	
+
 	char array[8];
 	array[0]=encoded[index+3];
 	array[1]=encoded[index+4];
@@ -645,12 +645,12 @@ static int decodeogg(char *encoded,int filesize,short **decoded,unsigned *size,u
 	array[6]=encoded[index+9];
 	array[7]=encoded[index+10];
 	samplecount=*(long long*)array;
-	
+
 	//log("total samples = %lld",samplecount);
 	pthread_mutex_lock(&mutex);
 	*targetsize=samplecount*sizeof(short);
 	pthread_mutex_unlock(&mutex);
-	
+
 	ogg_sync_state state;
 	ogg_stream_state streamstate;
 	ogg_page page;
@@ -794,7 +794,7 @@ static int decodeogg(char *encoded,int filesize,short **decoded,unsigned *size,u
 	else{
 		logcat("corrupt header during playback init");
 	}
-	
+
 	ogg_stream_clear(&streamstate);
 	vorbis_comment_clear(&vorbiscomment);
 	vorbis_info_clear(&vorbisinfo);
@@ -873,13 +873,13 @@ struct audioplayer *playsound(slesenv *engine,struct apacksound *sound,int loop)
 		}
 	}
 	struct audioplayer *audioplayer=malloc(sizeof(struct audioplayer));
-	
+
 	SLDataLocator_AndroidSimpleBufferQueue buffq={SL_DATALOCATOR_ANDROIDSIMPLEBUFFERQUEUE,2};
 	SLDataFormat_PCM format_pcm={SL_DATAFORMAT_PCM,1,SL_SAMPLINGRATE_44_1,SL_PCMSAMPLEFORMAT_FIXED_16,SL_PCMSAMPLEFORMAT_FIXED_16,SL_SPEAKER_FRONT_CENTER,SL_BYTEORDER_LITTLEENDIAN};
 	SLDataSource source={&buffq,&format_pcm};
 	SLDataLocator_OutputMix localoutputmix={SL_DATALOCATOR_OUTPUTMIX,engine->outputmix};
 	SLDataSink sink={&localoutputmix,NULL};
-	
+
 	(*engine->engineinterface)->CreateAudioPlayer(engine->engineinterface,&audioplayer->playerobject,&source,&sink,2,(SLInterfaceID[]){SL_IID_ANDROIDSIMPLEBUFFERQUEUE,SL_IID_VOLUME},(SLboolean[]){SL_BOOLEAN_TRUE,SL_BOOLEAN_TRUE});
 	(*audioplayer->playerobject)->Realize(audioplayer->playerobject,SL_BOOLEAN_FALSE);
 	(*audioplayer->playerobject)->GetInterface(audioplayer->playerobject,SL_IID_PLAY,&audioplayer->playerinterface);
@@ -887,7 +887,7 @@ struct audioplayer *playsound(slesenv *engine,struct apacksound *sound,int loop)
 	(*audioplayer->playerobject)->GetInterface(audioplayer->playerobject,SL_IID_ANDROIDSIMPLEBUFFERQUEUE,&audioplayer->playerbufferqueue);
 	(*audioplayer->playerbufferqueue)->RegisterCallback(audioplayer->playerbufferqueue,playercallback,audioplayer);
 	(*audioplayer->playerinterface)->SetPlayState(audioplayer->playerinterface,SL_PLAYSTATE_PLAYING);
-	
+
 	//log("size: %d, targetsize: %d",size,targetsize);
 	audioplayer->initial=size;
 	(*audioplayer->playerbufferqueue)->Enqueue(audioplayer->playerbufferqueue,sound->buffer,size);
@@ -895,7 +895,7 @@ struct audioplayer *playsound(slesenv *engine,struct apacksound *sound,int loop)
 	audioplayer->engine=engine;
 	audioplayer->sound=sound;
 	audioplayer->destroy=false;
-	
+
 	audioplayer->next=engine->audioplayerlist;
 	engine->audioplayerlist=audioplayer;
 	//#define COUNT_OBJECTS
@@ -965,7 +965,7 @@ void init_jni(struct android_app *app,struct jni_info *jni_info){
 	jni_info->hasvb=(*jni_info->env)->CallBooleanMethod(jni_info->env,jni_info->vb_svc,hasvbmethod);
 	if(!jni_info->hasvb)logcat("This device cannot vibrate");
 	else jni_info->vbmethod=(*jni_info->env)->GetMethodID(jni_info->env,vb,"vibrate","(J)V");
-	
+
 	jni_info-> MethodGetWindow = (*jni_info->env)->GetMethodID(jni_info->env,jni_info->sys_svc, "getWindow", "()Landroid/view/Window;");
 	jni_info-> lWindow = (*jni_info->env)->CallObjectMethod(jni_info->env,jni_info-> clazz, jni_info->MethodGetWindow);
 	jni_info-> cWindow = (*jni_info->env)->FindClass(jni_info->env,"android/view/Window");
@@ -973,7 +973,7 @@ void init_jni(struct android_app *app,struct jni_info *jni_info){
 	jni_info-> MethodGetDecorView = (*jni_info->env)->GetMethodID(jni_info->env, jni_info->cWindow, "getDecorView", "()Landroid/view/View;");
 	jni_info-> lDecorView = (*jni_info->env)->CallObjectMethod(jni_info->env, jni_info->lWindow, jni_info->MethodGetDecorView);
 	jni_info-> MethodSetSystemUiVisibility = (*jni_info->env)->GetMethodID(jni_info->env,jni_info->cView, "setSystemUiVisibility", "(I)V");
-	
+
 	(*jni_info->env)->DeleteLocalRef(jni_info->env,mstr);
 	(*jni_info->env)->DeleteLocalRef(jni_info->env,vb);
 }
