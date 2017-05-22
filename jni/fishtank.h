@@ -45,20 +45,23 @@ struct stat;
 #include "menu.h"
 
 // gameplay textures
-#define TID_BACKDROP 0
-#define TID_TANK 1
-#define TID_TURRET 2
-#define TID_SHELL 3
-#define TID_PLATFORM 4
-#define TID_PARTICLE_PLATFORM 5
-#define TID_PARTICLE_PLAYER 6
-#define TID_PARTICLE_BUBBLE 7
-#define TID_DEAD_FISH 8
-#define TID_BEACON 9
-#define TID_ARTILLERY 10
-#define TID_GROUND 11
-#define TID_MINE 12
-#define TID_MINE_CHAIN 13
+#define TID_BACKDROP_1 0
+#define TID_BACKDROP_2 1
+#define TID_BACKDROP_3 2
+#define TID_BACKDROP_4 3
+#define TID_TANK 4
+#define TID_TURRET 5
+#define TID_SHELL 6
+#define TID_PLATFORM 7
+#define TID_PARTICLE_PLATFORM 8
+#define TID_PARTICLE_PLAYER 9
+#define TID_PARTICLE_BUBBLE 10
+#define TID_DEAD_FISH 11
+#define TID_BEACON 12
+#define TID_ARTILLERY 13
+#define TID_GROUND 14
+#define TID_MINE 15
+#define TID_MINE_CHAIN 16
 
 // ui textures
 #define UITID_FISHTANK 0

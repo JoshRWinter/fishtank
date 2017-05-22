@@ -26,6 +26,7 @@ public:
 	int dead_timer; // after the player dies and is allowed to spectate
 	int spectate_index; // index of player whom is being spectated
 	std::string spectate_name;
+	int backdrop_index;
 
 private:
 	int32_t udp_secret;

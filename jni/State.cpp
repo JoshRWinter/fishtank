@@ -117,7 +117,7 @@ void State::render()const{
 	glUniform4f(renderer.uniform.rgba,1.0f,1.0f,1.0f,1.0f);
 	// draw backdrop
 	glClear(GL_COLOR_BUFFER_BIT);
-	glBindTexture(GL_TEXTURE_2D,renderer.assets.texture[TID_BACKDROP].object);
+	glBindTexture(GL_TEXTURE_2D,renderer.assets.texture[match.backdrop_index].object);
 	renderer.draw(backdrop);
 
 	// draw dead fish

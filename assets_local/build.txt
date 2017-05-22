@@ -1,1 +1,1 @@
-backdrop.tga tank.tga turret.tga shell.tga platform.tga particle_platform.tga particle_player.tga particle_bubble.tga dead_fish.tga beacon.tga artillery.tga ground.tga mine.tga mine_chain.tga -o ../assets/assets
+backdrop_1.tga backdrop_2.tga backdrop_3.tga backdrop_4.tga tank.tga turret.tga shell.tga platform.tga particle_platform.tga particle_player.tga particle_bubble.tga dead_fish.tga beacon.tga artillery.tga ground.tga mine.tga mine_chain.tga -o ../assets/assets

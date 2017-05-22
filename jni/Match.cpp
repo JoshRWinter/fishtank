@@ -273,10 +273,17 @@ void Match::get_level_config(State &state){
 	for(ParticlePlatform *p:state.particle_platform_list)
 		delete p;
 	state.particle_platform_list.clear();
+
 	// get round id
 	uint32_t round_id_tmp;
 	tcp.recv(&round_id_tmp,sizeof(round_id_tmp));
 	round_id=ntohl(round_id_tmp);
+
+	// get backdrop index
+	uint32_t backdrop_index_tmp;
+	tcp.recv(&backdrop_index_tmp,sizeof(backdrop_index_tmp));
+	backdrop_index=ntohl(backdrop_index_tmp);
+
 	// get platforms
 	state.platform_list.clear();
 	for(int i=0;i<PLATFORM_COUNT;++i){

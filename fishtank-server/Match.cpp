@@ -331,6 +331,9 @@ void Match::send_level_config(Client &client){
 	// send round id
 	uint32_t round_id_tmp=htonl(round_id);
 	client.tcp.send(&round_id_tmp,sizeof(round_id_tmp));
+	// send backdrop index
+	uint32_t backdrop_index_tmp=htonl(backdrop_index);
+	client.tcp.send(&backdrop_index_tmp,sizeof(backdrop_index_tmp));
 	// send platform
 	for(const Platform &platform:platform_list){
 		int32_t horiz=platform.horiz;
@@ -444,6 +447,7 @@ Client *Match::last_man_standing(){
 // construct a new level and send it
 void Match::ready_next_round(){
 	++round_id;
+	backdrop_index=randomint(0,3);
 	Platform::create_all(*this);
 	Mine::create_all(*this);
 	Platform::update(platform_list);
