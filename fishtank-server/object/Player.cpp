@@ -247,52 +247,47 @@ void Player::process(Match &match){
 				client.player.health=1; // reanimate the victim
 			}
 			else{ // most common
-				if(match.living_clients()==0&&match.client_list.size()==1){
-					// one player killed himself, reset the level
-					match.ready_next_round();
-				}
-				else{
-					std::string msg;
-					// send a message describing who was killed and why
-					// tell the victim who killed them
-					to_client_tcp tctcp;
-					memset(&tctcp,0,sizeof(tctcp));
-					tctcp.type=TYPE_KILLER_INDEX;
-					client.tcp.send(&tctcp.type,sizeof(tctcp.type));
-					client.tcp.send(tctcp.msg,sizeof(tctcp.msg));
-					client.tcp.send(tctcp.name,sizeof(tctcp.name));
-					uint32_t killer_index=htonl(match.get_client_index(client.killed_by_id));
-					client.tcp.send(&killer_index,sizeof(killer_index));
+				std::string msg;
+				// send a message describing who was killed and why
+				// tell the victim who killed them
+				to_client_tcp tctcp;
+				memset(&tctcp,0,sizeof(tctcp));
+				tctcp.type=TYPE_KILLER_INDEX;
+				client.tcp.send(&tctcp.type,sizeof(tctcp.type));
+				client.tcp.send(tctcp.msg,sizeof(tctcp.msg));
+				client.tcp.send(tctcp.name,sizeof(tctcp.name));
+				uint32_t killer_index=htonl(match.get_client_index(client.killed_by_id));
+				client.tcp.send(&killer_index,sizeof(killer_index));
 
-					// send a server message
-					switch(client.kill_reason){
-					case KILLED_BY_AIRSTRIKE:
-						msg=perp->name+" bombed "+client.name+"!";
-						break;
-					case KILLED_BY_SHELL:
-						msg=perp->name+" destroyed "+client.name+"!";
-						break;
-					case KILLED_BY_MINE:
-						msg=perp->name+" mined "+client.name+"!";
-						break;
-					case KILLED_BY_DECOMPRESSION:
-						msg=client.name+" died of\ndecompression sickness :(";
-						break;
-					}
-					match.send_chat(msg,"server");
+				// send a server message
+				switch(client.kill_reason){
+				case KILLED_BY_AIRSTRIKE:
+					msg=perp->name+" bombed "+client.name+"!";
+					break;
+				case KILLED_BY_SHELL:
+					msg=perp->name+" destroyed "+client.name+"!";
+					break;
+				case KILLED_BY_MINE:
+					msg=perp->name+" mined "+client.name+"!";
+					break;
+				case KILLED_BY_DECOMPRESSION:
+					msg=client.name+" died of\ndecompression sickness :(";
+					break;
 				}
+				match.send_chat(msg,"server");
 
 				// update the stats for the perp and the victim
 				if(perp!=&client)
 					++perp->stat.victories;
 				++client.stat.deaths;
-
-				// prevent this code path from being triggered again
-				client.kill_reason=0;
 			}
+
+			// prevent this code path from being triggered again
+			client.kill_reason=0;
 		}
 	}
 }
+
 
 
 Beacon::Beacon(){

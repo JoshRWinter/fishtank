@@ -86,7 +86,7 @@ void Match::step(){
 	Player::process(*this);
 
 	// check for a win
-	if(client_list.size()>1&&shell_list.size()==0&&airstrike_list.size()==0){
+	if(client_list.size()>0&&shell_list.size()==0&&airstrike_list.size()==0){
 		if(win_timer<WIN_TIMER){
 			--win_timer;
 			if(win_timer<1&&sent_win_message){
@@ -404,7 +404,7 @@ bool Match::check_win(){
 	int alive=living_clients();
 	std::string win_message;
 
-	if(alive==1){
+	if(alive==1&&client_list.size()>1){
 		Client *winner=last_man_standing();
 		if(winner==NULL)
 			return true;
