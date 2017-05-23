@@ -480,6 +480,15 @@ void Match::wait_next_step(){
 	static int sps=60,last_time;
 	int current_time=time(NULL);
 	static unsigned long frame=0;
+
+	// sleep longer if no one is connected
+	if(client_list.size()==0){
+		sleep(1);
+		last_time=time(NULL);
+		frame=0;
+		return;
+	}
+
 	if(current_time!=last_time){
 		last_time=current_time;
 		// server is falling behind
