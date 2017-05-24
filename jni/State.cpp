@@ -72,7 +72,7 @@ bool State::core(){
 		}
 
 		// process ui buttons
-		const float UI_TOLERANCE=-0.35f;
+		const float UI_TOLERANCE=-0.30f;
 		input.left.process(pointer,UI_TOLERANCE);
 		input.right.process(pointer,UI_TOLERANCE);
 		input.up_r.process(pointer,UI_TOLERANCE);
