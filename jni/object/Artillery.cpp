@@ -39,6 +39,10 @@ void Artillery::process(State &state){
 				continue;
 
 			if(arty.collide(p)){
+				// vibrate
+				if(inrange(state.player_list[state.match.my_index],arty,6.0f))
+					if(state.config.vibrate)
+						vibratedevice(&state.jni,60);
 				// just a visual effect, don't destroy the platform
 				ParticlePlatform::spawn(state,arty);
 				if(p.seed%2==0){
@@ -54,6 +58,10 @@ void Artillery::process(State &state){
 
 		// delete if below FLOOR
 		if(arty.y+ARTILLERY_SIZE>FLOOR){
+			// vibrate
+			if(inrange(state.player_list[state.match.my_index],arty,6.0f))
+				if(state.config.vibrate)
+					vibratedevice(&state.jni,40);
 			// particles
 			ParticlePlatform::spawn(state,arty);
 			delete *it;

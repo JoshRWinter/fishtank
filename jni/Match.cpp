@@ -177,6 +177,10 @@ void Match::recv_data(State &state){
 			if(player.cue_fire==0.0f)
 				player.cue_fire=(int)ntohl(server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_FIRE])/FLOAT_MULTIPLIER;
 			if(before_health>0&&player.health<1&&player.colorid!=0){
+				// vibrate
+				if(&player==&state.player_list[my_index])
+					if(state.config.vibrate)
+						vibratedevice(&state.jni,500);
 				ParticlePlayer::spawn(state,player);
 			}
 
@@ -207,6 +211,10 @@ void Match::recv_data(State &state){
 			state.mine_list[i].armed=((mine_status>>i)&1)==1;
 			if(before&&!state.mine_list[i].armed){
 				ParticleBubble::spawn(state,state.mine_list[i]);
+				// vibrate
+				if(inrange(state.player_list[my_index],state.mine_list[i],6.75f))
+					if(state.config.vibrate)
+						vibratedevice(&state.jni,325);
 			}
 		}
 

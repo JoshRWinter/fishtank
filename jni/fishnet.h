@@ -8,8 +8,10 @@
 
 #define MAX_PLAYERS 6
 #define MSG_LIMIT 45
-
 #define FLOAT_MULTIPLIER 10000.0f
+
+#define distance(x1,x2,y1,y2) (sqrtf(powf((x2)-(x1),2)+powf((y2)-(y1),2)))
+#define inrange(inrange_s,inrange_t,inrange_d) (distance(inrange_s.x+(inrange_s.w/2.0f),inrange_t.x+(inrange_t.w/2.0f),inrange_s.y+(inrange_s.h/2.0f),inrange_t.y+(inrange_t.h/2.0f))<inrange_d)
 
 // message from client to server tcp
 #define TYPE_CHAT 0

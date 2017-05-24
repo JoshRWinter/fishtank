@@ -53,6 +53,10 @@ void Shell::process(State &state){
 				continue;
 
 			if(player.collide(shell)){
+				// vibrate
+				if(&player==&state.player_list[state.match.my_index])
+					if(state.config.vibrate)
+						vibratedevice(&state.jni,30);
 				// generate some particles
 				ParticleShell::spawn(state,shell,randomint(6,9));
 				// more particles

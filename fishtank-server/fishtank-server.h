@@ -13,8 +13,6 @@ struct Client;
 struct area_bounds;
 #include "object.h"
 
-#define distance(x1,x2,y1,y2) (sqrtf(powf((x2)-(x1),2)+powf((y2)-(y1),2)))
-
 #define onein(n) (randomint(0,n-1)==0)
 #define WIN_TIMER 300
 
