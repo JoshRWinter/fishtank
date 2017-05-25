@@ -23,9 +23,9 @@
 #define RGB_BLUE_R 0.25f
 #define RGB_BLUE_G 0.32f
 #define RGB_BLUE_B 0.85f
-#define RGB_CYAN_R 0.2289f
-#define RGB_CYAN_G 0.5445f
-#define RGB_CYAN_B 0.64f
+#define RGB_CYAN_R 0.1289f
+#define RGB_CYAN_G 0.6045f
+#define RGB_CYAN_B 0.60f
 #define RGB_GREEN_R 0.35f
 #define RGB_GREEN_G 0.6f
 #define RGB_GREEN_B 0.42f
