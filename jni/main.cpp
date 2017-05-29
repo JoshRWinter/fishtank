@@ -8,10 +8,12 @@ void cmdproc(android_app *app,int32_t cmd){
 	case APP_CMD_INIT_WINDOW:
 		state->running=true;
 		state->renderer.init(*app);
+		state->init(*app);
 		break;
 	case APP_CMD_TERM_WINDOW:
 		state->running=false;
 		state->renderer.term();
+		state->term();
 		break;
 	case APP_CMD_DESTROY:
 		state->write_config();

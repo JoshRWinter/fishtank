@@ -77,7 +77,7 @@ void Match::send_data(const State &state){
 	tsh.state[CLIENT_STATE_PRESS_RIGHT]=htonl(state.input.right.active);
 	tsh.state[CLIENT_STATE_PRESS_UP]=htonl(state.input.up_r.active||state.input.up_l.active);
 	tsh.state[CLIENT_STATE_PRESS_FIRE]=htonl(state.final_firepower*FLOAT_MULTIPLIER);
-	tsh.state[CLIENT_STATE_PRESS_ASTRIKE]=htonl(state.final_strokepower*FLOAT_MULTIPLIER);
+	tsh.state[CLIENT_STATE_PRESS_ASTRIKE]=htonl(state.final_strikepower*FLOAT_MULTIPLIER);
 	tsh.state[CLIENT_STATE_PRESS_AIMLEFT]=htonl(state.input.aim_left.active);
 	tsh.state[CLIENT_STATE_PRESS_AIMRIGHT]=htonl(state.input.aim_right.active);
 	tsh.state[CLIENT_STATE_UDP_SECRET]=htonl(udp_secret);
@@ -108,6 +108,7 @@ void Match::recv_data(State &state){
 				state.announcement.push_back(sm);
 			}
 			else{
+				playsound(state.soundengine,state.aassets.sound+SID_CHAT,false);
 				ChatMessage cm((const char*)tctcp.name,(const char*)tctcp.msg);
 				state.chat.push_back(cm);
 				state.timer_chatpane=TIMER_CHATPANE;
@@ -161,6 +162,8 @@ void Match::recv_data(State &state){
 		int i=0;
 		for(Player &player:state.player_list){
 			int before_health=player.health;
+			float before_y_beacon=player.beacon.y;
+			float before_yv_beacon=player.beacon.yv;
 
 			player.health=(int)ntohl(server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_HEALTH]);
 			player.xv=(int)ntohl(server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_XV])/FLOAT_MULTIPLIER;
@@ -181,17 +184,34 @@ void Match::recv_data(State &state){
 				if(&player==&state.player_list[my_index])
 					if(state.config.vibrate)
 						vibratedevice(&state.jni,500);
+				// sound
+				if(inrange(state.player_list[my_index],player,SOUND_RANGE))
+					playsound(state.soundengine,state.aassets.sound+SID_PLAYER_EXPLODE,false);
+				// particles
 				ParticlePlayer::spawn(state,player);
 			}
+			// beacon sound effect
+			if(before_y_beacon>FLOOR&&player.colorid!=0&&player.beacon.y<FLOOR&&inrange(state.player_list[my_index],player,SOUND_RANGE))
+				playsound(state.soundengine,state.aassets.sound+SID_BEACON_FIRE,false);
+			// beacon bounce
+			if(before_yv_beacon>0.0f&&player.beacon.yv<0.0f&&fabsf(player.beacon.yv)>0.01f&&
+				inrange(state.player_list[my_index],player.beacon,SOUND_RANGE))
+				playsound(state.soundengine,state.aassets.sound+SID_BEACON_BOUNCE,false);
 
 			++i;
 		}
 
 		// update the platforms
+		int stagger=0; // in order not to allow 2 or more explosion sounds play at the same time
 		for(i=0;i<32;++i){
 			bool before=state.platform_list[i].active;
 			state.platform_list[i].active=((platform_status[0]>>i)&1)==1;
 			if(before&&!state.platform_list[i].active){
+				// sound effects
+				if(inrange(state.player_list[my_index],state.platform_list[i],SOUND_RANGE)){
+					state.platform_list[i].timer_audio=stagger;
+					stagger+=5;
+				}
 				// spawn particle effects
 				ParticlePlatform::spawn_destroy_platform(state,state.platform_list[i]);
 			}
@@ -200,6 +220,11 @@ void Match::recv_data(State &state){
 			bool before=state.platform_list[i+32].active;
 			state.platform_list[i+32].active=((platform_status[1]>>i)&1)==1;
 			if(before&&!state.platform_list[i+32].active){
+				// sound effects
+				if(inrange(state.player_list[my_index],state.platform_list[i+32],SOUND_RANGE)){
+					state.platform_list[i+32].timer_audio=stagger;
+					stagger+=5;
+				}
 				// spawn particle effects
 				ParticlePlatform::spawn_destroy_platform(state,state.platform_list[i+32]);
 			}
@@ -210,6 +235,10 @@ void Match::recv_data(State &state){
 			bool before=state.mine_list[i].armed;
 			state.mine_list[i].armed=((mine_status>>i)&1)==1;
 			if(before&&!state.mine_list[i].armed){
+				// sound effect
+				if(inrange(state.player_list[my_index],state.mine_list[i],SOUND_RANGE))
+					playsound(state.soundengine,state.aassets.sound+SID_MINE_EXPLOSION,false);
+
 				ParticleBubble::spawn(state,state.mine_list[i]);
 				// vibrate
 				if(inrange(state.player_list[my_index],state.mine_list[i],6.75f))

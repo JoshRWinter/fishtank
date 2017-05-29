@@ -24,6 +24,9 @@ bool State::core(){
 	// process shells
 	Shell::process(*this);
 
+	// process platforms
+	Platform::process(*this);
+
 	// process artillery
 	Artillery::process(*this);
 
@@ -87,7 +90,7 @@ bool State::core(){
 				firepower=minimum;
 			if(strike_mode){
 				strike_mode=false;
-				final_strokepower=firepower;
+				final_strikepower=firepower;
 			}
 			else
 				final_firepower=firepower;
@@ -290,7 +293,7 @@ State::State(){
 	memset(pointer,0,sizeof(crosshair)*2);
 	firepower=0.0f;
 	final_firepower=0.0f;
-	final_strokepower=0.0f;
+	final_strikepower=0.0f;
 
 	// players
 	Player dummy;
@@ -365,6 +368,16 @@ void State::reset(){
 	// clear messages
 	chat.clear();
 	announcement.clear();
+}
+
+void State::init(android_app &app){
+	loadapack(&aassets,app.activity->assetManager,"aassets");
+	soundengine=initOpenSL();
+}
+
+void State::term(){
+	termOpenSL(soundengine);
+	destroyapack(&aassets);
 }
 
 bool State::read_config(){

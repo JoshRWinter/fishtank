@@ -843,9 +843,18 @@ void enablesound(slesenv *engine){
 }
 void stopsound(slesenv *engine,struct audioplayer *audioplayer){
 	pthread_mutex_lock(&audioplayer->sound->parent->mutex);
-	(*audioplayer->playerinterface)->SetPlayState(audioplayer->playerinterface,SL_PLAYSTATE_STOPPED);
-	audioplayer->loop=false;
-	audioplayer->destroy=true;
+	// check to make sure it exists first
+	struct audioplayer *current=engine->audioplayerlist;
+	while(current!=NULL){
+		if(current==audioplayer){
+			(*audioplayer->playerinterface)->SetPlayState(audioplayer->playerinterface,SL_PLAYSTATE_STOPPED);
+			audioplayer->loop=false;
+			audioplayer->destroy=true;
+			break;
+		}
+
+		current=current->next;
+	}
 	pthread_mutex_unlock(&audioplayer->sound->parent->mutex);
 }
 void stopallsounds(slesenv *soundengine){
@@ -857,8 +866,29 @@ void stopallsounds(slesenv *soundengine){
 	}
 	soundengine->audioplayerlist=NULL;
 }
+void clean_destroyed_sounds(slesenv *engine){
+	engine->sound_count=0;
+	for(struct audioplayer *ap=engine->audioplayerlist,*prevap=NULL;ap!=NULL;){
+		if(ap->destroy){
+			(*ap->playerobject)->Destroy(ap->playerobject);
+			if(prevap!=NULL)prevap->next=ap->next;
+			else engine->audioplayerlist=ap->next;
+			void *temp=ap->next;
+			free(ap);
+			ap=temp;
+			continue;
+		}
+		++engine->sound_count;
+		prevap=ap;
+		ap=ap->next;
+	}
+}
 struct audioplayer *playsound(slesenv *engine,struct apacksound *sound,int loop){
 	if(!engine->enabled)return NULL;
+	if(engine->sound_count>25){
+		clean_destroyed_sounds(engine);
+		return NULL;
+	}
 	pthread_mutex_lock(&sound->parent->mutex);
 	unsigned size=sound->size,targetsize=sound->targetsize;
 	pthread_mutex_unlock(&sound->parent->mutex);
@@ -898,29 +928,9 @@ struct audioplayer *playsound(slesenv *engine,struct apacksound *sound,int loop)
 
 	audioplayer->next=engine->audioplayerlist;
 	engine->audioplayerlist=audioplayer;
-	//#define COUNT_OBJECTS
-	#ifdef COUNT_OBJECTS
-	int count=0;
-	#endif
-	for(struct audioplayer *ap=engine->audioplayerlist,*prevap=NULL;ap!=NULL;){
-		if(ap->destroy){
-			(*ap->playerobject)->Destroy(ap->playerobject);
-			if(prevap!=NULL)prevap->next=ap->next;
-			else engine->audioplayerlist=ap->next;
-			void *temp=ap->next;
-			free(ap);
-			ap=temp;
-			continue;
-		}
-		#ifdef COUNT_OBJECTS
-		count++;
-		#endif
-		prevap=ap;
-		ap=ap->next;
-	}
-	#ifdef COUNT_OBJECTS
-	logcat("count: %d",count);
-	#endif
+
+	clean_destroyed_sounds(engine);
+
 	return audioplayer;
 }
 slesenv *initOpenSL(){
@@ -932,6 +942,7 @@ slesenv *initOpenSL(){
 	(*soundengine->outputmix)->Realize(soundengine->outputmix,SL_BOOLEAN_FALSE);
 	soundengine->audioplayerlist=NULL;
 	soundengine->enabled=true;
+	soundengine->sound_count=0;
 	return soundengine;
 }
 void termOpenSL(slesenv *soundengine){

@@ -224,12 +224,14 @@ ParticlePlayer::ParticlePlayer(float xpos,float ypos,bool large,int player_color
 		speed=randomint(10,14)/100.0f;
 		frame=0;
 	}
+	this->large=large;
 	xv=-cosf(rot)*speed;
 	yv=-sinf(rot)*speed;
 	rotv=xv;
 	ttl=500.0f;
 	active=true;
 	colorid=player_colorid;
+	timer_lifetime=0.0f;
 }
 
 void ParticlePlayer::spawn(State &state,const Shell &shell,int colorid){
@@ -252,6 +254,9 @@ void ParticlePlayer::process(State &state){
 	for(std::vector<ParticlePlayer*>::iterator it=state.particle_player_list.begin();it!=state.particle_player_list.end();){
 		ParticlePlayer &particle=**it;
 
+		// lifetime
+		++particle.timer_lifetime;
+
 		// affected by gravity
 		if(particle.active){
 			particle.yv+=GRAVITY*state.speed;
@@ -261,10 +266,15 @@ void ParticlePlayer::process(State &state){
 		particle.x+=particle.xv*state.speed;
 		particle.y+=particle.yv*state.speed;
 		particle.rot+=particle.rotv;
+		const float speed=sqrtf((particle.xv*particle.xv)+(particle.yv*particle.yv));
 
 		// check for particles colliding with ground
 		particle.active=true;
 		if(particle.y+particle.h>FLOOR){
+			// sound effect
+			if(particle.large&&particle.timer_lifetime<70.0f&&speed>0.0f&&inrange(state.player_list[state.match.my_index],particle,SOUND_RANGE))
+				playsound(state.soundengine,state.aassets.sound+SID_PARTICLE_PLAYER_IMPACT,false);
+
 			particle.xv=0.0f;
 			particle.yv=0.0f;
 			particle.rotv=0.0f;
@@ -277,6 +287,9 @@ void ParticlePlayer::process(State &state){
 					continue;
 
 				if(particle.collide(platform)){
+					if(particle.large&&particle.timer_lifetime<70.0f&&speed>0.0f&&inrange(state.player_list[state.match.my_index],particle,SOUND_RANGE))
+						playsound(state.soundengine,state.aassets.sound+SID_PARTICLE_PLAYER_IMPACT,false);
+
 					particle.xv=0.0f;
 					particle.yv=0.0f;
 					particle.rotv=0.0f;

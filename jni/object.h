@@ -65,6 +65,10 @@ struct Player:Base{
 	int colorid; // zero if empty player
 	int health;
 	float cue_fire;
+	struct{
+		audioplayer *engine;
+		audioplayer *bubbles;
+	}audio;
 };
 
 #define SHELL_VIS_WIDTH 0.0f
@@ -83,11 +87,13 @@ struct Shell:Base{
 #define PLATFORM_VIS_HEIGHT 0.85f
 struct Platform:Base{
 	Platform(bool,bool,float,float,unsigned);
+	static void process(State&);
 	static void render(const Renderer&,const std::vector<Platform>&);
 
 	Base visual;
 	bool active;
 	int health;
+	float timer_audio;
 	unsigned seed; // serves to sync random interactions between client and server
 };
 
@@ -156,6 +162,8 @@ struct ParticlePlayer:Base{
 	float ttl;
 	bool active;
 	int colorid;
+	float timer_lifetime;
+	float large;
 };
 
 #define PARTICLE_BUBBLE_SIZE 0.175f

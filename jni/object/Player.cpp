@@ -20,11 +20,67 @@ Player::Player(){
 	turret.rot=M_PI;
 	turret.count=1;
 	turret.frame=0;
+
+	beacon.yv=FLOOR+10.0f;
+
+	audio.bubbles=NULL;
+	audio.engine=NULL;
 }
 
 void Player::process(State &state){
 	int index=0;
 	for(Player &player:state.player_list){
+
+		// turn off empty players' sound effects
+		if(player.colorid==0){
+			if(player.audio.bubbles){
+				stopsound(state.soundengine,player.audio.bubbles);
+				player.audio.bubbles=NULL;
+			}
+			if(player.audio.engine){
+				stopsound(state.soundengine,player.audio.engine);
+				player.audio.engine=NULL;
+			}
+		}
+
+		// handle bubble sound effects
+		bool bubble_sound=false;
+		if(&player==&state.player_list[state.match.my_index]){
+			if(player.health>0&&(state.input.up_l.active||state.input.up_r.active))
+				bubble_sound=true;
+		}
+		else if(player.health>0&&player.yv<0.0f&&inrange(state.player_list[state.match.my_index],player,SOUND_RANGE))
+			bubble_sound=true;
+		// play bubble sound
+		if(bubble_sound){
+			if(!player.audio.bubbles){
+				player.audio.bubbles=playsound(state.soundengine,state.aassets.sound+SID_BUBBLES,true);
+			}
+		}
+		else if(player.audio.bubbles){
+			stopsound(state.soundengine,player.audio.bubbles);
+			player.audio.bubbles=NULL;
+		}
+
+		// handle engine sound effects
+		bool engine_sound=false;
+		if(&player==&state.player_list[state.match.my_index]){
+			if(player.health>0&&(state.input.left.active||state.input.right.active))
+				engine_sound=true;
+		}
+		else if(player.health>0&&fabsf(player.xv)&&inrange(state.player_list[state.match.my_index],player,SOUND_RANGE))
+			engine_sound=true;
+		// play engine sound
+		if(engine_sound){
+			if(!player.audio.engine)
+				player.audio.engine=playsound(state.soundengine,state.aassets.sound+SID_ENGINE,true);
+		}
+		else if(player.audio.engine){
+			stopsound(state.soundengine,player.audio.engine);
+			player.audio.engine=NULL;
+			// play halting sound
+			playsound(state.soundengine,state.aassets.sound+SID_ENGINE_HALT,false);
+		}
 
 		if(&player==&state.player_list[state.match.my_index]&&player.health<1&&state.match.dead_timer>0){
 			--state.match.dead_timer;
@@ -34,8 +90,12 @@ void Player::process(State &state){
 
 		// handle firing the cannon
 		if(player.cue_fire>0.0f){
-			if(player.health>0)
+			if(player.health>0){
+				// sound effect
+				if(inrange(state.player_list[state.match.my_index],player,SOUND_RANGE))
+					playsound(state.soundengine,state.aassets.sound+SID_CANNON,false);
 				state.shell_list.push_back(new Shell(state,player));
+			}
 			else
 				state.match.cycle_spectate(state.player_list); // cycle the spectated player
 			player.cue_fire=0.0f;
@@ -70,7 +130,7 @@ void Player::process(State &state){
 		player.turret.y=player.y+(PLAYER_HEIGHT/2.0f)-(TURRET_HEIGHT*2.5f);
 
 		state.final_firepower=0.0f;
-		state.final_strokepower=0.0f;
+		state.final_strikepower=0.0f;
 
 		// tell the renderer the player's position
 		if(&player==&state.player_list[state.match.my_index]){

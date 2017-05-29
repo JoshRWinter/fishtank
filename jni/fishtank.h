@@ -79,8 +79,25 @@ struct stat;
 #define UITID_BUTTON_AS 11
 #define UITID_SKULL 12
 
+// sound effects
+#define SID_PLATFORM_IMPACT 0
+#define SID_PARTICLE_PLAYER_IMPACT 1
+#define SID_CANNON 2
+#define SID_SHELL_PLAYER_IMPACT 3
+#define SID_PLATFORM_DESTROY 4
+#define SID_MINE_EXPLOSION 5
+#define SID_PLAYER_EXPLODE 6
+#define SID_MINE_CHAIN_SNAP 7
+#define SID_BEACON_FIRE 8
+#define SID_BEACON_BOUNCE 9
+#define SID_BUBBLES 10
+#define SID_ENGINE 11
+#define SID_ENGINE_HALT 12
+#define SID_CHAT 13
+
 #define FIREPOWER_INCREMENT 0.008f
 #define TIMER_CHATPANE 400.0f
+#define SOUND_RANGE 8.0f
 
 struct ChatMessage{
 	ChatMessage(const char *name,const char *content):
@@ -136,6 +153,8 @@ struct Renderer{
 struct State{
 	State();
 	void reset();
+	void init(android_app&);
+	void term();
 	bool core();
 	void render()const;
 	bool process()const;
@@ -152,7 +171,7 @@ struct State{
 	std::string name; // the player's name
 	std::string connect_to; // connecting to address ...
 	Match match; // manages the game
-	float firepower,final_firepower,final_strokepower;
+	float firepower,final_firepower,final_strikepower;
 	float timer_chatpane; // show the chat when active
 	int colorid; // my colorid
 	std::vector<stat> scoreboard;

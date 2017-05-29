@@ -53,6 +53,7 @@ typedef struct{
 	SLEngineItf engineinterface;
 	struct audioplayer *audioplayerlist;
 	int enabled;
+	int sound_count;
 }slesenv;
 struct audioplayer{
 	SLObjectItf playerobject;
@@ -78,11 +79,11 @@ struct jni_info{
 	JavaVM *vm;
 	jobject clazz;
 	jobject sys_svc;
-	
+
 	int hasvb;
 	jclass vb_svc;
 	jmethodID vbmethod;
-	
+
 	jmethodID MethodGetWindow;
 	jobject lWindow;
 	jclass cWindow;
