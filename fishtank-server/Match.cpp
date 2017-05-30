@@ -366,6 +366,27 @@ void Match::send_level_config(Client &client){
 	}
 }
 
+int Match::get_score(const Client &c){
+	int kills=c.stat.victories-c.stat.match_victories; // but not victories
+
+	return (c.stat.match_victories*2)+kills;
+}
+
+// descending order
+void Match::scoreboard_sort(std::vector<ScoreboardEntry> &entries){
+	// the allmighty insertion sort
+	for(int i=1;i<entries.size();++i){
+		int j=i;
+		while(j>0&&entries[j-1].points<entries[j].points){
+			ScoreboardEntry tmp=entries[j];
+			entries[j]=entries[j-1];
+			entries[j-1]=tmp;
+
+			--j;
+		}
+	}
+}
+
 void Match::send_scoreboard(Client &client){
 	to_client_tcp tctcp;
 	memset(&tctcp,0,sizeof(tctcp));
@@ -374,29 +395,44 @@ void Match::send_scoreboard(Client &client){
 	client.tcp.send(&tctcp.msg,sizeof(tctcp.msg));
 	client.tcp.send(&tctcp.name,sizeof(tctcp.name));
 
+	// populate the scoreboard entries
+	std::vector<ScoreboardEntry> entries;
+	for(const Client *c:client_list){
+		ScoreboardEntry e(c);
+
+		entries.push_back(e);
+	}
+
+	// sort by points
+	Match::scoreboard_sort(entries);
+
 	uint32_t count=htonl(client_list.size());
 	client.tcp.send(&count,sizeof(count));
-	for(Client *c:client_list){
+	for(const ScoreboardEntry &e:entries){
 		// send name
 		char name[MSG_LIMIT+1];
-		strncpy(name,c->name.c_str(),MSG_LIMIT+1);
+		strncpy(name,e.client->name.c_str(),MSG_LIMIT+1);
 		client.tcp.send(name,MSG_LIMIT+1);
 
 		// send (boolean) currently dead
-		uint32_t dead=c->player.health<1;
+		uint32_t dead=e.client->player.health<1;
 		client.tcp.send(&dead,sizeof(dead));
 
 		// send match victories
-		uint32_t mv=htonl(c->stat.match_victories);
+		uint32_t mv=htonl(e.client->stat.match_victories);
 		client.tcp.send(&mv,sizeof(mv));
 
 		// send one-on-one victories
-		uint32_t ooo=htonl(c->stat.victories);
+		uint32_t ooo=htonl(e.client->stat.victories);
 		client.tcp.send(&ooo,sizeof(ooo));
 
 		// send deaths
-		uint32_t d=htonl(c->stat.deaths);
+		uint32_t d=htonl(e.client->stat.deaths);
 		client.tcp.send(&d,sizeof(d));
+
+		// send points
+		uint32_t p=htonl(e.points);
+		client.tcp.send(&p,sizeof(p));
 	}
 }
 

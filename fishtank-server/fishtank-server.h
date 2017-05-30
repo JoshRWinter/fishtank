@@ -57,6 +57,7 @@ struct area_bounds{
 	float left,right,bottom,top;
 };
 
+struct ScoreboardEntry;
 class Match{
 public:
 	Match();
@@ -77,6 +78,8 @@ public:
 	Client *last_man_standing();
 	void ready_next_round();
 	void wait_next_step();
+	static void scoreboard_sort(std::vector<ScoreboardEntry>&);
+	static int get_score(const Client&);
 
 	std::vector<Client*> client_list;
 	std::vector<Shell*> shell_list;
@@ -92,6 +95,12 @@ public:
 	int backdrop_index;
 	// bounds of the playing area
 	area_bounds bounds;
+};
+
+struct ScoreboardEntry{
+	ScoreboardEntry(const Client *c):client(c),points(Match::get_score(*c)){}
+	const Client *client;
+	int points; // filled by Match::get_score()
 };
 
 void get_nano_time(long long*);

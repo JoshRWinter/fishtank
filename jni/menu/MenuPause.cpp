@@ -68,26 +68,39 @@ void MenuPause::render(const Renderer &renderer)const{
 	// stats
 	float yoffset=-1.5f;
 	const float NAME_OFFSET=-7.0f;
-	const float MV_OFFSET=-1.0f;
-	const float OOO_OFFSET=2.5f;
-	const float D_OFFSET=6.0f;
+	const float RANK_OFFSET=-1.25f;
+	const float MV_OFFSET=1.5f;
+	const float OOO_OFFSET=4.0f;
+	const float D_OFFSET=6.25f;
 	// stats header
 	glUniform4f(renderer.uniform.rgba,0.8f,0.8f,0.8f,1.0f);
 	drawtext(renderer.font.button,NAME_OFFSET,yoffset-0.8f,"Name");
+	drawtextcentered(renderer.font.button,RANK_OFFSET+0.1f,yoffset-0.8f,"Ranking");
 	drawtextcentered(renderer.font.button,MV_OFFSET+0.1f,yoffset-0.8f,"Victories");
 	drawtextcentered(renderer.font.button,OOO_OFFSET+0.1f,yoffset-0.8f,"Kills");
 	drawtextcentered(renderer.font.button,D_OFFSET+0.1f,yoffset-0.8f,"Deaths");
 	glUniform4f(renderer.uniform.rgba,TEXT_COLOR,1.0f);
+	int ranking=1;
+	int last_points=-1;
 	for(const stat &s:*scoreboard){
+		// increment the ranking
+		if(last_points!=-1){
+			if(s.points!=last_points)
+				++ranking;
+		}
+
 		// convert to string
 		char str_mv[16];
 		char str_ooo[16];
 		char str_d[16];
+		char str_p[16];
 		sprintf(str_mv,"%d",s.match_victories);
 		sprintf(str_ooo,"%d",s.victories);
 		sprintf(str_d,"%d",s.deaths);
+		sprintf(str_p,"%d",ranking);
 
 		drawtext(renderer.font.button,NAME_OFFSET,yoffset,s.name.c_str());
+		drawtext(renderer.font.button,RANK_OFFSET,yoffset,str_p);
 		drawtext(renderer.font.button,MV_OFFSET,yoffset,str_mv);
 		drawtext(renderer.font.button,OOO_OFFSET,yoffset,str_ooo);
 		drawtext(renderer.font.button,D_OFFSET,yoffset,str_d);
@@ -109,6 +122,7 @@ void MenuPause::render(const Renderer &renderer)const{
 			glBindTexture(GL_TEXTURE_2D,renderer.font.button->atlas);
 		}
 
+		last_points=s.points;
 		yoffset+=0.6f;
 	}
 

@@ -409,11 +409,17 @@ void Match::get_scoreboard(std::vector<stat> &stat_list){
 		tcp.recv(&d,sizeof(d));
 		d=ntohl(d);
 
+		// get the points
+		uint32_t p;
+		tcp.recv(&p,sizeof(p));
+		p=ntohl(p);
+
 		s.name=name;
 		s.match_victories=mv;
 		s.victories=ooo;
 		s.deaths=d;
 		s.dead=dead!=0;
+		s.points=p;
 
 		stat_list.push_back(s);
 	}

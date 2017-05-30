@@ -123,6 +123,7 @@ struct stat{
 	int victories;
 	int deaths;
 	bool dead;
+	int points;
 };
 
 struct Renderer{
