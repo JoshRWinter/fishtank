@@ -63,8 +63,10 @@ bool State::core(){
 		// check for upper left chat press
 		if(pointer[0].active&&pointer[0].x>renderer.view.left&&pointer[0].x<renderer.view.left+4.0f&&
 			pointer[0].y>renderer.view.top&&pointer[0].y<renderer.view.top+2.0f){
+			pause_menu=true;
 			if(!menu.chat.exec(*this))
 				return false;
+			pause_menu=false;
 		}
 
 		// chatpane timer
@@ -109,7 +111,8 @@ bool State::core(){
 	if(back){
 		back=false;
 		pause_menu=true;
-		menu.pause.exec(*this);
+		if(!menu.pause.exec(*this))
+			return false;
 		pause_menu=false;
 	}
 
@@ -215,7 +218,7 @@ void State::render()const{
 		glUniform4f(renderer.uniform.rgba,0.701f,0.71f,0.3f,1.0f);
 		drawtextcentered(renderer.font.main,0.0f,-3.15f,announcement[0].msg.c_str());
 	}
-	if(chat.size()>0&&timer_chatpane>0.0f){
+	if(chat.size()>0&&timer_chatpane>0.0f&&!pause_menu){
 		glUniform4f(renderer.uniform.rgba,TEXT_COLOR,1.0f);
 		glBindTexture(GL_TEXTURE_2D,renderer.font.main->atlas);
 

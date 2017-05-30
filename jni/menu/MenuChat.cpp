@@ -9,7 +9,10 @@ bool MenuChat::exec(State &state){
 	button_say.init(-4.0f,3.1f,"Say...");
 	button_back.init(button_say.x+BUTTON_WIDTH+0.3f,3.1f,"Back");
 
-	scrolltop=SCROLLPANE_BOTTOM-(state.chat.size()*NEW_LINE_OFFSET)-0.5f;
+	if(state.renderer.view.top+(state.chat.size()*NEW_LINE_OFFSET)>SCROLLPANE_BOTTOM)
+		scrolltop=SCROLLPANE_BOTTOM-(state.chat.size()*NEW_LINE_OFFSET)-0.5f;
+	else
+		scrolltop=state.renderer.view.top+1.0f;
 	drag=false;
 	offset=0.0f;
 
@@ -67,6 +70,9 @@ bool MenuChat::exec(State &state){
 				scrolltop=state.renderer.view.top-(state.chat.size()*NEW_LINE_OFFSET)+NEW_LINE_OFFSET;
 		}
 
+		// allow game world to be processed
+		state.core();
+		state.render();
 		render(state.renderer,state.chat);
 		eglSwapBuffers(state.renderer.display,state.renderer.surface);
 	}
@@ -75,9 +81,13 @@ bool MenuChat::exec(State &state){
 }
 
 void MenuChat::render(const Renderer &renderer,const std::vector<ChatMessage> &chat_list)const{
+	// blank background
+	glUniform4f(renderer.uniform.rgba,0.2f,0.5f,0.65f,0.8f);
+	glBindTexture(GL_TEXTURE_2D,renderer.uiassets.texture[UITID_FULL_WHITE].object);
+	renderer.uidraw(background);
 	// background
 	glUniform4f(renderer.uniform.rgba,1.0f,1.0f,1.0f,1.0f);
-	glBindTexture(GL_TEXTURE_2D,renderer.uiassets.texture[UITID_BACKGROUND].object);
+	glBindTexture(GL_TEXTURE_2D,renderer.uiassets.texture[UITID_BACKGROUND_TRANSPARENT].object);
 	renderer.uidraw(background);
 
 	// messages
