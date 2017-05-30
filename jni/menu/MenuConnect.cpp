@@ -17,6 +17,10 @@ bool MenuConnect::exec(State &state,const std::string &ip){
 	tcp.get_name(connected_address);
 
 	while(state.process()){
+		// recv network updates if connected
+		if(connection_state==CONN_STATE_READY)
+			state.match.recv_data(state);
+
 		if(connection_state!=CONN_STATE_READY){
 			if(button_cancel.process(state.pointer)||state.back){
 				state.back=false;
