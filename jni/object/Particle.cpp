@@ -300,7 +300,9 @@ void ParticlePlayer::process(State &state){
 		}
 
 		// delete when ttl <= 0.0f
-		particle.ttl-=state.speed;
+		// large particles get deleted in Match::get_level_config()
+		if(!particle.large)
+			particle.ttl-=state.speed;
 		if(particle.ttl<=0.0f){
 			// shrink it first
 			const float SHRINK=0.99f;
