@@ -1,6 +1,6 @@
 #include "../fishtank.h"
 
-static const float SCROLLPANE_BOTTOM=1.0f;
+static const float SCROLLPANE_BOTTOM=2.0f;
 static const float NEW_LINE_OFFSET=0.7f;
 
 bool MenuChat::exec(State &state){
