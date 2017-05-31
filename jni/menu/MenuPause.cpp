@@ -1,5 +1,7 @@
 #include "../fishtank.h"
 
+#define REQUEST_TIMER 300
+
 bool MenuPause::exec(State &state){
 	background.init_background(state.renderer);
 	black_background=background;
@@ -9,8 +11,7 @@ bool MenuPause::exec(State &state){
 	button_back.init(button_quit.x+BUTTON_WIDTH+0.3f,3.1f,"Resume");
 
 	// get the scoreboard from the server
-	state.scoreboard.clear();
-	state.match.request_scoreboard();
+	int request_timer=0;
 	scoreboard=&state.scoreboard;
 
 	id=state.match.get_id();
@@ -18,6 +19,13 @@ bool MenuPause::exec(State &state){
 	while(state.process()){
 		if(!state.match.connected())
 			return true;
+
+		// update scoreboard
+		--request_timer;
+		if(request_timer<1){
+			state.match.request_scoreboard();
+			request_timer=REQUEST_TIMER;
+		}
 
 		// buttons
 		if(button_settings.process(state.pointer)){

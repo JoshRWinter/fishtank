@@ -385,6 +385,8 @@ void Match::get_scoreboard(std::vector<stat> &stat_list){
 	tcp.recv(&count,sizeof(count));
 	count=ntohl(count);
 
+	stat_list.clear();
+
 	for(int i=0;i<count;++i){
 		stat s;
 
