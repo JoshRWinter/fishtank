@@ -433,6 +433,10 @@ void Match::send_scoreboard(Client &client){
 		// send points
 		uint32_t p=htonl(e.points);
 		client.tcp.send(&p,sizeof(p));
+
+		// send client id
+		uint32_t id=htonl(e.client->id);
+		client.tcp.send(&id,sizeof(id));
 	}
 }
 

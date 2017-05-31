@@ -85,6 +85,7 @@ struct MenuPause{
 	Button button_settings;
 	Button button_back;
 	std::vector<stat> *scoreboard;
+	int id; // my client id
 };
 
 struct MenuChat{

@@ -19,6 +19,7 @@ public:
 	void cycle_spectate(const std::vector<Player>&);
 	int find_new_spectate(const std::vector<Player>&)const;
 	void request_spectate_name(int);
+	int get_id();
 	socket_tcp &get_tcp();
 
 	int my_index; // player's index into State::player_list

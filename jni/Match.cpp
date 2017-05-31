@@ -365,6 +365,10 @@ void Match::get_level_config(State &state){
 	}
 }
 
+int Match::get_id(){
+	return id;
+}
+
 void Match::request_scoreboard(){
 	// send the request
 	to_server_tcp tstcp;
@@ -414,12 +418,18 @@ void Match::get_scoreboard(std::vector<stat> &stat_list){
 		tcp.recv(&p,sizeof(p));
 		p=ntohl(p);
 
+		// get the id
+		uint32_t id;
+		tcp.recv(&id,sizeof(id));
+		id=ntohl(id);
+
 		s.name=name;
 		s.match_victories=mv;
 		s.victories=ooo;
 		s.deaths=d;
 		s.dead=dead!=0;
 		s.points=p;
+		s.id=id;
 
 		stat_list.push_back(s);
 	}

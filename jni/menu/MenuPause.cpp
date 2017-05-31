@@ -13,6 +13,8 @@ bool MenuPause::exec(State &state){
 	state.match.request_scoreboard();
 	scoreboard=&state.scoreboard;
 
+	id=state.match.get_id();
+
 	while(state.process()){
 		if(!state.match.connected())
 			return true;
@@ -87,6 +89,16 @@ void MenuPause::render(const Renderer &renderer)const{
 		if(last_points!=-1){
 			if(s.points!=last_points)
 				++ranking;
+		}
+
+		// draw the highlight box if this loop is me
+		if(s.id==id){
+			glBindTexture(GL_TEXTURE_2D,renderer.uiassets.texture[UITID_HIGHLIGHT].object);
+			glUniform4f(renderer.uniform.rgba,0.7f,0.7f,0.2f,0.6f);
+			Base highlight={-8.0f,yoffset+0.025f,16.0f,0.6f,0.0f,0,1};
+			renderer.uidraw(highlight);
+			glBindTexture(GL_TEXTURE_2D,renderer.font.button->atlas);
+			glUniform4f(renderer.uniform.rgba,TEXT_COLOR,1.0f);
 		}
 
 		// convert to string

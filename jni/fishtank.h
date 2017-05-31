@@ -78,6 +78,7 @@ struct stat;
 #define UITID_FULL_WHITE 10
 #define UITID_BUTTON_AS 11
 #define UITID_SKULL 12
+#define UITID_HIGHLIGHT 13
 
 // sound effects
 #define SID_PLATFORM_IMPACT 0
@@ -124,6 +125,7 @@ struct stat{
 	int deaths;
 	bool dead;
 	int points;
+	int id;
 };
 
 struct Renderer{
