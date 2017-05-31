@@ -16,13 +16,15 @@ bool MenuChat::exec(State &state){
 	drag=false;
 	offset=0.0f;
 
+	int msg_count=state.chat.size();
+
 	while(state.process()){
 		// get new chat messages
 		bool new_message=false;
-		int beforesize=state.chat.size();
-		state.match.recv_data(state);
-		if(state.chat.size()!=beforesize)
+		if(state.chat.size()!=msg_count){
+			msg_count=state.chat.size();
 			new_message=true;
+		}
 
 		// buttons
 		if(button_say.process(state.pointer)){
