@@ -2,6 +2,7 @@
 #include "../fishtank.h"
 
 bool MenuConnect::exec(State &state,const std::string &ip){
+	state.reset();
 	background.init_background(state.renderer);
 
 	socket_tcp &tcp=state.match.get_tcp();
@@ -32,7 +33,6 @@ bool MenuConnect::exec(State &state,const std::string &ip){
 			if(button_ready.process(state.pointer)||state.back){
 				state.pointer[0].active=false;
 				state.pointer[0].y=0.0f;
-				state.reset();
 				state.back=false;
 				return true;
 			}
