@@ -54,10 +54,10 @@ void Shell::process(State &state){
 
 			if(player.collide(shell)){
 				// sound effect
-				if(inrange(state.player_list[state.match.my_index],shell,SOUND_RANGE))
+				if(inrange(state.player_list[state.match.get_current_index()],shell,SOUND_RANGE))
 					playsound(state.soundengine,state.aassets.sound+SID_SHELL_PLAYER_IMPACT,false);
 				// vibrate
-				if(&player==&state.player_list[state.match.my_index])
+				if(&player==&state.player_list[state.match.get_current_index()])
 					if(state.config.vibrate)
 						vibratedevice(&state.jni,30);
 				// generate some particles
@@ -82,7 +82,7 @@ void Shell::process(State &state){
 
 			if(shell.collide(platform)){
 				// sound effect
-				if(inrange(state.player_list[state.match.my_index],shell,SOUND_RANGE))
+				if(inrange(state.player_list[state.match.get_current_index()],shell,SOUND_RANGE))
 					playsound(state.soundengine,state.aassets.sound+SID_PLATFORM_IMPACT,false);
 				// generate some particles
 				ParticlePlatform::spawn(state,shell,randomint(3,5));
@@ -117,7 +117,7 @@ void Shell::process(State &state){
 		// check for shell going below screen
 		if(shell.y>FLOOR-0.4f){
 			// sound effect
-			if(inrange(state.player_list[state.match.my_index],shell,SOUND_RANGE))
+			if(inrange(state.player_list[state.match.get_current_index()],shell,SOUND_RANGE))
 				playsound(state.soundengine,state.aassets.sound+SID_PLATFORM_IMPACT,false);
 			// particles
 			ParticlePlatform::spawn(state,shell,randomint(3,4));

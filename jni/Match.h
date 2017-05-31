@@ -20,6 +20,7 @@ public:
 	int find_new_spectate(const std::vector<Player>&)const;
 	void request_spectate_name(int);
 	int get_id();
+	int get_current_index(); // returns index of current player viewing
 	socket_tcp &get_tcp();
 
 	int my_index; // player's index into State::player_list

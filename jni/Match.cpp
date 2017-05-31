@@ -181,21 +181,21 @@ void Match::recv_data(State &state){
 				player.cue_fire=(int)ntohl(server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_FIRE])/FLOAT_MULTIPLIER;
 			if(before_health>0&&player.health<1&&player.colorid!=0){
 				// vibrate
-				if(&player==&state.player_list[my_index])
+				if(&player==&state.player_list[get_current_index()])
 					if(state.config.vibrate)
 						vibratedevice(&state.jni,500);
 				// sound
-				if(inrange(state.player_list[my_index],player,SOUND_RANGE))
+				if(inrange(state.player_list[get_current_index()],player,SOUND_RANGE))
 					playsound(state.soundengine,state.aassets.sound+SID_PLAYER_EXPLODE,false);
 				// particles
 				ParticlePlayer::spawn(state,player);
 			}
 			// beacon sound effect
-			if(before_y_beacon>FLOOR&&player.colorid!=0&&player.beacon.y<FLOOR&&inrange(state.player_list[my_index],player,SOUND_RANGE))
+			if(before_y_beacon>FLOOR&&player.colorid!=0&&player.beacon.y<FLOOR&&inrange(state.player_list[get_current_index()],player,SOUND_RANGE))
 				playsound(state.soundengine,state.aassets.sound+SID_BEACON_FIRE,false);
 			// beacon bounce
 			if(before_yv_beacon>0.0f&&player.beacon.yv<0.0f&&fabsf(player.beacon.yv)>0.01f&&
-				inrange(state.player_list[my_index],player.beacon,SOUND_RANGE))
+				inrange(state.player_list[get_current_index()],player.beacon,SOUND_RANGE))
 				playsound(state.soundengine,state.aassets.sound+SID_BEACON_BOUNCE,false);
 
 			++i;
@@ -208,7 +208,7 @@ void Match::recv_data(State &state){
 			state.platform_list[i].active=((platform_status[0]>>i)&1)==1;
 			if(before&&!state.platform_list[i].active){
 				// sound effects
-				if(inrange(state.player_list[my_index],state.platform_list[i],SOUND_RANGE)){
+				if(inrange(state.player_list[get_current_index()],state.platform_list[i],SOUND_RANGE)){
 					state.platform_list[i].timer_audio=stagger;
 					stagger+=5;
 				}
@@ -221,7 +221,7 @@ void Match::recv_data(State &state){
 			state.platform_list[i+32].active=((platform_status[1]>>i)&1)==1;
 			if(before&&!state.platform_list[i+32].active){
 				// sound effects
-				if(inrange(state.player_list[my_index],state.platform_list[i+32],SOUND_RANGE)){
+				if(inrange(state.player_list[get_current_index()],state.platform_list[i+32],SOUND_RANGE)){
 					state.platform_list[i+32].timer_audio=stagger;
 					stagger+=5;
 				}
@@ -236,12 +236,12 @@ void Match::recv_data(State &state){
 			state.mine_list[i].armed=((mine_status>>i)&1)==1;
 			if(before&&!state.mine_list[i].armed){
 				// sound effect
-				if(inrange(state.player_list[my_index],state.mine_list[i],SOUND_RANGE))
+				if(inrange(state.player_list[get_current_index()],state.mine_list[i],SOUND_RANGE))
 					playsound(state.soundengine,state.aassets.sound+SID_MINE_EXPLOSION,false);
 
 				ParticleBubble::spawn(state,state.mine_list[i]);
 				// vibrate
-				if(inrange(state.player_list[my_index],state.mine_list[i],6.75f))
+				if(inrange(state.player_list[get_current_index()],state.mine_list[i],6.75f))
 					if(state.config.vibrate)
 						vibratedevice(&state.jni,325);
 			}
@@ -367,6 +367,12 @@ void Match::get_level_config(State &state){
 
 int Match::get_id(){
 	return id;
+}
+
+// returns index of current player
+// either currently playing or spectating
+int Match::get_current_index(){
+	return dead_timer!=0?my_index:spectate_index;
 }
 
 void Match::request_scoreboard(){

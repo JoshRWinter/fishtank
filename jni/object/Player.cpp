@@ -49,7 +49,7 @@ void Player::process(State &state){
 			if(player.health>0&&(state.input.up_l.active||state.input.up_r.active))
 				bubble_sound=true;
 		}
-		else if(player.health>0&&player.yv<0.0f&&inrange(state.player_list[state.match.my_index],player,SOUND_RANGE))
+		else if(player.health>0&&player.yv<0.0f&&inrange(state.player_list[state.match.get_current_index()],player,SOUND_RANGE))
 			bubble_sound=true;
 		// play bubble sound
 		if(bubble_sound){
@@ -68,7 +68,7 @@ void Player::process(State &state){
 			if(player.health>0&&(state.input.left.active||state.input.right.active))
 				engine_sound=true;
 		}
-		else if(player.health>0&&fabsf(player.xv)&&inrange(state.player_list[state.match.my_index],player,SOUND_RANGE))
+		else if(player.health>0&&fabsf(player.xv)&&inrange(state.player_list[state.match.get_current_index()],player,SOUND_RANGE))
 			engine_sound=true;
 		// play engine sound
 		if(engine_sound){
@@ -82,6 +82,7 @@ void Player::process(State &state){
 			playsound(state.soundengine,state.aassets.sound+SID_ENGINE_HALT,false);
 		}
 
+		// count down the dead timer until the player is allowed to spectate another player
 		if(&player==&state.player_list[state.match.my_index]&&player.health<1&&state.match.dead_timer>0){
 			--state.match.dead_timer;
 			if(state.match.dead_timer<0)
@@ -92,7 +93,7 @@ void Player::process(State &state){
 		if(player.cue_fire>0.0f){
 			if(player.health>0){
 				// sound effect
-				if(inrange(state.player_list[state.match.my_index],player,SOUND_RANGE))
+				if(inrange(state.player_list[state.match.get_current_index()],player,SOUND_RANGE))
 					playsound(state.soundengine,state.aassets.sound+SID_CANNON,false);
 				state.shell_list.push_back(new Shell(state,player));
 			}
