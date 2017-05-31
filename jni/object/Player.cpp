@@ -21,7 +21,7 @@ Player::Player(){
 	turret.count=1;
 	turret.frame=0;
 
-	beacon.yv=FLOOR+10.0f;
+	beacon.y=FLOOR+10.0f;
 
 	audio.bubbles=NULL;
 	audio.engine=NULL;
