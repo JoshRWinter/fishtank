@@ -1,6 +1,9 @@
 #include "../fishtank.h"
 
 bool MenuMain::exec(State &state){
+	// stop player sound effects
+	Player::stop_sound(state.soundengine,state.player_list);
+
 	background.x=state.renderer.view.left;
 	background.y=state.renderer.view.top;
 	background.w=state.renderer.view.right*2.0f;
