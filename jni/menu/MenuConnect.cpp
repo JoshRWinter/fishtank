@@ -34,6 +34,7 @@ bool MenuConnect::exec(State &state,const std::string &ip){
 				state.pointer[0].active=false;
 				state.pointer[0].y=0.0f;
 				state.back=false;
+				state.play_music();
 				return true;
 			}
 		}

@@ -2,7 +2,7 @@
 
 bool MenuMain::exec(State &state){
 	// stop player sound effects
-	Player::stop_sound(state.soundengine,state.player_list);
+	state.play_music();
 
 	background.x=state.renderer.view.left;
 	background.y=state.renderer.view.top;

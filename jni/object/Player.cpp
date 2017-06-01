@@ -211,19 +211,6 @@ void Player::render(const Renderer &renderer,const std::vector<Player> &player_l
 	glUniform4f(renderer.uniform.rgba,1.0f,1.0f,1.0f,1.0f);
 }
 
-void Player::stop_sound(slesenv *soundengine,std::vector<Player> &player_list){
-	for(Player &player:player_list){
-		if(player.audio.engine!=NULL){
-			stopsound(soundengine,player.audio.engine);
-			player.audio.engine=NULL;
-		}
-		if(player.audio.bubbles!=NULL){
-			stopsound(soundengine,player.audio.bubbles);
-			player.audio.bubbles=NULL;
-		}
-	}
-}
-
 Beacon::Beacon(){
 	w=BEACON_WIDTH;
 	h=BEACON_HEIGHT;

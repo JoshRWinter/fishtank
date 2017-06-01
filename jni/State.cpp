@@ -2,9 +2,10 @@
 
 bool State::core(){
 	if(show_menu){
-		show_menu=false;
 		if(!menu.main.exec(*this))
 			return false;
+		show_menu=false;
+		play_music();
 	}
 
 	// get network updates
@@ -376,6 +377,25 @@ void State::reset(){
 void State::init(android_app &app){
 	loadapack(&aassets,app.activity->assetManager,"aassets");
 	soundengine=initOpenSL();
+	play_music();
+}
+
+void State::play_music(){
+	stopallsounds(soundengine);
+	if(config.music){
+		if(show_menu){
+			// play menu theme
+			playsound(soundengine,aassets.sound+SID_MENU_THEME,true);
+		}
+		else{
+			// play the gameplay theme
+			playsound(soundengine,aassets.sound+SID_GAMEPLAY_THEME,true);
+		}
+	}
+	else{
+		// play silence
+		playsound(soundengine,aassets.sound+SID_SILENCE,true);
+	}
 }
 
 void State::term(){

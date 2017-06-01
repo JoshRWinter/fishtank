@@ -58,7 +58,6 @@ struct Player:Base{
 	Player();
 	static void process(State&);
 	static void render(const Renderer&,const std::vector<Player>&);
-	static void stop_sound(slesenv *soundengine,std::vector<Player>&);
 
 	Beacon beacon;
 	float xv,yv;

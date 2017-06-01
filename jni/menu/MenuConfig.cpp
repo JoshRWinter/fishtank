@@ -21,6 +21,7 @@ bool MenuConfig::exec(State &state){
 		// buttons
 		if(button_music.process(state.pointer)){
 			state.config.music=!state.config.music;
+			state.play_music();
 		}
 		if(button_sounds.process(state.pointer)){
 			state.config.sounds=!state.config.sounds;
