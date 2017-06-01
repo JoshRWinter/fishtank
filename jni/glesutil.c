@@ -885,10 +885,6 @@ void clean_destroyed_sounds(slesenv *engine){
 }
 struct audioplayer *playsound(slesenv *engine,struct apacksound *sound,int loop){
 	if(!engine->enabled)return NULL;
-	if(engine->sound_count>25){
-		clean_destroyed_sounds(engine);
-		return NULL;
-	}
 	pthread_mutex_lock(&sound->parent->mutex);
 	unsigned size=sound->size,targetsize=sound->targetsize;
 	pthread_mutex_unlock(&sound->parent->mutex);
@@ -910,13 +906,28 @@ struct audioplayer *playsound(slesenv *engine,struct apacksound *sound,int loop)
 	SLDataLocator_OutputMix localoutputmix={SL_DATALOCATOR_OUTPUTMIX,engine->outputmix};
 	SLDataSink sink={&localoutputmix,NULL};
 
-	(*engine->engineinterface)->CreateAudioPlayer(engine->engineinterface,&audioplayer->playerobject,&source,&sink,2,(SLInterfaceID[]){SL_IID_ANDROIDSIMPLEBUFFERQUEUE,SL_IID_VOLUME},(SLboolean[]){SL_BOOLEAN_TRUE,SL_BOOLEAN_TRUE});
-	(*audioplayer->playerobject)->Realize(audioplayer->playerobject,SL_BOOLEAN_FALSE);
-	(*audioplayer->playerobject)->GetInterface(audioplayer->playerobject,SL_IID_PLAY,&audioplayer->playerinterface);
-	(*audioplayer->playerobject)->GetInterface(audioplayer->playerobject,SL_IID_VOLUME,&audioplayer->volumeinterface);
-	(*audioplayer->playerobject)->GetInterface(audioplayer->playerobject,SL_IID_ANDROIDSIMPLEBUFFERQUEUE,&audioplayer->playerbufferqueue);
-	(*audioplayer->playerbufferqueue)->RegisterCallback(audioplayer->playerbufferqueue,playercallback,audioplayer);
-	(*audioplayer->playerinterface)->SetPlayState(audioplayer->playerinterface,SL_PLAYSTATE_PLAYING);
+	int result;
+	result=(*engine->engineinterface)->CreateAudioPlayer(engine->engineinterface,&audioplayer->playerobject,&source,&sink,2,(SLInterfaceID[]){SL_IID_ANDROIDSIMPLEBUFFERQUEUE,SL_IID_VOLUME},(SLboolean[]){SL_BOOLEAN_TRUE,SL_BOOLEAN_TRUE});
+	if(result!=0)
+		goto error_out_not_allocated;
+	result=(*audioplayer->playerobject)->Realize(audioplayer->playerobject,SL_BOOLEAN_FALSE);
+	if(result!=0)
+		goto error_out;
+	result=(*audioplayer->playerobject)->GetInterface(audioplayer->playerobject,SL_IID_PLAY,&audioplayer->playerinterface);
+	if(result!=0)
+		goto error_out;
+	result=(*audioplayer->playerobject)->GetInterface(audioplayer->playerobject,SL_IID_VOLUME,&audioplayer->volumeinterface);
+	if(result!=0)
+		goto error_out;
+	result=(*audioplayer->playerobject)->GetInterface(audioplayer->playerobject,SL_IID_ANDROIDSIMPLEBUFFERQUEUE,&audioplayer->playerbufferqueue);
+	if(result!=0)
+		goto error_out;
+	result=(*audioplayer->playerbufferqueue)->RegisterCallback(audioplayer->playerbufferqueue,playercallback,audioplayer);
+	if(result!=0)
+		goto error_out;
+	result=(*audioplayer->playerinterface)->SetPlayState(audioplayer->playerinterface,SL_PLAYSTATE_PLAYING);
+	if(result!=0)
+		goto error_out;
 
 	//log("size: %d, targetsize: %d",size,targetsize);
 	audioplayer->initial=size;
@@ -932,6 +943,17 @@ struct audioplayer *playsound(slesenv *engine,struct apacksound *sound,int loop)
 	clean_destroyed_sounds(engine);
 
 	return audioplayer;
+
+	error_out:
+	// something bad happened, bail out
+	(*audioplayer->playerobject)->Destroy(audioplayer->playerobject);
+
+	error_out_not_allocated:
+	logcat("OpenSL error, bailing out");
+	free(audioplayer);
+	clean_destroyed_sounds(engine);
+	return NULL;
+
 }
 slesenv *initOpenSL(){
 	slesenv *soundengine=malloc(sizeof(slesenv));
