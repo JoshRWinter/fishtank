@@ -23,8 +23,8 @@ Player::Player(){
 
 	beacon.y=FLOOR+10.0f;
 
-	audio.bubbles=NULL;
-	audio.engine=NULL;
+	audio.bubbles=0;
+	audio.engine=0;
 }
 
 void Player::process(State &state){
@@ -33,13 +33,13 @@ void Player::process(State &state){
 
 		// turn off empty players' sound effects
 		if(player.colorid==0){
-			if(player.audio.bubbles){
+			if(player.audio.bubbles!=0){
 				stopsound(state.soundengine,player.audio.bubbles);
-				player.audio.bubbles=NULL;
+				player.audio.bubbles=0;
 			}
-			if(player.audio.engine){
+			if(player.audio.engine!=0){
 				stopsound(state.soundengine,player.audio.engine);
-				player.audio.engine=NULL;
+				player.audio.engine=0;
 			}
 		}
 
@@ -53,13 +53,13 @@ void Player::process(State &state){
 			bubble_sound=true;
 		// play bubble sound
 		if(bubble_sound){
-			if(!player.audio.bubbles){
+			if(player.audio.bubbles==0){
 				player.audio.bubbles=playsound(state.soundengine,state.aassets.sound+SID_BUBBLES,true);
 			}
 		}
-		else if(player.audio.bubbles){
+		else if(player.audio.bubbles!=0){
 			stopsound(state.soundengine,player.audio.bubbles);
-			player.audio.bubbles=NULL;
+			player.audio.bubbles=0;
 		}
 
 		// handle engine sound effects
@@ -72,12 +72,12 @@ void Player::process(State &state){
 			engine_sound=true;
 		// play engine sound
 		if(engine_sound){
-			if(!player.audio.engine)
+			if(player.audio.engine==0)
 				player.audio.engine=playsound(state.soundengine,state.aassets.sound+SID_ENGINE,true);
 		}
-		else if(player.audio.engine){
+		else if(player.audio.engine!=0){
 			stopsound(state.soundengine,player.audio.engine);
-			player.audio.engine=NULL;
+			player.audio.engine=0;
 			// play halting sound
 			playsound(state.soundengine,state.aassets.sound+SID_ENGINE_HALT,false);
 		}

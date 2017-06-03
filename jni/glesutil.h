@@ -54,6 +54,7 @@ typedef struct{
 	struct audioplayer *audioplayerlist;
 	int enabled;
 	int sound_count;
+	int last_id;
 }slesenv;
 struct audioplayer{
 	SLObjectItf playerobject;
@@ -63,6 +64,7 @@ struct audioplayer{
 	slesenv *engine;
 	struct apacksound *sound;
 	int loop,destroy,initial;
+	int id;
 	struct audioplayer *next;
 };
 struct crosshair{
@@ -118,8 +120,9 @@ void drawtext(ftfont *font,float xpos,float ypos,const char *output);
 void drawtextcentered(ftfont *font,float xpos,float ypos,const char *output);
 slesenv *initOpenSL();
 void termOpenSL(slesenv *soundengine);
-struct audioplayer *playsound(slesenv *engine,struct apacksound *sound,int loop);
-void stopsound(slesenv *engine,struct audioplayer *audioplayer);
+int playsound(slesenv *engine,struct apacksound *sound,int loop);
+int checksound(slesenv *engine,int id);
+void stopsound(slesenv *engine,int id);
 void stopallsounds(slesenv *engine);
 void disablesound(slesenv *engine);
 void enablesound(slesenv *engine);

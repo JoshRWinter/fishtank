@@ -841,21 +841,29 @@ void enablesound(slesenv *engine){
 		pthread_mutex_unlock(&ap->sound->parent->mutex);
 	}
 }
-void stopsound(slesenv *engine,struct audioplayer *audioplayer){
-	pthread_mutex_lock(&audioplayer->sound->parent->mutex);
-	// check to make sure it exists first
+void stopsound(slesenv *engine,int id){
 	struct audioplayer *current=engine->audioplayerlist;
 	while(current!=NULL){
-		if(current==audioplayer){
-			(*audioplayer->playerinterface)->SetPlayState(audioplayer->playerinterface,SL_PLAYSTATE_STOPPED);
-			audioplayer->loop=false;
-			audioplayer->destroy=true;
+		if(current->id==id){
+			(*current->playerinterface)->SetPlayState(current->playerinterface,SL_PLAYSTATE_STOPPED);
+			current->loop=false;
+			current->destroy=true;
 			break;
 		}
 
 		current=current->next;
 	}
-	pthread_mutex_unlock(&audioplayer->sound->parent->mutex);
+}
+// return true if sound still playing
+int checksound(slesenv *engine,int id){
+	struct audioplayer *current=engine->audioplayerlist;
+	while(current!=NULL){
+		if(current->id==id)
+			return true;
+
+		current=current->next;
+	}
+	return false;
 }
 void stopallsounds(slesenv *soundengine){
 	for(struct audioplayer *audioplayer=soundengine->audioplayerlist;audioplayer!=NULL;){
@@ -883,13 +891,13 @@ void clean_destroyed_sounds(slesenv *engine){
 		ap=ap->next;
 	}
 }
-struct audioplayer *playsound(slesenv *engine,struct apacksound *sound,int loop){
-	if(!engine->enabled)return NULL;
+int playsound(slesenv *engine,struct apacksound *sound,int loop){
+	if(!engine->enabled)return 0;
 	pthread_mutex_lock(&sound->parent->mutex);
 	unsigned size=sound->size,targetsize=sound->targetsize;
 	pthread_mutex_unlock(&sound->parent->mutex);
 	if(size==0){
-		if(!loop)return NULL;// don't care, non loops are usually not high-priority
+		if(!loop)return 0;// don't care, non loops are usually not high-priority
 		while(size==0){
 			pthread_mutex_lock(&sound->parent->mutex);
 			size=sound->size;
@@ -898,6 +906,7 @@ struct audioplayer *playsound(slesenv *engine,struct apacksound *sound,int loop)
 			usleep(10*1000);
 		}
 	}
+
 	struct audioplayer *audioplayer=malloc(sizeof(struct audioplayer));
 
 	SLDataLocator_AndroidSimpleBufferQueue buffq={SL_DATALOCATOR_ANDROIDSIMPLEBUFFERQUEUE,2};
@@ -936,13 +945,14 @@ struct audioplayer *playsound(slesenv *engine,struct apacksound *sound,int loop)
 	audioplayer->engine=engine;
 	audioplayer->sound=sound;
 	audioplayer->destroy=false;
+	audioplayer->id=engine->last_id++;
 
 	audioplayer->next=engine->audioplayerlist;
 	engine->audioplayerlist=audioplayer;
 
 	clean_destroyed_sounds(engine);
 
-	return audioplayer;
+	return audioplayer->id;
 
 	error_out:
 	// something bad happened, bail out
@@ -952,7 +962,7 @@ struct audioplayer *playsound(slesenv *engine,struct apacksound *sound,int loop)
 	logcat("OpenSL error, bailing out");
 	free(audioplayer);
 	clean_destroyed_sounds(engine);
-	return NULL;
+	return 0;
 
 }
 slesenv *initOpenSL(){
@@ -965,6 +975,7 @@ slesenv *initOpenSL(){
 	soundengine->audioplayerlist=NULL;
 	soundengine->enabled=true;
 	soundengine->sound_count=0;
+	soundengine->last_id=1;
 	return soundengine;
 }
 void termOpenSL(slesenv *soundengine){

@@ -66,8 +66,8 @@ struct Player:Base{
 	int health;
 	float cue_fire;
 	struct{
-		audioplayer *engine;
-		audioplayer *bubbles;
+		int engine;
+		int bubbles;
 	}audio;
 };
 
