@@ -1,6 +1,6 @@
 #include "../fishtank.h"
 
-#define REQUEST_TIMER 300
+#define REQUEST_TIMER 180
 
 bool MenuPause::exec(State &state){
 	background.init_background(state.renderer);
