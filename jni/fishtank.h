@@ -101,7 +101,7 @@ struct stat;
 
 #define FIREPOWER_INCREMENT 0.008f
 #define TIMER_CHATPANE 400.0f
-#define SOUND_RANGE 8.0f
+#define SOUND_RANGE 4.0f
 
 struct ChatMessage{
 	ChatMessage(const char *name,const char *content):
@@ -168,6 +168,7 @@ struct State{
 	bool read_config();
 	void play_music();
 	static void fill_color(int,float*,float*,float*);
+	static float attenuation(float);
 
 	Renderer renderer;
 

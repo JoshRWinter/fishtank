@@ -52,6 +52,10 @@ int Base::correct(const Base &b){
 	return 0;
 }
 
+float Base::dist(const Base &b){
+	return distance(x+(w/2.0f),b.x+(b.w/2.0f),y+(h/2.0f),b.y+(b.h/2.0f));
+}
+
 bool Base::pointing(const crosshair &ch,float tolerance)const{
 	return ch.x>x+tolerance&&ch.x<(x+w)-tolerance&&ch.y>y+tolerance&&ch.y<(y+h)-tolerance;
 }

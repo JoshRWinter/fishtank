@@ -854,6 +854,27 @@ void stopsound(slesenv *engine,int id){
 		current=current->next;
 	}
 }
+static int float_to_millibel(float f){
+	return (int)(-2000.0f*log10f(1.0f/f));
+}
+// change volume
+void setsoundintensity(slesenv *engine,int id,float intensity){
+	// clamp to (0.0f,1.0f]
+	if(intensity<=0.0f)
+		return;
+	else if(intensity>1.0f)
+		intensity=1.0f;
+
+	struct audioplayer *current=engine->audioplayerlist;
+	while(current!=NULL){
+		if(id==current->id){
+			(*current->volumeinterface)->SetVolumeLevel(current->volumeinterface,float_to_millibel(intensity));
+			return;
+		}
+
+		current=current->next;
+	}
+}
 // return true if sound still playing
 int checksound(slesenv *engine,int id){
 	struct audioplayer *current=engine->audioplayerlist;
@@ -891,8 +912,10 @@ void clean_destroyed_sounds(slesenv *engine){
 		ap=ap->next;
 	}
 }
-int playsound(slesenv *engine,struct apacksound *sound,int loop){
+int playsound(slesenv *engine,struct apacksound *sound,float intensity,int loop){
 	if(!engine->enabled)return 0;
+	if(intensity<=0.0f)return 0;
+	if(intensity>1.0f)intensity=1.0f;
 	pthread_mutex_lock(&sound->parent->mutex);
 	unsigned size=sound->size,targetsize=sound->targetsize;
 	pthread_mutex_unlock(&sound->parent->mutex);
@@ -946,6 +969,9 @@ int playsound(slesenv *engine,struct apacksound *sound,int loop){
 	audioplayer->sound=sound;
 	audioplayer->destroy=false;
 	audioplayer->id=engine->last_id++;
+
+	// set intensity (volume)
+	(*audioplayer->volumeinterface)->SetVolumeLevel(audioplayer->volumeinterface,float_to_millibel(intensity));
 
 	audioplayer->next=engine->audioplayerlist;
 	engine->audioplayerlist=audioplayer;

@@ -34,7 +34,7 @@ void Platform::process(State &state){
 			if(platform.timer_audio>=0.0f){
 				platform.timer_audio-=state.speed;
 				if(platform.timer_audio<=0.0f)
-					playsound(state.soundengine,state.aassets.sound+SID_PLATFORM_DESTROY,false);
+					playsound(state.soundengine,state.aassets.sound+SID_PLATFORM_DESTROY,State::attenuation(state.player_list[state.match.get_current_index()].dist(platform)),false);
 			}
 		}
 	}

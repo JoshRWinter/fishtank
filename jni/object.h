@@ -16,6 +16,7 @@ struct Base{
 	int correct(const Base&);
 	bool pointing(const crosshair&,float=0.0f)const;
 	void init_background(const Renderer&);
+	float dist(const Base&);
 
 	float x,y,w,h,rot;
 	int frame,count;

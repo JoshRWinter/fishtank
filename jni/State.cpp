@@ -385,16 +385,16 @@ void State::play_music(){
 	if(config.music){
 		if(show_menu){
 			// play menu theme
-			playsound(soundengine,aassets.sound+SID_MENU_THEME,true);
+			playsound(soundengine,aassets.sound+SID_MENU_THEME,1.0f,true);
 		}
 		else{
 			// play the gameplay theme
-			playsound(soundengine,aassets.sound+SID_GAMEPLAY_THEME,true);
+			playsound(soundengine,aassets.sound+SID_GAMEPLAY_THEME,1.0f,true);
 		}
 	}
 	else{
 		// play silence
-		playsound(soundengine,aassets.sound+SID_SILENCE,true);
+		playsound(soundengine,aassets.sound+SID_SILENCE,1.0f,true);
 	}
 }
 
@@ -449,6 +449,13 @@ void State::write_config(){
 	fwrite(&vibrate,sizeof(char),1,file);
 
 	fclose(file);
+}
+
+float State::attenuation(float d){
+	if(d<SOUND_RANGE)
+		return 1.0f;
+
+	return 1.0f-((d-SOUND_RANGE)/10.0f);
 }
 
 void State::fill_color(int id,float *r,float *g,float *b){
