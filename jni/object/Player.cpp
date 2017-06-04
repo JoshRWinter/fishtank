@@ -230,5 +230,7 @@ Beacon::Beacon(){
 	count=2;
 	x=0.0f;
 	y=FLOOR+10.0f;
+	xv=0.0f;
+	yv=0.0f;
 	timer_frame=BEACON_FRAME_TIMER;
 }
