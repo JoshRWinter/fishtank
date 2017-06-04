@@ -14,7 +14,10 @@ bool MenuConfig::exec(State &state){
 	"~ Fishtank ~\n"
 	"Programming and Art by Josh Winter\n"
 	"Source for game and server software at\n"
-	"https://bitbucket.org/JoshRWinter/fishtank"
+	"https://bitbucket.org/JoshRWinter/fishtank\n"
+	"~ Music ~\n"
+	"AIM - Fallen Angels\n"
+	"SynthGoddess - Underwater Regrets (demo)"
 	;
 
 	while(state.process()){

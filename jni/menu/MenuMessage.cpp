@@ -38,7 +38,7 @@ void MenuMessage::render(const Renderer &renderer)const{
 
 	glUniform4f(renderer.uniform.rgba,TEXT_COLOR,1.0f);
 	// main msg
-	drawtextcentered(renderer.font.button,0.0f,-2.25f,msg);
+	drawtextcentered(renderer.font.button,0.0f,-2.55f,msg);
 
 	// header text
 	if(header!=NULL){
