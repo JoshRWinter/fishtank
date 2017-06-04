@@ -36,6 +36,7 @@ void Player::reset(const area_bounds &bounds,const std::vector<Mine> &mine_list)
 	yv=0.0f;
 	angle=M_PI/2.0f;
 	avail_airstrike=true;
+	beacon.reset();
 }
 
 bool Player::near_mine(const std::vector<Mine> &mine_list)const{
