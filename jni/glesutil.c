@@ -802,6 +802,7 @@ static int decodeogg(char *encoded,int filesize,short **decoded,unsigned *size,u
 	free(convbuffer);
 	return true;
 }
+
 void playercallback(SLAndroidSimpleBufferQueueItf buffq,void *vcontext){
 	struct audioplayer *context=vcontext;
 	pthread_mutex_lock(&context->sound->parent->mutex);
@@ -825,76 +826,7 @@ void playercallback(SLAndroidSimpleBufferQueueItf buffq,void *vcontext){
 	}
 	context->destroy=true;
 }
-void disablesound(slesenv *engine){
-	engine->enabled=false;
-	for(struct audioplayer *ap=engine->audioplayerlist;ap!=NULL;ap=ap->next){
-		pthread_mutex_lock(&ap->sound->parent->mutex);
-		(*ap->volumeinterface)->SetVolumeLevel(ap->volumeinterface,SL_MILLIBEL_MIN);
-		pthread_mutex_unlock(&ap->sound->parent->mutex);
-	}
-}
-void enablesound(slesenv *engine){
-	engine->enabled=true;
-	for(struct audioplayer *ap=engine->audioplayerlist;ap!=NULL;ap=ap->next){
-		pthread_mutex_lock(&ap->sound->parent->mutex);
-		(*ap->volumeinterface)->SetVolumeLevel(ap->volumeinterface,0);// zero is max
-		pthread_mutex_unlock(&ap->sound->parent->mutex);
-	}
-}
-void stopsound(slesenv *engine,int id){
-	struct audioplayer *current=engine->audioplayerlist;
-	while(current!=NULL){
-		if(current->id==id){
-			(*current->playerinterface)->SetPlayState(current->playerinterface,SL_PLAYSTATE_STOPPED);
-			current->loop=false;
-			current->destroy=true;
-			break;
-		}
 
-		current=current->next;
-	}
-}
-static int float_to_millibel(float f){
-	return (int)(-2000.0f*log10f(1.0f/f));
-}
-// change volume
-void setsoundintensity(slesenv *engine,int id,float intensity){
-	// clamp to (0.0f,1.0f]
-	if(intensity<=0.0f)
-		return;
-	else if(intensity>1.0f)
-		intensity=1.0f;
-
-	struct audioplayer *current=engine->audioplayerlist;
-	while(current!=NULL){
-		if(id==current->id){
-			(*current->volumeinterface)->SetVolumeLevel(current->volumeinterface,float_to_millibel(intensity));
-			return;
-		}
-
-		current=current->next;
-	}
-}
-// return true if sound still playing
-int checksound(slesenv *engine,int id){
-	struct audioplayer *current=engine->audioplayerlist;
-	while(current!=NULL){
-		if(current->id==id)
-			return true;
-
-		current=current->next;
-	}
-	return false;
-}
-void stopallsounds(slesenv *soundengine){
-	for(struct audioplayer *audioplayer=soundengine->audioplayerlist;audioplayer!=NULL;){
-		(*audioplayer->playerobject)->Destroy(audioplayer->playerobject);
-		void *temp=audioplayer->next;
-		free(audioplayer);
-		audioplayer=temp;
-	}
-	soundengine->audioplayerlist=NULL;
-}
 void clean_destroyed_sounds(slesenv *engine){
 	engine->sound_count=0;
 	for(struct audioplayer *ap=engine->audioplayerlist,*prevap=NULL;ap!=NULL;){
@@ -912,10 +844,9 @@ void clean_destroyed_sounds(slesenv *engine){
 		ap=ap->next;
 	}
 }
-int playsound(slesenv *engine,struct apacksound *sound,float intensity,int loop){
-	if(!engine->enabled)return 0;
-	if(intensity<=0.0f)return 0;
-	if(intensity>1.0f)intensity=1.0f;
+
+static struct audioplayer *newsound(slesenv *engine,struct apacksound *sound,int loop,int *sound_size){
+	if(!engine->enabled)return NULL;
 	pthread_mutex_lock(&sound->parent->mutex);
 	unsigned size=sound->size,targetsize=sound->targetsize;
 	pthread_mutex_unlock(&sound->parent->mutex);
@@ -963,22 +894,23 @@ int playsound(slesenv *engine,struct apacksound *sound,float intensity,int loop)
 
 	//log("size: %d, targetsize: %d",size,targetsize);
 	audioplayer->initial=size;
-	(*audioplayer->playerbufferqueue)->Enqueue(audioplayer->playerbufferqueue,sound->buffer,size);
 	audioplayer->loop=loop;
 	audioplayer->engine=engine;
 	audioplayer->sound=sound;
 	audioplayer->destroy=false;
+	audioplayer->panning=false;
 	audioplayer->id=engine->last_id++;
+	audioplayer->source.x=0.0f;
+	audioplayer->source.y=0.0f;
+	*sound_size=size;
 
-	// set intensity (volume)
-	(*audioplayer->volumeinterface)->SetVolumeLevel(audioplayer->volumeinterface,float_to_millibel(intensity));
-
+	// add to the list
 	audioplayer->next=engine->audioplayerlist;
 	engine->audioplayerlist=audioplayer;
 
 	clean_destroyed_sounds(engine);
 
-	return audioplayer->id;
+	return audioplayer;
 
 	error_out:
 	// something bad happened, bail out
@@ -988,10 +920,202 @@ int playsound(slesenv *engine,struct apacksound *sound,float intensity,int loop)
 	logcat("OpenSL error, bailing out");
 	free(audioplayer);
 	clean_destroyed_sounds(engine);
-	return 0;
-
+	return NULL;
 }
-slesenv *initOpenSL(){
+
+static int float_to_millibel(float f){
+	return (int)(-2000.0f*log10f(1.0f/f));
+}
+
+static void executesound(struct audioplayer *player,int size){
+	(*player->playerbufferqueue)->Enqueue(player->playerbufferqueue,player->sound->buffer,size);
+}
+
+void sl_disable(slesenv *engine){
+	engine->enabled=false;
+}
+
+void sl_enable(slesenv *engine){
+	engine->enabled=true;
+}
+
+// return true if sound still playing
+int sl_check(slesenv *engine,int id){
+	struct audioplayer *current=engine->audioplayerlist;
+
+	while(current!=NULL&&!current->destroy){
+		if(current->id==id)
+			return true;
+
+		current=current->next;
+	}
+
+	return false;
+}
+
+void sl_stop_all(slesenv *soundengine){
+	for(struct audioplayer *audioplayer=soundengine->audioplayerlist;audioplayer!=NULL;){
+		if(!audioplayer->destroy)
+			(*audioplayer->playerobject)->Destroy(audioplayer->playerobject);
+		void *temp=audioplayer->next;
+		free(audioplayer);
+		audioplayer=temp;
+	}
+
+	soundengine->audioplayerlist=NULL;
+}
+
+static void enablepanning(struct audioplayer *player){
+	if(player->panning)
+		return;
+
+	int result=(*player->volumeinterface)->EnableStereoPosition(player->volumeinterface,true);
+	if(result==0)
+		player->panning=true;
+	else
+		logcat("Stereo positioning is not possible on this device");
+}
+
+static void configsound(slesenv *engine,struct audioplayer *player){
+	// call the user provided sound configuration function
+	float position,intensity;
+	engine->sound_config_fn(&engine->listener,&player->source,&position,&intensity);
+
+	// set stereo position
+	if(position<-1.0f)
+		position=-1.0f;
+	else if(position>1.0f)
+		position=1.0f;
+	// make sure panning is enabled
+	if(player->panning)
+		(*player->volumeinterface)->SetStereoPosition(player->volumeinterface,position*1000.0f);
+
+	// set intensity (volume)
+	long millibel=float_to_millibel(intensity);
+	if(millibel>0)
+		millibel=0;
+	else if(millibel<SL_MILLIBEL_MIN)
+		millibel=SL_MILLIBEL_MIN;
+	(*player->volumeinterface)->SetVolumeLevel(player->volumeinterface,millibel);
+}
+
+void sl_set_source_position(slesenv *engine,int id,float x,float y){
+	struct audioplayer *current=engine->audioplayerlist;
+
+	while(current!=NULL){
+		if(current->id==id){
+			if(current->panning){
+				current->source.x=x;
+				current->source.y=y;
+				configsound(engine,current);
+			}
+			return;
+		}
+
+		current=current->next;
+	}
+}
+
+void sl_set_listener_position(slesenv *engine,float x,float y){
+	int update=false;
+	if(engine->listener.x!=x||engine->listener.y!=y)
+		update=true;
+
+	engine->listener.x=x;
+	engine->listener.y=y;
+
+	if(update){
+		struct audioplayer *current=engine->audioplayerlist;
+
+		while(current!=NULL){
+			if(current->panning)
+				configsound(engine,current);
+
+			current=current->next;
+		}
+	}
+}
+
+void sl_stop(slesenv *engine,int id){
+	struct audioplayer *current=engine->audioplayerlist;
+	while(current!=NULL){
+		if(current->id==id){
+			(*current->playerinterface)->SetPlayState(current->playerinterface,SL_PLAYSTATE_STOPPED);
+			current->loop=false;
+			current->destroy=true;
+			break;
+		}
+
+		current=current->next;
+	}
+}
+
+int sl_play(slesenv *engine,struct apacksound *sound){
+	int size;
+	struct audioplayer *player=newsound(engine,sound,false,&size);
+	if(player==NULL)
+		return 0;
+
+	int id=player->id;
+	executesound(player,size);
+
+	return id;
+}
+
+int sl_play_loop(slesenv *engine,struct apacksound *sound){
+	int size;
+	struct audioplayer *player=newsound(engine,sound,true,&size);
+	if(player==NULL)
+		return 0;
+
+	int id=player->id;
+	executesound(player,size);
+
+	return id;
+}
+
+int sl_play_stereo(slesenv *engine,struct apacksound *sound,float x,float y){
+	int size;
+	struct audioplayer *player=newsound(engine,sound,false,&size);
+	if(player==NULL)
+		return 0;
+
+	int id=player->id;
+	player->source.x=x;
+	player->source.y=y;
+	enablepanning(player);
+	configsound(engine,player);
+	executesound(player,size);
+
+	return id;
+}
+
+int sl_play_stereo_loop(slesenv *engine,struct apacksound *sound,float x,float y){
+	int size;
+	struct audioplayer *player=newsound(engine,sound,true,&size);
+	if(player==NULL)
+		return 0;
+
+	int id=player->id;
+	player->source.x=x;
+	player->source.y=y;
+	enablepanning(player);
+	configsound(engine,player);
+	executesound(player,size);
+
+	return id;
+}
+
+// default config function
+static void default_sound_config_fn(const struct sl_entity_position *listener,const struct sl_entity_position *source,float *stereo,float *attenuation){
+	*stereo=0.0f;
+	*attenuation=1.0f;
+}
+
+slesenv *initOpenSL(SL_CONFIG_FN sound_config_fn){
+	if(sound_config_fn==NULL)
+		sound_config_fn=default_sound_config_fn;
+
 	slesenv *soundengine=malloc(sizeof(slesenv));
 	slCreateEngine(&soundengine->engine,0,NULL,0,NULL,NULL);
 	(*soundengine->engine)->Realize(soundengine->engine,SL_BOOLEAN_FALSE);
@@ -1002,6 +1126,9 @@ slesenv *initOpenSL(){
 	soundengine->enabled=true;
 	soundengine->sound_count=0;
 	soundengine->last_id=1;
+	soundengine->sound_config_fn=sound_config_fn;
+	soundengine->listener.x=0.0f;
+	soundengine->listener.y=0.0f;
 	return soundengine;
 }
 void termOpenSL(slesenv *soundengine){

@@ -41,6 +41,26 @@ int32_t inputproc(android_app *app,AInputEvent *event){
 	return false;
 }
 
+void sound_config_fn(const struct sl_entity_position *listener,const struct sl_entity_position *source,float *stereo,float *attenuation){
+	// set the stereo position
+	*stereo=(source->x-listener->x)/10.0f;
+
+	// set the attenuation
+	float dist=distance(listener->x,source->x,listener->y,source->y);
+	float atten;
+	if(dist<SOUND_RANGE)
+		atten=1.0f;
+	else{
+		atten=1.0f-((dist-SOUND_RANGE)/10.0f);
+		// clamp
+		if(atten<0.0f)
+			atten=0.0f;
+		else if(atten>1.0f)
+			atten=1.0f;
+	}
+	*attenuation=atten;
+}
+
 extern "C" void android_main(android_app *app){
 	logcat("--- BEGIN NEW LOG ---");
 	app_dummy();

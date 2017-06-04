@@ -60,7 +60,7 @@ void Artillery::process(State &state){
 		if(arty.y+ARTILLERY_SIZE>FLOOR){
 			// vibrate and sound effects
 			if(state.config.sounds)
-				playsound(state.soundengine,state.aassets.sound+SID_PLATFORM_DESTROY,State::attenuation(state.player_list[state.match.get_current_index()].dist(arty)),false);
+				sl_play_stereo(state.soundengine,state.aassets.sound+SID_PLATFORM_DESTROY,arty.x+(ARTILLERY_SIZE/2.0f),arty.y+(ARTILLERY_SIZE/2.0f));
 			if(inrange(state.player_list[state.match.get_current_index()],arty,6.75f)){
 				if(state.config.vibrate)
 					vibratedevice(&state.jni,40);

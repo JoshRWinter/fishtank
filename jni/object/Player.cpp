@@ -34,63 +34,58 @@ void Player::process(State &state){
 		// turn off empty players' sound effects
 		if(player.colorid==0){
 			if(player.audio.bubbles!=0){
-				stopsound(state.soundengine,player.audio.bubbles);
+				sl_stop(state.soundengine,player.audio.bubbles);
 				player.audio.bubbles=0;
 			}
 			if(player.audio.engine!=0){
-				stopsound(state.soundengine,player.audio.engine);
+				sl_stop(state.soundengine,player.audio.engine);
 				player.audio.engine=0;
 			}
 		}
 
 		// handle bubble sound effects
 		bool bubble_sound=false;
-		float sound_intensity=1.0f;
 		if(&player==&state.player_list[state.match.my_index]){
 			if(player.health>0&&(state.input.up_l.active||state.input.up_r.active))
 				bubble_sound=true;
 		}
 		else if(player.health>0&&player.yv<0.0f){
 			bubble_sound=true;
-			sound_intensity=State::attenuation(state.player_list[state.match.get_current_index()].dist(player));
 		}
 		// play bubble sound
 		if(bubble_sound){
-			if(player.audio.bubbles==0&&state.config.sounds){
-				player.audio.bubbles=playsound(state.soundengine,state.aassets.sound+SID_BUBBLES,sound_intensity,true);
-			}
+			if(player.audio.bubbles==0&&state.config.sounds)
+				player.audio.bubbles=sl_play_stereo_loop(state.soundengine,state.aassets.sound+SID_BUBBLES,player.x+(PLAYER_WIDTH/2.0f),player.y+(PLAYER_HEIGHT/2.0f));
 			else
-				setsoundintensity(state.soundengine,player.audio.bubbles,State::attenuation(state.player_list[state.match.get_current_index()].dist(player)));
+				sl_set_source_position(state.soundengine,player.audio.bubbles,player.x+(PLAYER_WIDTH/2.0f),player.y+(PLAYER_HEIGHT/2.0f));
 		}
 		else if(player.audio.bubbles!=0){
-			stopsound(state.soundengine,player.audio.bubbles);
+			sl_stop(state.soundengine,player.audio.bubbles);
 			player.audio.bubbles=0;
 		}
 
 		// handle engine sound effects
 		bool engine_sound=false;
-		sound_intensity=1.0f;
 		if(&player==&state.player_list[state.match.my_index]){
 			if(player.health>0&&(state.input.left.active||state.input.right.active))
 				engine_sound=true;
 		}
 		else if(player.health>0&&fabsf(player.xv)){
 			engine_sound=true;
-			sound_intensity=State::attenuation(state.player_list[state.match.get_current_index()].dist(player));
 		}
 		// play engine sound
 		if(engine_sound){
 			if(player.audio.engine==0&&state.config.sounds)
-				player.audio.engine=playsound(state.soundengine,state.aassets.sound+SID_ENGINE,sound_intensity,true);
+				player.audio.engine=sl_play_stereo_loop(state.soundengine,state.aassets.sound+SID_ENGINE,player.x+(PLAYER_WIDTH/2.0f),player.y+(PLAYER_HEIGHT/2.0f));
 			else
-				setsoundintensity(state.soundengine,player.audio.engine,State::attenuation(state.player_list[state.match.get_current_index()].dist(player)));
+				sl_set_source_position(state.soundengine,player.audio.engine,player.x+(PLAYER_WIDTH/2.0f),player.y+(PLAYER_HEIGHT/2.0f));
 		}
 		else if(player.audio.engine!=0){
-			stopsound(state.soundengine,player.audio.engine);
+			sl_stop(state.soundengine,player.audio.engine);
 			player.audio.engine=0;
 			// play halting sound
 			if(state.config.sounds)
-				playsound(state.soundengine,state.aassets.sound+SID_ENGINE_HALT,State::attenuation(state.player_list[state.match.get_current_index()].dist(player)),false);
+				sl_play_stereo(state.soundengine,state.aassets.sound+SID_ENGINE_HALT,player.x+(PLAYER_WIDTH/2.0f),player.y+(PLAYER_HEIGHT/2.0f));
 		}
 
 		// count down the dead timer until the player is allowed to spectate another player
@@ -105,7 +100,7 @@ void Player::process(State &state){
 			if(player.health>0){
 				// sound effect
 				if(state.config.sounds)
-					playsound(state.soundengine,state.aassets.sound+SID_CANNON,State::attenuation(state.player_list[state.match.get_current_index()].dist(player)),false);
+					sl_play_stereo(state.soundengine,state.aassets.sound+SID_CANNON,player.x+(PLAYER_WIDTH/2.0f),player.y+(PLAYER_HEIGHT/2.0f));
 				state.shell_list.push_back(new Shell(state,player));
 			}
 			else
@@ -157,6 +152,8 @@ void Player::process(State &state){
 				state.renderer.player_x=player.x;
 				state.renderer.player_y=player.y;
 			}
+			// update the listener position for the audio system
+			sl_set_listener_position(state.soundengine,state.renderer.player_x+(PLAYER_WIDTH/2.0f),state.renderer.player_y+(PLAYER_HEIGHT/2.0f));
 		}
 
 		++index;

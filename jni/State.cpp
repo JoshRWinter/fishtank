@@ -376,25 +376,25 @@ void State::reset(){
 
 void State::init(android_app &app){
 	loadapack(&aassets,app.activity->assetManager,"aassets");
-	soundengine=initOpenSL();
+	soundengine=initOpenSL(sound_config_fn);
 	play_music();
 }
 
 void State::play_music(){
-	stopallsounds(soundengine);
+	sl_stop_all(soundengine);
 	if(config.music){
 		if(show_menu){
 			// play menu theme
-			playsound(soundengine,aassets.sound+SID_MENU_THEME,1.0f,true);
+			sl_play_loop(soundengine,aassets.sound+SID_MENU_THEME);
 		}
 		else{
 			// play the gameplay theme
-			playsound(soundengine,aassets.sound+SID_GAMEPLAY_THEME,1.0f,true);
+			sl_play_loop(soundengine,aassets.sound+SID_GAMEPLAY_THEME);
 		}
 	}
 	else{
 		// play silence
-		playsound(soundengine,aassets.sound+SID_SILENCE,1.0f,true);
+		sl_play_loop(soundengine,aassets.sound+SID_SILENCE);
 	}
 }
 
@@ -449,13 +449,6 @@ void State::write_config(){
 	fwrite(&vibrate,sizeof(char),1,file);
 
 	fclose(file);
-}
-
-float State::attenuation(float d){
-	if(d<SOUND_RANGE)
-		return 1.0f;
-
-	return 1.0f-((d-SOUND_RANGE)/10.0f);
 }
 
 void State::fill_color(int id,float *r,float *g,float *b){
