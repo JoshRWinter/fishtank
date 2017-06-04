@@ -108,7 +108,8 @@ void Match::recv_data(State &state){
 				state.announcement.push_back(sm);
 			}
 			else{
-				playsound(state.soundengine,state.aassets.sound+SID_CHAT,1.0f,false);
+				if(state.config.sounds)
+					playsound(state.soundengine,state.aassets.sound+SID_CHAT,1.0f,false);
 				ChatMessage cm((const char*)tctcp.name,(const char*)tctcp.msg);
 				state.chat.push_back(cm);
 				state.timer_chatpane=TIMER_CHATPANE;
@@ -185,15 +186,16 @@ void Match::recv_data(State &state){
 					if(state.config.vibrate)
 						vibratedevice(&state.jni,500);
 				// sound
-				playsound(state.soundengine,state.aassets.sound+SID_PLAYER_EXPLODE,State::attenuation(state.player_list[get_current_index()].dist(player)),false);
+				if(state.config.sounds)
+					playsound(state.soundengine,state.aassets.sound+SID_PLAYER_EXPLODE,State::attenuation(state.player_list[get_current_index()].dist(player)),false);
 				// particles
 				ParticlePlayer::spawn(state,player);
 			}
 			// beacon sound effect
-			if(before_y_beacon>FLOOR&&player.colorid!=0&&player.beacon.y<FLOOR)
+			if(before_y_beacon>FLOOR&&player.colorid!=0&&player.beacon.y<FLOOR&&state.config.sounds)
 				playsound(state.soundengine,state.aassets.sound+SID_BEACON_FIRE,State::attenuation(state.player_list[get_current_index()].dist(player)),false);
 			// beacon bounce
-			if(before_yv_beacon>0.0f&&player.beacon.yv<0.0f&&fabsf(player.beacon.yv)>0.01f)
+			if(before_yv_beacon>0.0f&&player.beacon.yv<0.0f&&fabsf(player.beacon.yv)>0.01f&&state.config.sounds)
 				playsound(state.soundengine,state.aassets.sound+SID_BEACON_BOUNCE,State::attenuation(state.player_list[get_current_index()].dist(player)),false);
 
 			++i;
@@ -230,7 +232,8 @@ void Match::recv_data(State &state){
 			state.mine_list[i].armed=((mine_status>>i)&1)==1;
 			if(before&&!state.mine_list[i].armed){
 				// sound effect
-				playsound(state.soundengine,state.aassets.sound+SID_MINE_EXPLOSION,State::attenuation(state.player_list[get_current_index()].dist(state.mine_list[i])),false);
+				if(state.config.sounds)
+					playsound(state.soundengine,state.aassets.sound+SID_MINE_EXPLOSION,State::attenuation(state.player_list[get_current_index()].dist(state.mine_list[i])),false);
 
 				ParticleBubble::spawn(state,state.mine_list[i]);
 				// vibrate

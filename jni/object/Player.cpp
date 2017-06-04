@@ -56,7 +56,7 @@ void Player::process(State &state){
 		}
 		// play bubble sound
 		if(bubble_sound){
-			if(player.audio.bubbles==0){
+			if(player.audio.bubbles==0&&state.config.sounds){
 				player.audio.bubbles=playsound(state.soundengine,state.aassets.sound+SID_BUBBLES,sound_intensity,true);
 			}
 			else
@@ -80,7 +80,7 @@ void Player::process(State &state){
 		}
 		// play engine sound
 		if(engine_sound){
-			if(player.audio.engine==0)
+			if(player.audio.engine==0&&state.config.sounds)
 				player.audio.engine=playsound(state.soundengine,state.aassets.sound+SID_ENGINE,sound_intensity,true);
 			else
 				setsoundintensity(state.soundengine,player.audio.engine,State::attenuation(state.player_list[state.match.get_current_index()].dist(player)));
@@ -89,7 +89,8 @@ void Player::process(State &state){
 			stopsound(state.soundengine,player.audio.engine);
 			player.audio.engine=0;
 			// play halting sound
-			playsound(state.soundengine,state.aassets.sound+SID_ENGINE_HALT,State::attenuation(state.player_list[state.match.get_current_index()].dist(player)),false);
+			if(state.config.sounds)
+				playsound(state.soundengine,state.aassets.sound+SID_ENGINE_HALT,State::attenuation(state.player_list[state.match.get_current_index()].dist(player)),false);
 		}
 
 		// count down the dead timer until the player is allowed to spectate another player
@@ -103,7 +104,8 @@ void Player::process(State &state){
 		if(player.cue_fire>0.0f){
 			if(player.health>0){
 				// sound effect
-				playsound(state.soundengine,state.aassets.sound+SID_CANNON,State::attenuation(state.player_list[state.match.get_current_index()].dist(player)),false);
+				if(state.config.sounds)
+					playsound(state.soundengine,state.aassets.sound+SID_CANNON,State::attenuation(state.player_list[state.match.get_current_index()].dist(player)),false);
 				state.shell_list.push_back(new Shell(state,player));
 			}
 			else

@@ -28,10 +28,6 @@ bool MenuConfig::exec(State &state){
 		}
 		if(button_sounds.process(state.pointer)){
 			state.config.sounds=!state.config.sounds;
-			if(state.config.sounds)
-				enablesound(state.soundengine);
-			else
-				disablesound(state.soundengine);
 		}
 		if(button_vibrate.process(state.pointer)){
 			state.config.vibrate=!state.config.vibrate;

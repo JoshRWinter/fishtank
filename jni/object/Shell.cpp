@@ -54,7 +54,8 @@ void Shell::process(State &state){
 
 			if(player.collide(shell)){
 				// sound effect
-				playsound(state.soundengine,state.aassets.sound+SID_SHELL_PLAYER_IMPACT,State::attenuation(state.player_list[state.match.get_current_index()].dist(shell)),false);
+				if(state.config.sounds)
+					playsound(state.soundengine,state.aassets.sound+SID_SHELL_PLAYER_IMPACT,State::attenuation(state.player_list[state.match.get_current_index()].dist(shell)),false);
 				// vibrate
 				if(&player==&state.player_list[state.match.get_current_index()])
 					if(state.config.vibrate)
@@ -81,7 +82,8 @@ void Shell::process(State &state){
 
 			if(shell.collide(platform)){
 				// sound effect
-				playsound(state.soundengine,state.aassets.sound+SID_PLATFORM_IMPACT,State::attenuation(state.player_list[state.match.get_current_index()].dist(shell)),false);
+				if(state.config.sounds)
+					playsound(state.soundengine,state.aassets.sound+SID_PLATFORM_IMPACT,State::attenuation(state.player_list[state.match.get_current_index()].dist(shell)),false);
 				// generate some particles
 				ParticlePlatform::spawn(state,shell,randomint(3,5));
 				// estimate dmg
@@ -115,7 +117,8 @@ void Shell::process(State &state){
 		// check for shell going below screen
 		if(shell.y>FLOOR-0.4f){
 			// sound effect
-			playsound(state.soundengine,state.aassets.sound+SID_PLATFORM_IMPACT,State::attenuation(state.player_list[state.match.get_current_index()].dist(shell)),false);
+			if(state.config.sounds)
+				playsound(state.soundengine,state.aassets.sound+SID_PLATFORM_IMPACT,State::attenuation(state.player_list[state.match.get_current_index()].dist(shell)),false);
 			// particles
 			ParticlePlatform::spawn(state,shell,randomint(3,4));
 			delete *it;

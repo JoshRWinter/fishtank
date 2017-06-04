@@ -59,7 +59,8 @@ void Artillery::process(State &state){
 		// delete if below FLOOR
 		if(arty.y+ARTILLERY_SIZE>FLOOR){
 			// vibrate and sound effects
-			playsound(state.soundengine,state.aassets.sound+SID_PLATFORM_DESTROY,State::attenuation(state.player_list[state.match.get_current_index()].dist(arty)),false);
+			if(state.config.sounds)
+				playsound(state.soundengine,state.aassets.sound+SID_PLATFORM_DESTROY,State::attenuation(state.player_list[state.match.get_current_index()].dist(arty)),false);
 			if(inrange(state.player_list[state.match.get_current_index()],arty,6.75f)){
 				if(state.config.vibrate)
 					vibratedevice(&state.jni,40);

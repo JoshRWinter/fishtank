@@ -31,7 +31,7 @@ void Mine::process(State &state){
 		if(!state.platform_list[mine.platform_index].active){
 			// if so, the mine will be allowed to float upward
 			// play mine chain snap sound
-			if(mine.yv==0.0f)
+			if(mine.yv==0.0f&&state.config.sounds)
 				playsound(state.soundengine,state.aassets.sound+SID_MINE_CHAIN_SNAP,State::attenuation(state.player_list[state.match.get_current_index()].dist(mine)),false);
 			mine.yv-=MINE_UPWARD_ACCEL;
 			if(mine.yv<-MINE_UPWARD_TERMINAL_VEL)
