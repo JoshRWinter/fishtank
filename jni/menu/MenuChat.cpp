@@ -9,10 +9,10 @@ bool MenuChat::exec(State &state){
 	button_say.init(-4.0f,3.1f,"Say...");
 	button_back.init(button_say.x+BUTTON_WIDTH+0.3f,3.1f,"Back");
 
-	if(state.renderer.view.top+(state.chat.size()*NEW_LINE_OFFSET)>SCROLLPANE_BOTTOM)
+	if(state.renderer.view.top+0.5f+(state.chat.size()*NEW_LINE_OFFSET)>SCROLLPANE_BOTTOM)
 		scrolltop=SCROLLPANE_BOTTOM-(state.chat.size()*NEW_LINE_OFFSET)-0.5f;
 	else
-		scrolltop=state.renderer.view.top+1.0f;
+		scrolltop=state.renderer.view.top+0.5f;
 	drag=false;
 	offset=0.0f;
 
@@ -95,14 +95,20 @@ void MenuChat::render(const Renderer &renderer,const std::vector<ChatMessage> &c
 	// messages
 	glUniform4f(renderer.uniform.rgba,TEXT_COLOR,1.0f);
 	glBindTexture(GL_TEXTURE_2D,renderer.font.main->atlas);
-	float line=scrolltop;
-	const float LEFT_MARGIN=-6.0f;
-	for(const ChatMessage &cm:chat_list){
-		if(line+0.6f>SCROLLPANE_BOTTOM)
-			break;
-		std::string m=cm.from+": "+cm.msg;
-		drawtext(renderer.font.main,LEFT_MARGIN,line,m.c_str());
-		line+=NEW_LINE_OFFSET;
+	if(chat_list.size()>0){
+		float line=scrolltop;
+		const float LEFT_MARGIN=-6.0f;
+		for(const ChatMessage &cm:chat_list){
+			if(line+0.6f>SCROLLPANE_BOTTOM)
+				break;
+			std::string m=cm.from+": "+cm.msg;
+			drawtext(renderer.font.main,LEFT_MARGIN,line,m.c_str());
+			line+=NEW_LINE_OFFSET;
+		}
+	}
+	else{
+		// display "no messages"
+		drawtextcentered(renderer.font.main,0.0f,-3.0f,"(no messages)");
 	}
 
 	// buttons
