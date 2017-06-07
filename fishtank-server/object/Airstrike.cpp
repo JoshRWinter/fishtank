@@ -57,6 +57,25 @@ void Airstrike::process(Match &match){
 			if(stop)
 				continue;
 
+			// collide with players
+			for(Client *c:match.client_list){
+				Client &client=*c;
+
+				if(arty.collide(client.player)&&client.player.health>0){
+					client.killed_by_id=arty.client_id;
+					client.kill_reason=KILLED_BY_AIRSTRIKE;
+					client.player.health=0;
+
+					// delete
+					delete *arty_it;
+					arty_it=strike.arty_list.erase(arty_it);
+					stop=true;
+					break;
+				}
+			}
+			if(stop)
+				continue;
+
 			// delete if at FLOOR
 			if(arty.y+ARTILLERY_SIZE>FLOOR){
 				arty.explode(match.client_list);

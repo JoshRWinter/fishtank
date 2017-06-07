@@ -56,6 +56,23 @@ void Artillery::process(State &state){
 		if(stop)
 			continue;
 
+		// collide with players
+		for(const Player &player:state.player_list){
+			if(player.colorid==0||player.health<1)
+				continue;
+
+			if(arty.collide(player)){
+				logcat("collided");
+				// delete
+				delete *it;
+				it=state.arty_list.erase(it);
+				stop=true;
+				break;
+			}
+		}
+		if(stop)
+			continue;
+
 		// delete if below FLOOR
 		if(arty.y+ARTILLERY_SIZE>FLOOR){
 			// vibrate and sound effects
