@@ -29,7 +29,7 @@ struct Beacon:Base{
 #define PLAYER_TIMER_FIRE 7
 struct Mine;
 struct Player:Base{
-	Player(const area_bounds&,const std::vector<Mine>&);
+	Player(const area_bounds&,const std::vector<Mine>&,int);
 	bool near_mine(const std::vector<Mine>&)const;
 	void reset(const area_bounds&,const std::vector<Mine>&);
 	static void process(Match&);

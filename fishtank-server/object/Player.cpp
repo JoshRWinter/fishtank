@@ -18,8 +18,10 @@ static float shell_dmg(float f){
 	return 1.85f;
 }
 
-Player::Player(const area_bounds &bounds,const std::vector<Mine> &mine_list){
+Player::Player(const area_bounds &bounds,const std::vector<Mine> &mine_list,int player_count){
 	reset(bounds,mine_list);
+	if(player_count>2)
+		health=0;
 }
 
 void Player::reset(const area_bounds &bounds,const std::vector<Mine> &mine_list){

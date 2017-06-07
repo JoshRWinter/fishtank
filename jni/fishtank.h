@@ -207,7 +207,7 @@ struct State{
 
 	// ui buttons
 	struct{
-		ButtonBasic left,right,up_l,up_r,fire,aim_left,aim_right,strike;
+		ButtonBasic left,right,up_l,up_r,fire,cycle,aim_left,aim_right,strike;
 	}input;
 
 	// chat message

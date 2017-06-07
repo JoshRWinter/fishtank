@@ -39,8 +39,20 @@ void Match::initialize(State &state){
 	tcp.recv(&id_tmp,sizeof(id_tmp));
 	id=ntohl(id_tmp);
 
+	// get the player count
+	uint32_t count_tmp;
+	tcp.recv(&count_tmp,sizeof(count_tmp));
+	count_tmp=ntohl(count_tmp);
+
 	// get the level configuration
 	get_level_config(state);
+
+	if(count_tmp>2){
+		// will be dead at first
+		spectate_index=0;
+		request_spectate_name(0);
+		dead_timer=0;
+	}
 }
 
 bool Match::connected(){
@@ -163,6 +175,7 @@ void Match::recv_data(State &state){
 		int i=0;
 		for(Player &player:state.player_list){
 			int before_health=player.health;
+			int before_colorid=player.colorid;
 			float before_y_beacon=player.beacon.y;
 			float before_yv_beacon=player.beacon.yv;
 
@@ -180,7 +193,7 @@ void Match::recv_data(State &state){
 			player.colorid=ntohl(server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_COLORID]);
 			if(player.cue_fire==0.0f)
 				player.cue_fire=(int)ntohl(server_state[(i*SERVER_STATE_FIELDS)+SERVER_STATE_FIRE])/FLOAT_MULTIPLIER;
-			if(before_health>0&&player.health<1&&player.colorid!=0){
+			if(before_health>0&&player.health<1&&player.colorid!=0&&player.colorid==before_colorid){
 				// vibrate
 				if(&player==&state.player_list[get_current_index()])
 					if(state.config.vibrate)
@@ -367,7 +380,7 @@ int Match::get_id(){
 
 // returns index of current player
 // either currently playing or spectating
-int Match::get_current_index(){
+int Match::get_current_index()const{
 	return dead_timer!=0?my_index:spectate_index;
 }
 

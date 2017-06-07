@@ -77,35 +77,41 @@ bool State::core(){
 				timer_chatpane=0.0f;
 		}
 
-		// process ui buttons
 		const float UI_TOLERANCE=-0.30f;
-		input.left.process(pointer,UI_TOLERANCE);
-		input.right.process(pointer,UI_TOLERANCE);
-		input.up_r.process(pointer,UI_TOLERANCE);
-		input.up_l.process(pointer,UI_TOLERANCE);
-		input.aim_left.process(pointer,UI_TOLERANCE);
-		input.aim_right.process(pointer,UI_TOLERANCE);
-		if(input.strike.process(pointer,UI_TOLERANCE))
-			strike_mode=!strike_mode;
-		if(input.fire.process(pointer,UI_TOLERANCE)){
-			const float minimum=0.35f;
-			if(firepower<minimum)
-				firepower=minimum;
-			if(strike_mode){
-				strike_mode=false;
-				final_strikepower=firepower;
+		if(match.get_current_index()==match.my_index&&match.dead_timer!=0){
+			// process ui buttons
+			input.left.process(pointer,UI_TOLERANCE);
+			input.right.process(pointer,UI_TOLERANCE);
+			input.up_r.process(pointer,UI_TOLERANCE);
+			input.up_l.process(pointer,UI_TOLERANCE);
+			input.aim_left.process(pointer,UI_TOLERANCE);
+			input.aim_right.process(pointer,UI_TOLERANCE);
+			if(input.strike.process(pointer,UI_TOLERANCE))
+				strike_mode=!strike_mode;
+					if(input.fire.process(pointer,UI_TOLERANCE)){
+				const float minimum=0.35f;
+				if(firepower<minimum)
+					firepower=minimum;
+				if(strike_mode){
+					strike_mode=false;
+					final_strikepower=firepower;
+				}
+				else
+					final_firepower=firepower;
+				firepower=0.0f;
+			}
+			else if(input.fire.active){
+				firepower+=FIREPOWER_INCREMENT*speed;
+				if(firepower>1.0f)
+					firepower=1.0f;
 			}
 			else
-				final_firepower=firepower;
-			firepower=0.0f;
+				firepower=0.0f;
 		}
-		else if(input.fire.active){
-			firepower+=FIREPOWER_INCREMENT*speed;
-			if(firepower>1.0f)
-				firepower=1.0f;
+		if(match.get_current_index()!=match.my_index&&match.dead_timer==0){
+			if(input.cycle.process(pointer,UI_TOLERANCE))
+				match.cycle_spectate(player_list); // cycle the spectated player
 		}
-		else
-			firepower=0.0f;
 	}
 
 	// pause menu
@@ -176,42 +182,52 @@ void State::render()const{
 	glBindTexture(GL_TEXTURE_2D,renderer.assets.texture[TID_GROUND].object);
 	renderer.draw(ground);
 
-	// firepower indicator
-	if(firepower>0.0f){
-		glBindTexture(GL_TEXTURE_2D,renderer.uiassets.texture[UITID_FIREPOWER_INDICATOR].object);
-		float s=FIRE_BUTTON_SIZE*firepower;
-		Base fpi={input.fire.x+(FIRE_BUTTON_SIZE/2.0f)-(s/2.0f),input.fire.y+(FIRE_BUTTON_SIZE/2.0f)-(s/2.0f),s,s,0.0f,0,1};
-		renderer.uidraw(fpi);
+	if(match.get_current_index()==match.my_index){
+		// firepower indicator
+		if(firepower>0.0f){
+			glBindTexture(GL_TEXTURE_2D,renderer.uiassets.texture[UITID_FIREPOWER_INDICATOR].object);
+			float s=FIRE_BUTTON_SIZE*firepower;
+			Base fpi={input.fire.x+(FIRE_BUTTON_SIZE/2.0f)-(s/2.0f),input.fire.y+(FIRE_BUTTON_SIZE/2.0f)-(s/2.0f),s,s,0.0f,0,1};
+			renderer.uidraw(fpi);
+		}
+		// draw ui buttons
+		glBindTexture(GL_TEXTURE_2D,renderer.uiassets.texture[UITID_UIBUTTON].object);
+		input.left.render(renderer);
+		input.right.render(renderer);
+		input.up_r.render(renderer);
+		input.up_l.render(renderer);
+		input.aim_left.render(renderer);
+		input.aim_right.render(renderer);
+		glBindTexture(GL_TEXTURE_2D,renderer.uiassets.texture[UITID_FBUTTON].object);
+		input.fire.render(renderer);
+		glBindTexture(GL_TEXTURE_2D,renderer.uiassets.texture[UITID_BUTTON_AS].object);
+		// artillery strike button
+		if(strike_mode)
+			glUniform4f(renderer.uniform.rgba,0.9f,0.15f,0.21f,0.13f);
+		else if(!input.strike.active)
+			glUniform4f(renderer.uniform.rgba,1.0f,1.0f,1.0f,0.13f);
+		else
+			glUniform4f(renderer.uniform.rgba,0.7f,0.7f,0.7f,0.13f);
+		renderer.uidraw(input.strike);
+		// ui button text
+		glBindTexture(GL_TEXTURE_2D,renderer.font.button_small->atlas);
+		glUniform4f(renderer.uniform.rgba,1.0f,1.0f,1.0f,0.3f);
+		input.left.render_text(renderer);
+		input.right.render_text(renderer);
+		input.up_r.render_text(renderer);
+		input.up_l.render_text(renderer);
+		input.fire.render_text(renderer);
+		input.aim_left.render_text(renderer);
+		input.aim_right.render_text(renderer);
 	}
-	// draw ui buttons
-	glBindTexture(GL_TEXTURE_2D,renderer.uiassets.texture[UITID_UIBUTTON].object);
-	input.left.render(renderer);
-	input.right.render(renderer);
-	input.up_r.render(renderer);
-	input.up_l.render(renderer);
-	input.aim_left.render(renderer);
-	input.aim_right.render(renderer);
-	glBindTexture(GL_TEXTURE_2D,renderer.uiassets.texture[UITID_FBUTTON].object);
-	input.fire.render(renderer);
-	glBindTexture(GL_TEXTURE_2D,renderer.uiassets.texture[UITID_BUTTON_AS].object);
-	// artillery strike button
-	if(strike_mode)
-		glUniform4f(renderer.uniform.rgba,0.9f,0.15f,0.21f,0.13f);
-	else if(!input.strike.active)
-		glUniform4f(renderer.uniform.rgba,1.0f,1.0f,1.0f,0.13f);
-	else
-		glUniform4f(renderer.uniform.rgba,0.7f,0.7f,0.7f,0.13f);
-	renderer.uidraw(input.strike);
-	// ui button text
-	glBindTexture(GL_TEXTURE_2D,renderer.font.button_small->atlas);
-	glUniform4f(renderer.uniform.rgba,1.0f,1.0f,1.0f,0.3f);
-	input.left.render_text(renderer);
-	input.right.render_text(renderer);
-	input.up_r.render_text(renderer);
-	input.up_l.render_text(renderer);
-	input.fire.render_text(renderer);
-	input.aim_left.render_text(renderer);
-	input.aim_right.render_text(renderer);
+	else{
+		// "cycle" spectate button
+		glBindTexture(GL_TEXTURE_2D,renderer.uiassets.texture[UITID_FBUTTON].object);
+		input.cycle.render(renderer);
+		glUniform4f(renderer.uniform.rgba,1.0f,1.0f,1.0f,0.3f);
+		glBindTexture(GL_TEXTURE_2D,renderer.font.button_small->atlas);
+		input.cycle.render_text(renderer);
+	}
 
 	// draw server and chat messages
 	if(announcement.size()>0){
@@ -242,7 +258,7 @@ void State::render()const{
 		glBindTexture(GL_TEXTURE_2D,renderer.font.button->atlas);
 		std::string spectating;
 		spectating="Shadowing: "+match.spectate_name;
-		drawtextcentered(renderer.font.button,0.0f,2.25f,spectating.c_str());
+		drawtextcentered(renderer.font.button,0.0f,1.25f,spectating.c_str());
 	}
 
 	// fps
@@ -299,12 +315,6 @@ State::State(){
 	final_firepower=0.0f;
 	final_strikepower=0.0f;
 
-	// players
-	Player dummy;
-	for(int i=0;i<MAX_PLAYERS;++i){
-		player_list.push_back(dummy);
-	}
-
 	// background
 	backdrop.x=-13.5f;
 	backdrop.y=-14.6f;
@@ -330,6 +340,7 @@ State::State(){
 	input.up_r.init(4.55f,0.8f,DPAD_SIZE,"U");
 	input.up_l.init(-5.75f,0.8f,DPAD_SIZE,"U");
 	input.fire.init(4.225f,2.3f,FIRE_BUTTON_SIZE,"FIRE");
+	input.cycle.init(-FIRE_BUTTON_SIZE/2.0f,2.3f,FIRE_BUTTON_SIZE,"NEXT");
 	input.aim_left.init(2.7f,2.5f,DPAD_SIZE,"L");
 	input.aim_right.init(6.35f,2.5f,DPAD_SIZE,"R");
 	input.strike.init(-DPAD_SIZE/2.0f,3.05f,DPAD_SIZE,"");
@@ -369,9 +380,17 @@ void State::reset(){
 	for(DeadFish *f:dead_fish_list)
 		delete f;
 	dead_fish_list.clear();
+
 	// clear messages
 	chat.clear();
 	announcement.clear();
+
+	// reset players
+	player_list.clear();
+	Player dummy;
+	for(int i=0;i<MAX_PLAYERS;++i){
+		player_list.push_back(dummy);
+	}
 }
 
 void State::init(android_app &app){

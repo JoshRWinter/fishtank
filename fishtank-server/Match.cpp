@@ -46,7 +46,7 @@ void Match::accept_new_clients(){
 			}
 
 			// accept the client
-			Client *c=new Client(connector_socket,connector_address,bounds,mine_list);
+			Client *c=new Client(connector_socket,connector_address,bounds,mine_list,client_list.size()+1);
 			client_list.push_back(c);
 
 			// send the level configuration to this client

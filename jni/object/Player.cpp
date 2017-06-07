@@ -10,7 +10,7 @@ Player::Player(){
 	w=PLAYER_WIDTH;
 	h=PLAYER_HEIGHT;
 	rot=0.0f;
-	health=100;
+	health=0;
 	cue_fire=0.0f;
 	frame=0;
 	count=2;
@@ -103,8 +103,6 @@ void Player::process(State &state){
 					sl_play_stereo(state.soundengine,state.aassets.sound+SID_CANNON,player.x+(PLAYER_WIDTH/2.0f),player.y+(PLAYER_HEIGHT/2.0f));
 				state.shell_list.push_back(new Shell(state,player));
 			}
-			else
-				state.match.cycle_spectate(state.player_list); // cycle the spectated player
 			player.cue_fire=0.0f;
 		}
 
