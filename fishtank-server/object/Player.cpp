@@ -34,6 +34,7 @@ void Player::reset(const area_bounds &bounds,const std::vector<Mine> &mine_list)
 	}while(near_mine(mine_list)&&tries<40);
 	xv=0.0f;
 	yv=0.0f;
+	timer_fire=0;
 	angle=M_PI/2.0f;
 	avail_airstrike=true;
 	beacon.reset();
@@ -56,11 +57,14 @@ void Player::process(Match &match){
 
 		// handle firing the cannon
 		if(client.input.fire>0.0f&&client.player.health>0){
+			client.player.timer_fire=PLAYER_TIMER_FIRE;
 			Shell *s=new Shell(match,client,shell_dmg(client.input.fire));
 			match.shell_list.push_back(s);
 			// launch the player backwards a bit
 			client.player.xv=-s->xv/5.0f;
 		}
+		if(client.player.timer_fire)
+			--client.player.timer_fire;
 		client.input.fire=0.0f;
 
 		// handle firing a beacon (airstrike)

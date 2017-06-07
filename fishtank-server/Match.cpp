@@ -276,7 +276,7 @@ void Match::recv_data(){
 		client->input.up=ntohl(tsh.state[CLIENT_STATE_PRESS_UP]);
 		client->input.aim_left=ntohl(tsh.state[CLIENT_STATE_PRESS_AIMLEFT]);
 		client->input.aim_right=ntohl(tsh.state[CLIENT_STATE_PRESS_AIMRIGHT]);
-		if(client->input.fire==0.0f)
+		if(client->input.fire==0.0f&&client->player.timer_fire==0)
 			client->input.fire=(int)ntohl(tsh.state[CLIENT_STATE_PRESS_FIRE])/FLOAT_MULTIPLIER;
 		if(client->input.astrike==0.0f)
 			client->input.astrike=(int)ntohl(tsh.state[CLIENT_STATE_PRESS_ASTRIKE])/FLOAT_MULTIPLIER;

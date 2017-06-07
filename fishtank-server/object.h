@@ -26,6 +26,7 @@ struct Beacon:Base{
 #define PLAYER_Y_SPEED 0.1f
 #define PLAYER_X_FAST_SPEED 0.035f
 #define PLAYER_ANGLE_INCREMENT 0.02f
+#define PLAYER_TIMER_FIRE 7
 struct Mine;
 struct Player:Base{
 	Player(const area_bounds&,const std::vector<Mine>&);
@@ -36,6 +37,7 @@ struct Player:Base{
 	Beacon beacon;
 	bool avail_airstrike; // player is allowed to call an airstrike
 	int health;
+	int timer_fire;
 	float angle; // angle of the turret
 	float xv,yv;
 
