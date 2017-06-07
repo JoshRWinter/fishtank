@@ -90,6 +90,7 @@ struct Airstrike{
 	std::vector<Artillery*> arty_list;
 };
 
+#define MINE_BLAST_HEIGHT -18.0f
 #define MINE_BLAST_RADIUS 4.5f
 struct Mine:Base{
 	Mine(const std::vector<Platform>&,int);

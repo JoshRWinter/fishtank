@@ -76,6 +76,10 @@ void Mine::process(Match &match){
 			// update ypos
 			mine.y+=mine.yv;
 
+			// explode at BLAST_HEIGHT
+			if(mine.y<MINE_BLAST_HEIGHT)
+				mine.explode(match.platform_list,match.client_list);
+
 			// check to see if the platform the mine is attached to is destroyed
 			// if so, the mine will be allowed to float upward
 			if(match.platform_list[mine.platform_index].health<1){
