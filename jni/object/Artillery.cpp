@@ -62,7 +62,6 @@ void Artillery::process(State &state){
 				continue;
 
 			if(arty.collide(player)){
-				logcat("collided");
 				// delete
 				delete *it;
 				it=state.arty_list.erase(it);

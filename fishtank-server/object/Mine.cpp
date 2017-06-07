@@ -16,7 +16,11 @@ Mine::Mine(const std::vector<Platform> &platform_list,int platform_index){
 
 void Mine::create_all(Match &match){
 	match.mine_list.clear();
-	const int count=randomint(5,6); // how many mines
+	int count;
+	if(onein(7))
+		count=15;
+	else
+		count=randomint(5,7); // how many mines
 
 	for(int i=0;i<count;++i){
 		// pick a platform
