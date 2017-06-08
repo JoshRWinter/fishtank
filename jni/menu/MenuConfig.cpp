@@ -15,9 +15,14 @@ bool MenuConfig::exec(State &state){
 	"Programming and Art by Josh Winter\n"
 	"Source for game and server software at\n"
 	"https://bitbucket.org/JoshRWinter/fishtank\n"
-	"~ Music ~\n"
-	"AIM - Fallen Angels\n"
-	"SynthGoddess - Underwater Regrets (demo)"
+	;
+
+	const char *music_text=
+	"CloakedSoup - Fallen Angels\n"
+	"SynthGoddess - Underwater Regrets (demo)\n"
+	"SynthGoddess - Motions (demo)\n\n"
+	"cloakedsoup.newgrounds.com\n"
+	"synthgoddess.newgrounds.com"
 	;
 
 	while(state.process()){
@@ -34,6 +39,8 @@ bool MenuConfig::exec(State &state){
 		}
 		if(button_about.process(state.pointer)){
 			if(!state.menu.message.exec(state,about_text,"Aboot"))
+				return false;
+			if(!state.menu.message.exec(state,music_text,"Music"))
 				return false;
 		}
 		if(button_back.process(state.pointer)||state.back){

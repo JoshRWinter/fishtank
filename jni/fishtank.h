@@ -83,21 +83,22 @@ struct stat;
 // sound effects
 #define SID_SILENCE 0
 #define SID_MENU_THEME 1
-#define SID_GAMEPLAY_THEME 2
-#define SID_PLATFORM_IMPACT 3
-#define SID_PARTICLE_PLAYER_IMPACT 4
-#define SID_CANNON 5
-#define SID_SHELL_PLAYER_IMPACT 6
-#define SID_PLATFORM_DESTROY 7
-#define SID_MINE_EXPLOSION 8
-#define SID_PLAYER_EXPLODE 9
-#define SID_MINE_CHAIN_SNAP 10
-#define SID_BEACON_FIRE 11
-#define SID_BEACON_BOUNCE 12
-#define SID_BUBBLES 13
-#define SID_ENGINE 14
-#define SID_ENGINE_HALT 15
-#define SID_CHAT 16
+#define SID_GAMEPLAY_THEME_1 2
+#define SID_GAMEPLAY_THEME_2 3
+#define SID_PLATFORM_IMPACT 4
+#define SID_PARTICLE_PLAYER_IMPACT 5
+#define SID_CANNON 6
+#define SID_SHELL_PLAYER_IMPACT 7
+#define SID_PLATFORM_DESTROY 8
+#define SID_MINE_EXPLOSION 9
+#define SID_PLAYER_EXPLODE 10
+#define SID_MINE_CHAIN_SNAP 11
+#define SID_BEACON_FIRE 12
+#define SID_BEACON_BOUNCE 13
+#define SID_BUBBLES 14
+#define SID_ENGINE 15
+#define SID_ENGINE_HALT 16
+#define SID_CHAT 17
 
 #define FIREPOWER_INCREMENT 0.008f
 #define TIMER_CHATPANE 400.0f
@@ -167,6 +168,7 @@ struct State{
 	void write_config();
 	bool read_config();
 	void play_music();
+	void process_music();
 	static void fill_color(int,float*,float*,float*);
 
 	Renderer renderer;
@@ -185,6 +187,13 @@ struct State{
 
 	// configuration
 	Config config;
+
+	// gameplay music
+	struct{
+		int track;
+		int id;
+		int check_timer;
+	}music;
 
 	// menus
 	struct{

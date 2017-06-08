@@ -19,6 +19,10 @@ bool State::core(){
 			return false;
 	}
 
+	// process music
+	if(config.music)
+		process_music();
+
 	// process players
 	Player::process(*this);
 
@@ -408,13 +412,34 @@ void State::play_music(){
 		}
 		else{
 			// play the gameplay theme
-			sl_play_loop(soundengine,aassets.sound+SID_GAMEPLAY_THEME);
+			music.track=2;
+			music.id=sl_play(soundengine,aassets.sound+music.track);
+			music.check_timer=0;
 		}
 	}
 	else{
 		// play silence
 		sl_play_loop(soundengine,aassets.sound+SID_SILENCE);
 	}
+}
+
+void State::process_music(){
+	if(music.check_timer==0){
+		music.check_timer=200;
+		// check if the music is still playing
+		bool playing=sl_check(soundengine,music.id)==1;
+		if(!playing){
+			// find next track
+			++music.track;
+			if(music.track>3)
+				music.track=1;
+
+			// play more music
+			music.id=sl_play(soundengine,aassets.sound+music.track);
+		}
+	}
+	else
+		--music.check_timer;
 }
 
 void State::term(){
