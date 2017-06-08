@@ -117,12 +117,13 @@ void MenuInput::render(const Renderer &renderer)const{
 	glUniform4f(renderer.uniform.rgba,TEXT_COLOR,1.0f);
 	// render what's in the string
 	drawtextcentered(renderer.font.button_small,0.0f,-2.5f,(*text+"|").c_str());
-	// draw the header text
-	glBindTexture(GL_TEXTURE_2D,renderer.font.main->atlas);
-	drawtextcentered(renderer.font.main,0.0f,-4.3f,header);
 	// render the character limit
 	glUniform4f(renderer.uniform.rgba,0.4f,0.4f,0.4f,1.0f);
 	char char_limit_string[18];
 	sprintf(char_limit_string,"%d/%d",text->length(),MSG_LIMIT);
 	drawtextcentered(renderer.font.button_small,6.95f,-1.4f,char_limit_string);
+	// draw the header text
+	glUniform4f(renderer.uniform.rgba,TEXT_COLOR,1.0f);
+	glBindTexture(GL_TEXTURE_2D,renderer.font.main->atlas);
+	drawtextcentered(renderer.font.main,0.0f,-4.3f,header);
 }
