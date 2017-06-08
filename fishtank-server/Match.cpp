@@ -280,6 +280,11 @@ void Match::recv_data(){
 			client->input.fire=(int)ntohl(tsh.state[CLIENT_STATE_PRESS_FIRE])/FLOAT_MULTIPLIER;
 		if(client->input.astrike==0.0f)
 			client->input.astrike=(int)ntohl(tsh.state[CLIENT_STATE_PRESS_ASTRIKE])/FLOAT_MULTIPLIER;
+
+		if(client->input.fire>1.0f)
+			client->input.fire=1.0f;
+		if(client->input.astrike>1.0f)
+			client->input.astrike=1.0f;
 	}
 }
 
