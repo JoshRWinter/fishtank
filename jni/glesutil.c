@@ -943,7 +943,12 @@ void sl_enable(slesenv *engine){
 int sl_check(slesenv *engine,int id){
 	struct audioplayer *current=engine->audioplayerlist;
 
-	while(current!=NULL&&!current->destroy){
+	while(current!=NULL){
+		if(current->destroy){
+			current=current->next;
+			continue;
+		}
+
 		if(current->id==id)
 			return true;
 
