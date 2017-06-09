@@ -160,7 +160,6 @@ struct ParticlePlayer:Base{
 	static void render(const Renderer&,const std::vector<ParticlePlayer*>&);
 
 	float xv,yv,rotv;
-	float ttl;
 	bool active;
 	int colorid;
 	float timer_lifetime;

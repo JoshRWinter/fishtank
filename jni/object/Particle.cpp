@@ -228,7 +228,6 @@ ParticlePlayer::ParticlePlayer(float xpos,float ypos,bool large,int player_color
 	xv=-cosf(rot)*speed;
 	yv=-sinf(rot)*speed;
 	rotv=xv;
-	ttl=500.0f;
 	active=true;
 	colorid=player_colorid;
 	timer_lifetime=0.0f;
@@ -299,25 +298,7 @@ void ParticlePlayer::process(State &state){
 			}
 		}
 
-		// delete when ttl <= 0.0f
-		// large particles get deleted in Match::get_level_config()
-		if(!particle.large)
-			particle.ttl-=state.speed;
-		if(particle.ttl<=0.0f){
-			// shrink it first
-			const float SHRINK=0.99f;
-			float oldsize=particle.w;
-			particle.w*=SHRINK;
-			particle.h=particle.w;
-			particle.x+=(oldsize-particle.w)/2.0f;
-			particle.y+=(oldsize-particle.h)/2.0f;
-			if(particle.w<0.0f){
-				// delete
-				delete *it;
-				it=state.particle_player_list.erase(it);
-				continue;
-			}
-		}
+		// particles don't get deleted until end of round
 
 		++it;
 	}
