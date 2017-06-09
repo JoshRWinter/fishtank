@@ -917,7 +917,7 @@ static struct audioplayer *newsound(slesenv *engine,struct apacksound *sound,int
 	(*audioplayer->playerobject)->Destroy(audioplayer->playerobject);
 
 	error_out_not_allocated:
-	logcat("OpenSL error, bailing out");
+	logcat("OpenSL error, bailing out (%d sounds)",engine->sound_count);
 	free(audioplayer);
 	clean_destroyed_sounds(engine);
 	return NULL;
