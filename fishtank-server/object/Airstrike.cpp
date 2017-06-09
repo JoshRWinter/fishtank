@@ -62,9 +62,7 @@ void Airstrike::process(Match &match){
 				Client &client=*c;
 
 				if(arty.collide(client.player)&&client.player.health>0){
-					client.killed_by_id=arty.client_id;
-					client.kill_reason=KILLED_BY_AIRSTRIKE;
-					client.player.health=0;
+					arty.explode(match.client_list);
 
 					// delete
 					delete *arty_it;
