@@ -207,11 +207,11 @@ void State::render()const{
 		glBindTexture(GL_TEXTURE_2D,renderer.uiassets.texture[UITID_BUTTON_AS].object);
 		// artillery strike button
 		if(strike_mode)
-			glUniform4f(renderer.uniform.rgba,0.9f,0.15f,0.21f,0.13f);
+			glUniform4f(renderer.uniform.rgba,0.9f,0.15f,0.21f,1.0f);
 		else if(!input.strike.active)
-			glUniform4f(renderer.uniform.rgba,1.0f,1.0f,1.0f,0.13f);
+			glUniform4f(renderer.uniform.rgba,1.0f,1.0f,1.0f,1.0f);
 		else
-			glUniform4f(renderer.uniform.rgba,0.7f,0.7f,0.7f,0.13f);
+			glUniform4f(renderer.uniform.rgba,0.7f,0.7f,0.7f,1.0f);
 		renderer.uidraw(input.strike);
 		// ui button text
 		glBindTexture(GL_TEXTURE_2D,renderer.font.button_small->atlas);
