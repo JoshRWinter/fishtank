@@ -33,7 +33,7 @@ void Mine::process(State &state){
 			// play mine chain snap sound
 			if(mine.yv==0.0f&&state.config.sounds)
 				sl_play_stereo(state.soundengine,state.aassets.sound+SID_MINE_CHAIN_SNAP,mine.chain.x+(MINE_CHAIN_WIDTH/2.0f),mine.chain.y+(MINE_CHAIN_HEIGHT/2.0f));
-			mine.yv-=MINE_UPWARD_ACCEL;
+			mine.yv-=MINE_UPWARD_ACCEL*state.speed;
 			if(mine.yv<-MINE_UPWARD_TERMINAL_VEL)
 				mine.yv=-MINE_UPWARD_TERMINAL_VEL;
 		}
