@@ -8,6 +8,7 @@
 
 #define MAX_PLAYERS 6
 #define MSG_LIMIT 45
+#define MSG_EXTRA_LIMIT 70
 #define FLOAT_MULTIPLIER 10000.0f
 
 #define distance(x1,x2,y1,y2) (sqrtf(powf((x2)-(x1),2)+powf((y2)-(y1),2)))
@@ -41,10 +42,10 @@ struct to_server_heartbeat{
 };
 
 // message from server to client tcp
-#define SIZEOF_TO_CLIENT_TCP (1+(MSG_LIMIT+1)+(MSG_LIMIT+1))
+#define SIZEOF_TO_CLIENT_TCP (1+(MSG_EXTRA_LIMIT+1)+(MSG_LIMIT+1))
 struct to_client_tcp{
 	uint8_t type;
-	uint8_t msg[MSG_LIMIT+1];
+	uint8_t msg[MSG_EXTRA_LIMIT+1];
 	uint8_t name[MSG_LIMIT+1];
 };
 

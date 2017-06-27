@@ -107,7 +107,7 @@ void Match::recv_data(State &state){
 		tcp.recv(&tctcp.name,sizeof(tctcp.name));
 
 		// carefully
-		tctcp.msg[MSG_LIMIT]=0;
+		tctcp.msg[MSG_EXTRA_LIMIT]=0;
 		tctcp.name[MSG_LIMIT]=0;
 
 		switch(tctcp.type){

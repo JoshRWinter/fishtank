@@ -289,12 +289,26 @@ void Match::recv_data(){
 }
 
 // send a chat message to everyone including the speaker
-void Match::send_chat(const std::string &msg,const std::string &from){
+void Match::send_chat(const std::string &m,const std::string &f){
 	to_client_tcp tctcp;
 	memset(&tctcp,0,sizeof(to_client_tcp));
+	std::string msg=m;
+	std::string from=f;
+
+	// truncate "msg" to MSG_EXTRA_LIMIT chars
+	if(msg.length()>MSG_EXTRA_LIMIT){
+		for(int i=MSG_EXTRA_LIMIT;i<msg.length();++i)
+			msg.erase(i);
+	}
+
+	// truncate "from" to MSG_LIMIT chars
+	if(from.length()>MSG_LIMIT){
+		for(int i=MSG_LIMIT;i<from.length();++i)
+			from.erase(i);
+	}
 
 	tctcp.type=TYPE_CHAT;
-	strncpy((char*)tctcp.msg,msg.c_str(),MSG_LIMIT+1);
+	strncpy((char*)tctcp.msg,msg.c_str(),MSG_EXTRA_LIMIT+1);
 	strncpy((char*)tctcp.name,from.c_str(),MSG_LIMIT+1);
 
 	for(std::vector<Client*>::iterator it=client_list.begin();it!=client_list.end();++it){
