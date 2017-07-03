@@ -133,17 +133,17 @@
      borderopacity="1.0"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.4142136"
-     inkscape:cx="338.13959"
-     inkscape:cy="740.2389"
+     inkscape:zoom="0.7071068"
+     inkscape:cx="419.48617"
+     inkscape:cy="599.25193"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:snap-nodes="false"
      inkscape:window-width="1918"
-     inkscape:window-height="1042"
+     inkscape:window-height="805"
      inkscape:window-x="0"
-     inkscape:window-y="18"
+     inkscape:window-y="0"
      inkscape:window-maximized="0" />
   <metadata
      id="metadata5">
@@ -169,7 +169,7 @@
        cy="-112.04947"
        r="65.748306" />
     <g
-       transform="matrix(5.8378056,0,0,3.7861576,-788.37732,-806.63634)"
+       transform="matrix(5.9073024,0,0,3.1811449,-803.88364,-660.19073)"
        id="g15728"
        style="stroke-width:0.80533123;filter:url(#filter19809)">
       <g
@@ -208,10 +208,16 @@
        x="-132.01645"
        y="-124.25716"
        transform="rotate(167.03431)" />
+    <circle
+       style="opacity:1;fill:#3591b5;fill-opacity:1;stroke:none;stroke-width:4.06500006;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter8126)"
+       id="circle8108"
+       cx="87.32502"
+       cy="78.27729"
+       r="3.2740517" />
     <g
        style="stroke-width:0.75900096;filter:url(#filter19809)"
        id="g7720"
-       transform="matrix(6.5965349,0,0,3.6480877,-876.08266,-764.13558)">
+       transform="matrix(6.624527,0,0,3.4147048,-885.24547,-704.7125)">
       <g
          transform="translate(83.438244,16.630953)"
          id="g7714"
@@ -241,7 +247,7 @@
          inkscape:connector-curvature="0" />
     </g>
     <g
-       transform="matrix(4.9837988,0,0,3.6381353,-600.37209,-769.12242)"
+       transform="matrix(4.9837988,0,0,3.6381353,-598.87538,-770.43204)"
        id="g7732"
        style="stroke-width:0.87331617;filter:url(#filter19809)">
       <g
@@ -281,12 +287,12 @@
     <circle
        style="opacity:1;fill:#3591b5;fill-opacity:1;stroke:none;stroke-width:4.06500006;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter8114)"
        id="path8098"
-       cx="109.54041"
-       cy="65.664856"
+       cx="108.79206"
+       cy="63.045616"
        r="3.2740517" />
     <g
        style="filter:url(#filter5426)"
-       transform="matrix(0.82879167,0,0,0.82879167,71.357222,-1.4126735)"
+       transform="matrix(0.82078639,0,0,0.82078639,66.343431,1.3806629)"
        id="g5524">
       <g
          id="g5494"
@@ -2111,12 +2117,6 @@
        cx="154.16106"
        id="circle8104"
        style="opacity:1;fill:#3591b5;fill-opacity:1;stroke:none;stroke-width:4.06500006;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-    <circle
-       style="opacity:1;fill:#3591b5;fill-opacity:1;stroke:none;stroke-width:4.06500006;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter8126)"
-       id="circle8108"
-       cx="88.118767"
-       cy="78.012711"
-       r="3.2740517" />
     <g
        id="g5420"
        transform="translate(-0.56126679,4.3030396)"
