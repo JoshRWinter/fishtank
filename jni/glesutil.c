@@ -388,7 +388,7 @@ void destroy_ftfont(ftfont *font){
 }
 #define alignx(xf) ((((int)((xf/ftglobal_fscreenwidth)*ftglobal_iscreenwidth))/(float)ftglobal_iscreenwidth)*ftglobal_fscreenwidth)
 #define aligny(yf) ((((int)((yf/ftglobal_fscreenheight)*ftglobal_iscreenheight))/(float)ftglobal_iscreenheight)*ftglobal_fscreenheight)
-void drawtext(ftfont *font,float xpos,float ypos,const char *output){
+void drawtext(const ftfont *font,float xpos,float ypos,const char *output){
 	glUniform2f(ftglobal_size,font->fontsize,font->fontsize);
 	float xoffset=0.0f,yoffset=0.0f;
 	int character=0;
@@ -413,7 +413,7 @@ void drawtext(ftfont *font,float xpos,float ypos,const char *output){
 		character++;
 	}
 }
-static float linelength(ftfont *font,const char *line){
+static float linelength(const ftfont *font,const char *line){
 	int character=0;
 	float length=0.0f;
 	while(line[character]!=0&&line[character]!='\n'){
@@ -422,7 +422,7 @@ static float linelength(ftfont *font,const char *line){
 	}
 	return length;
 }
-void drawtextcentered(ftfont *font,float xpos,float ypos,const char *output){
+void drawtextcentered(const ftfont *font,float xpos,float ypos,const char *output){
 	glUniform2f(ftglobal_size,font->fontsize,font->fontsize);
 	float xoffset=0.0f,yoffset=0.0f;
 	float adjustedxpos=xpos-(linelength(font,output)/2.0f);
@@ -599,7 +599,6 @@ unsigned screenshotblur(int w,int h,int resize,int intensity){
 			float sumr=0;
 			float sumg=0;
 			float sumb=0;
-			int index;
 			weightindex=0;
 			for(int j=-blur;j<=blur;j++){
 				int index=((a==0)?i+(4*j):(i+(j*shrinkw*4)));
@@ -1204,7 +1203,11 @@ void hidenavbars(struct jni_info *jni_info){
 
 void init_accel(struct android_app *app,struct accel_info *accel_info){
 	accel_info->app=app;
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+	// this function is marked deprecated, but there is no replacement function lol
 	accel_info->manager=ASensorManager_getInstance();
+#pragma GCC diagnostic pop
 	accel_info->sensor=ASensorManager_getDefaultSensor(accel_info->manager,ASENSOR_TYPE_ACCELEROMETER);
 	accel_info->queue=ASensorManager_createEventQueue(accel_info->manager,app->looper,LOOPER_ID_USER,NULL,NULL);
 	accel_info->x=0.0f;

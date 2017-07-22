@@ -16,6 +16,7 @@
 #define onein(n) (randomint(0,n-1)==0)
 
 #ifdef __cplusplus
+#include "Atlas.h"
 extern "C" {
 #endif
 
@@ -125,8 +126,8 @@ ftfont *create_ftfont(struct AAssetManager *mgr,float fontsize,const char *facen
 void destroy_ftfont(ftfont *font);
 float textlen(ftfont *font,const char *text);
 float textheight(ftfont *font,const char *text);
-void drawtext(ftfont *font,float xpos,float ypos,const char *output);
-void drawtextcentered(ftfont *font,float xpos,float ypos,const char *output);
+void drawtext(const ftfont *font,float xpos,float ypos,const char *output);
+void drawtextcentered(const ftfont *font,float xpos,float ypos,const char *output);
 slesenv *initOpenSL(SL_CONFIG_FN fn);
 void termOpenSL(slesenv *soundengine);
 int sl_play(slesenv *engine,struct apacksound *sound);

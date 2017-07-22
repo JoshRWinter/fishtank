@@ -63,7 +63,6 @@ void sound_config_fn(const struct sl_entity_position *listener,const struct sl_e
 
 extern "C" void android_main(android_app *app){
 	logcat("--- BEGIN NEW LOG ---");
-	app_dummy();
 	srand48(time(NULL));
 	State state;
 	state.reset();
