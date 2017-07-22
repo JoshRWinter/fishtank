@@ -4,8 +4,8 @@ extern const char *vertexshader,*fragmentshader;
 
 void Renderer::init(android_app &app){
 	getdims(&dev,app.window,DIMS_LAND);
-	screen.w=dev.w>1280?1280:dev.w;
-	screen.h=dev.h>720?720:dev.h;
+	screen.w=dev.w>1280?1280:1024;
+	screen.h=dev.h>720?720:576;
 
 	initextensions(); // opengl extensions
 
