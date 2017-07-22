@@ -16,14 +16,14 @@ struct MenuMain:Menu{
 	Button button_play;
 	Button button_quit;
 	Button button_config;
-	Base background;
+	UIBase background;
 };
 
 struct MenuConfig:Menu{
 	bool exec(State&);
 	virtual void render(const Renderer&)const;
 
-	Base background;
+	UIBase background;
 	Button button_music;
 	Button button_sounds;
 	Button button_vibrate;
@@ -40,7 +40,7 @@ struct MenuInput:Menu{
 	ButtonSmall alpha[28];
 	ButtonSmall numeric[10];
 	ButtonSmall backspace,clear,space;
-	Base background;
+	UIBase background;
 	std::string *text;
 	ButtonSmall enter,cancel;
 };
@@ -51,11 +51,11 @@ struct MenuPlay:Menu{
 
 	int *colorid;
 	std::string *name;
-	Base background;
+	UIBase background;
 	Button button_name;
 	Button button_connect;
 	Button button_back;
-	Base blob[5]; // color blobs
+	UIBase blob[5]; // color blobs
 };
 
 #define CONN_STATE_TRYING 1
@@ -68,7 +68,7 @@ struct MenuConnect{
 	bool exec(State&,const std::string&);
 	virtual void render(const Renderer&)const;
 
-	Base background;
+	UIBase background;
 	std::string address;
 	std::string connected_address;
 	Button button_cancel;
@@ -80,7 +80,7 @@ struct MenuPause{
 	bool exec(State&);
 	virtual void render(const Renderer&)const;
 
-	Base background,black_background;
+	UIBase background,black_background;
 	Button button_quit;
 	Button button_settings;
 	Button button_back;
@@ -95,7 +95,7 @@ struct MenuChat{
 	float scrolltop;
 	bool drag; // currently draggin finger (scrolling)
 	float offset;
-	Base background;
+	UIBase background;
 	Button button_say;
 	Button button_back;
 };
@@ -107,7 +107,7 @@ struct MenuMessage:Menu{
 	const char *msg;
 	const char *header;
 	Button button_ok;
-	Base background;
+	UIBase background;
 };
 
 #endif // MENU_H

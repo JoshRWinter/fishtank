@@ -6,8 +6,7 @@ DeadFish::DeadFish(float xpos,float ypos,int cid){
 	x=xpos-(FISH_WIDTH/2.0f);
 	y=ypos-(FISH_HEIGHT/2.0f);
 	rot=0.0f;
-	count=1;
-	frame=0;
+	texture=AID_DEADFISH;
 
 	colorid=cid;
 	increase=randomint(0,10);
@@ -76,13 +75,11 @@ void DeadFish::process(State &state){
 }
 
 void DeadFish::render(const Renderer &renderer,const std::vector<DeadFish*> &fish_list){
-	glBindTexture(GL_TEXTURE_2D,renderer.assets.texture[TID_DEAD_FISH].object);
-
 	for(const DeadFish *f:fish_list){
 		float r,g,b;
 		State::fill_color(f->colorid,&r,&g,&b);
 		glUniform4f(renderer.uniform.rgba,r,g,b,1.0f);
-		renderer.draw(*f);
+		renderer.draw(*f,&renderer.atlas);
 	}
 
 	glUniform4f(renderer.uniform.rgba,1.0f,1.0f,1.0f,1.0f);

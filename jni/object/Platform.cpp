@@ -15,13 +15,13 @@ Platform::Platform(bool platform_active,bool horiz,float xpos,float ypos,unsigne
 	x=xpos-(w/2.0f);
 	y=ypos-(h/2.0f);
 	active=platform_active;
+	texture=-1;
 
 	visual.x=xpos-(PLATFORM_VIS_WIDTH/2.0f);
 	visual.y=ypos-(PLATFORM_VIS_HEIGHT/2.0f);
 	visual.w=PLATFORM_VIS_WIDTH;
 	visual.h=PLATFORM_VIS_HEIGHT;
-	visual.count=4;
-	visual.frame=randomint(0,2);
+	visual.texture=AID_PLATFORM_1+randomint(0,2);
 
 	health=100;
 	timer_audio=-1.0f;
@@ -41,17 +41,17 @@ void Platform::process(State &state){
 }
 
 void Platform::render(const Renderer &renderer,const std::vector<Platform> &platform_list){
-	glBindTexture(GL_TEXTURE_2D,renderer.assets.texture[TID_PLATFORM].object);
 	for(const Platform &platform:platform_list){
 		if(!platform.active)
 			continue;
 
-		renderer.draw(platform.visual);
+		renderer.draw(platform.visual,&renderer.atlas);
 		if(platform.health<100){
+			// draw damage mask
 			glUniform4f(renderer.uniform.rgba,1.0f,1.0f,1.0f,(100-platform.health)/100.0f);
 			Base dmg=platform.visual;
-			dmg.frame=3;
-			renderer.draw(dmg);
+			dmg.texture=AID_PLATFORM_DMG;
+			renderer.draw(dmg,&renderer.atlas);
 			glUniform4f(renderer.uniform.rgba,1.0f,1.0f,1.0f,1.0f);
 		}
 	}

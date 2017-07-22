@@ -103,7 +103,15 @@ void MenuPause::render(const Renderer &renderer)const{
 		if(s.id==id){
 			glBindTexture(GL_TEXTURE_2D,renderer.uiassets.texture[UITID_HIGHLIGHT].object);
 			glUniform4f(renderer.uniform.rgba,0.7f,0.7f,0.2f,0.6f);
-			Base highlight={-8.0f,yoffset+0.025f,16.0f,0.6f,0.0f,0,1};
+			UIBase highlight;
+			highlight.x=-8.0f;
+			highlight.y=yoffset+0.025;
+			highlight.w=16.0f;
+			highlight.h=0.6f;
+			highlight.rot=0.0f;
+			highlight.texture=-1;
+			highlight.frame=0;
+			highlight.count=1;
 			renderer.uidraw(highlight);
 			glBindTexture(GL_TEXTURE_2D,renderer.font.button->atlas);
 			glUniform4f(renderer.uniform.rgba,TEXT_COLOR,1.0f);
@@ -129,7 +137,7 @@ void MenuPause::render(const Renderer &renderer)const{
 		if(s.dead){
 			glBindTexture(GL_TEXTURE_2D,renderer.uiassets.texture[UITID_SKULL].object);
 			glUniform4f(renderer.uniform.rgba,1.0f,1.0f,1.0f,1.0f);
-			Base skull;
+			UIBase skull;
 			skull.x=NAME_OFFSET-0.65f;
 			skull.y=yoffset+0.1f;
 			skull.w=SKULL_WIDTH;
@@ -137,6 +145,7 @@ void MenuPause::render(const Renderer &renderer)const{
 			skull.rot=0.0f;
 			skull.count=1;
 			skull.frame=0;
+			skull.texture=-1;
 			renderer.uidraw(skull);
 			glUniform4f(renderer.uniform.rgba,TEXT_COLOR,1.0f);
 			glBindTexture(GL_TEXTURE_2D,renderer.font.button->atlas);

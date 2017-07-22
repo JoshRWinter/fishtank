@@ -49,20 +49,10 @@ struct stat;
 #define TID_BACKDROP_2 1
 #define TID_BACKDROP_3 2
 #define TID_BACKDROP_4 3
-#define TID_TANK 4
-#define TID_TURRET 5
-#define TID_SHELL 6
-#define TID_PLATFORM 7
-#define TID_PARTICLE_PLATFORM 8
-#define TID_PARTICLE_PLAYER 9
-#define TID_PARTICLE_BUBBLE 10
-#define TID_DEAD_FISH 11
-#define TID_BEACON 12
-#define TID_ARTILLERY 13
-#define TID_GROUND 14
-#define TID_MINE 15
-#define TID_MINE_CHAIN 16
-#define TID_UPPER_GRADIENT 17
+#define TID_GROUND 4
+#define TID_UPPER_GRADIENT 5
+#define TID_TANK 6
+#define TID_TURRET 7
 
 // ui textures
 #define UITID_FISHTANK 0
@@ -79,6 +69,29 @@ struct stat;
 #define UITID_BUTTON_AS 11
 #define UITID_SKULL 12
 #define UITID_HIGHLIGHT 13
+
+// gameplay atlas
+#define AID_ARTILLERY 0
+#define AID_BEACON_1 1
+#define AID_BEACON_2 2
+#define AID_DEADFISH 3
+#define AID_MINE_CHAIN 4
+#define AID_MINE 5
+#define AID_PARTICLE_BUBBLE 6
+#define AID_PARTICLE_PLATFORM_1 7
+#define AID_PARTICLE_PLATFORM_2 8
+#define AID_PARTICLE_PLAYER_1 9
+#define AID_PARTICLE_PLAYER_2 10
+#define AID_PARTICLE_PLAYER_3 11
+#define AID_PARTICLE_PLAYER_4 12
+#define AID_PLATFORM_1 13
+#define AID_PLATFORM_2 14
+#define AID_PLATFORM_3 15
+#define AID_PLATFORM_DMG 16
+#define AID_SHELL 17
+#define AID_TANK_BASE 18
+#define AID_TANK_DMG 19
+#define AID_TURRET 20
 
 // sound effects
 #define SID_SILENCE 0
@@ -136,8 +149,8 @@ struct Renderer{
 	Renderer();
 	void init(android_app&);
 	void term();
-	void draw(const Base&)const;
-	void uidraw(const Base&)const;
+	void draw(const Base&,const Atlas* =NULL)const;
+	void uidraw(const UIBase&)const;
 
 	device dev; // screen resolution
 	device screen; // framebuffer resolution
@@ -155,6 +168,7 @@ struct Renderer{
 
 	pack assets; // gameplay textures
 	pack uiassets; // ui textures
+	Atlas atlas; // gameplay atlas
 };
 
 struct State{

@@ -6,16 +6,14 @@ Mine::Mine(const std::vector<Platform> &platform_list,int platform_index,bool ar
 	chain.x=platform_list[platform_index].x+(PLATFORM_WIDTH/2.0f)-(MINE_CHAIN_WIDTH/2.0f);
 	chain.y=platform_list[platform_index].y-MINE_CHAIN_HEIGHT;
 	chain.rot=0.0f;
-	chain.frame=0;
-	chain.count=1;
+	chain.texture=AID_MINE_CHAIN;
 
 	w=MINE_SIZE;
 	h=MINE_SIZE;
 	x=chain.x+(MINE_CHAIN_WIDTH/2.0f)-(MINE_SIZE/2.0f);
 	y=chain.y-MINE_SIZE+0.2f;
 	rot=randomint(1,360)*(M_PI/180.0f);
-	frame=0;
-	count=1;
+	texture=AID_MINE;
 
 	this->platform_index=platform_index;
 	yv=0.0f;
@@ -64,31 +62,19 @@ void Mine::process(State &state){
 
 void Mine::render(const Renderer &renderer,const std::vector<Mine> &mine_list){
 	// draw the mine chain
-	bool bound=false;
 	for(const Mine &mine:mine_list){
 		if(!mine.armed)
 			continue;
 
-		if(!bound){
-			glBindTexture(GL_TEXTURE_2D,renderer.assets.texture[TID_MINE_CHAIN].object);
-			bound=true;
-		}
-
-		renderer.draw(mine.chain);
+		renderer.draw(mine.chain,&renderer.atlas);
 	}
 
 	// draw the mine
-	bound=false;
 	for(const Mine &mine:mine_list){
 		if(!mine.armed)
 			continue;
 
-		if(!bound){
-			glBindTexture(GL_TEXTURE_2D,renderer.assets.texture[TID_MINE].object);
-			bound=true;
-		}
-
-		renderer.draw(mine);
+		renderer.draw(mine,&renderer.atlas);
 	}
 
 }

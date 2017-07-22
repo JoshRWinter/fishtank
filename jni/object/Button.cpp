@@ -10,6 +10,7 @@ void Button::init(float xpos,float ypos,const char *button_label){
 	frame=0;
 	label=button_label;
 	active=false;
+	texture=-1;
 }
 
 bool Button::process(const crosshair *ch,float tolerance){

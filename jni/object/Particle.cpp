@@ -6,8 +6,7 @@ ParticleShell::ParticleShell(const Shell &shell){
 	rot=shell.visual.rot+(randomint(-40,40)*(M_PI/180.0f));
 	x=shell.x+(shell.w/2.0f);
 	y=shell.y+(SHELL_HEIGHT/2.0f)-(PARTICLE_SHELL_HEIGHT/2.0f);
-	count=1;
-	frame=0;
+	texture=AID_SHELL;
 
 	float speed=randomint(16,23)/100.0f;
 	xv=-cosf(rot)*speed;
@@ -53,15 +52,13 @@ void ParticleShell::process(State &state){
 }
 
 void ParticleShell::render(const Renderer &renderer,const std::vector<ParticleShell*> &particle_shell_list){
-	glBindTexture(GL_TEXTURE_2D,renderer.assets.texture[TID_SHELL].object);
-
 	for(const ParticleShell *p:particle_shell_list){
 		// figure out the color;
 		float r,g,b;
 		State::fill_color(p->colorid,&r,&g,&b);
 		glUniform4f(renderer.uniform.rgba,r,g,b,1.0f);
 
-		renderer.draw(*p);
+		renderer.draw(*p,&renderer.atlas);
 	}
 }
 
@@ -71,8 +68,7 @@ ParticlePlatform::ParticlePlatform(const Shell &shell){
 	rot=randomint(1,360)*(M_PI/180.0f);
 	x=shell.x+(SHELL_WIDTH/2.0f)-(w/2.0f);
 	y=shell.y+(SHELL_HEIGHT/2.0f)-(h/2.0f);
-	count=2;
-	frame=randomint(0,1);
+	texture=AID_PARTICLE_PLATFORM_1+randomint(0,1);
 
 	xv=-cosf(rot)*PARTICLE_PLATFORM_SPEED;
 	yv=-sinf(rot)*PARTICLE_PLATFORM_SPEED;
@@ -85,8 +81,7 @@ ParticlePlatform::ParticlePlatform(float xpos,float ypos){
 	rot=randomint(1,360)*(M_PI/180.0f);
 	x=xpos-(w/2.0f);
 	y=ypos-(h/2.0f);
-	count=2;
-	frame=randomint(0,1);
+	texture=AID_PARTICLE_PLATFORM_1+randomint(0,1);
 
 	xv=-cosf(rot)*PARTICLE_PLATFORM_SPEED/2.0f;
 	yv=-sinf(rot)*PARTICLE_PLATFORM_SPEED/2.0f;
@@ -99,8 +94,7 @@ ParticlePlatform::ParticlePlatform(const Artillery &arty){
 	rot=randomint(1,360)*(M_PI/180.0f);
 	x=arty.x+(ARTILLERY_WIDTH/2.0f)-(w/2.0f);
 	y=arty.y+(ARTILLERY_HEIGHT/2.0f)-(h/2.0f);
-	count=2;
-	frame=randomint(0,1);
+	texture=AID_PARTICLE_PLATFORM_1+randomint(0,1);
 
 	const float speed=randomint(10,17)/100.0f;
 	xv=-cosf(rot)*speed;
@@ -201,10 +195,8 @@ void ParticlePlatform::process(State &state){
 }
 
 void ParticlePlatform::render(const Renderer &renderer,const std::vector<ParticlePlatform*> &particle_platform_list){
-	glBindTexture(GL_TEXTURE_2D,renderer.assets.texture[TID_PARTICLE_PLATFORM].object);
-
 	for(const ParticlePlatform *p:particle_platform_list)
-		renderer.draw(*p);
+		renderer.draw(*p,&renderer.atlas);
 }
 
 ParticlePlayer::ParticlePlayer(float xpos,float ypos,bool large,int player_colorid){
@@ -213,16 +205,15 @@ ParticlePlayer::ParticlePlayer(float xpos,float ypos,bool large,int player_color
 	x=xpos-(w/2.0f);
 	y=ypos-(h/2.0f);
 	rot=randomint(1,360)*(M_PI/180.0f);
-	count=4;
 
 	float speed;
 	if(large){
-		frame=randomint(1,3);
+		texture=AID_PARTICLE_PLAYER_2+randomint(0,2);
 		speed=randomint(19,24)/100.0f;
 	}
 	else{
+		texture=AID_PARTICLE_PLAYER_1;
 		speed=randomint(10,14)/100.0f;
-		frame=0;
 	}
 	this->large=large;
 	xv=-cosf(rot)*speed;
@@ -305,14 +296,13 @@ void ParticlePlayer::process(State &state){
 }
 
 void ParticlePlayer::render(const Renderer &renderer,const std::vector<ParticlePlayer*> &particle_player_list){
-	glBindTexture(GL_TEXTURE_2D,renderer.assets.texture[TID_PARTICLE_PLAYER].object);
 	for(const ParticlePlayer *p:particle_player_list){
 		// figure out the color;
 		float r,g,b;
 		State::fill_color(p->colorid,&r,&g,&b);
 		glUniform4f(renderer.uniform.rgba,r,g,b,1.0f);
 
-		renderer.draw(*p);
+		renderer.draw(*p,&renderer.atlas);
 	}
 	glUniform4f(renderer.uniform.rgba,1.0f,1.0f,1.0f,1.0f);
 }
@@ -334,8 +324,7 @@ ParticleBubble::ParticleBubble(const State &state,const Player &player){
 	xv=randomint(-3,3)/100.0f;
 	yv=(randomint(12,14)/100.0f)*state.speed;
 	ttl=20.0f;
-	count=1;
-	frame=0;
+	texture=AID_PARTICLE_BUBBLE;
 }
 
 ParticleBubble::ParticleBubble(const Artillery &arty){
@@ -345,8 +334,7 @@ ParticleBubble::ParticleBubble(const Artillery &arty){
 	y=arty.y+(ARTILLERY_HEIGHT/2.0f)-(PARTICLE_BUBBLE_SIZE/2.0f);
 	rot=randomint(1,360)*(M_PI/180.0);
 	ttl=30.0f;
-	count=1;
-	frame=0;
+	texture=AID_PARTICLE_BUBBLE;
 
 	xv=randomint(-1,1)/90.0f;
 	yv=randomint(-1,1)/90.0f;
@@ -357,8 +345,7 @@ ParticleBubble::ParticleBubble(const Mine &mine){
 	h=PARTICLE_BUBBLE_SIZE;
 	x=mine.x+(MINE_SIZE/2.0f)-(PARTICLE_BUBBLE_SIZE/2.0f);
 	y=mine.y+(MINE_SIZE/2.0f)-(PARTICLE_BUBBLE_SIZE/2.0f);
-	count=1;
-	frame=0;
+	texture=AID_PARTICLE_BUBBLE;
 	ttl=randomint(20,45);
 	if(!onein(3))
 		rot=randomint(0.0f,M_PI*10.0f)/10.0f;
@@ -451,8 +438,6 @@ void ParticleBubble::process(State &state){
 }
 
 void ParticleBubble::render(const Renderer &renderer,const std::vector<ParticleBubble*> &particle_list){
-	glBindTexture(GL_TEXTURE_2D,renderer.assets.texture[TID_PARTICLE_BUBBLE].object);
-
 	for(const ParticleBubble *p:particle_list)
-		renderer.draw(*p);
+		renderer.draw(*p,&renderer.atlas);
 }

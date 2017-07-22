@@ -57,6 +57,9 @@ void Renderer::init(android_app &app){
 	// ui textures
 	if(!loadpack(&uiassets,app.activity->assetManager,"uiassets",NULL))
 		logcat("ui texture init error");
+	// atlas
+	if(!atlas.load(app.activity->assetManager,"atlas"))
+		logcat("%s",atlas.error());
 
 	// fonts
 	set_ftfont_params(screen.w,screen.h,view.right*2.0f,view.bottom*2.0f,uniform.vector,uniform.size,uniform.texcoords);
@@ -71,6 +74,7 @@ void Renderer::term(){
 	destroy_ftfont(font.button_small);
 	destroypack(&assets);
 	destroypack(&uiassets);
+	atlas.unload();
 	glDeleteBuffers(1,&vbo);
 	glDeleteVertexArrays(1,&vao);
 	glDeleteProgram(program);
@@ -80,15 +84,16 @@ void Renderer::term(){
 	eglTerminate(display);
 }
 
-void Renderer::draw(const Base &b)const{
-	const float size=1.0f/b.count;
-	const float left=b.frame*size;
-	const float right=left+size;
+void Renderer::draw(const Base &b,const Atlas *atlas)const{
+	static const float default_coords[]={0.0f,1.0f,0.0f,1.0f};
+	const float *coords=default_coords;
+	if(atlas)
+		coords=atlas->coords(b.texture);
 
 	float new_x=b.x-(player_x+(PLAYER_WIDTH/2.0f));
 	float new_y=b.y-(player_y+(PLAYER_HEIGHT/2.0f));
 
-	glUniform4f(uniform.texcoords,left,right,0.0f,1.0f);
+	glUniform4fv(uniform.texcoords,1,coords);
 	glUniform2f(uniform.vector,new_x,new_y);
 	glUniform2f(uniform.size,b.w,b.h);
 	glUniform1f(uniform.rot,b.rot);
@@ -96,7 +101,7 @@ void Renderer::draw(const Base &b)const{
 	glDrawArrays(GL_TRIANGLE_STRIP,0,4);
 }
 
-void Renderer::uidraw(const Base &b)const{
+void Renderer::uidraw(const UIBase &b)const{
 	const float size=1.0f/b.count;
 	const float left=b.frame*size;
 	const float right=left+size;

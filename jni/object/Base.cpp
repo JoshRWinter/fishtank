@@ -56,11 +56,11 @@ float Base::dist(const Base &b){
 	return distance(x+(w/2.0f),b.x+(b.w/2.0f),y+(h/2.0f),b.y+(b.h/2.0f));
 }
 
-bool Base::pointing(const crosshair &ch,float tolerance)const{
+bool UIBase::pointing(const crosshair &ch,float tolerance)const{
 	return ch.x>x+tolerance&&ch.x<(x+w)-tolerance&&ch.y>y+tolerance&&ch.y<(y+h)-tolerance;
 }
 
-void Base::init_background(const Renderer &renderer){
+void UIBase::init_background(const Renderer &renderer){
 	x=renderer.view.left;
 	y=renderer.view.top;
 	w=renderer.view.right*2.0f;
@@ -68,4 +68,5 @@ void Base::init_background(const Renderer &renderer){
 	rot=0.0f;
 	frame=1;
 	count=0;
+	texture=-1;
 }

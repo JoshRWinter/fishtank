@@ -7,8 +7,7 @@ Shell::Shell(const State &state,const Player &player):owner(player){
 	x=player.turret.x+(TURRET_WIDTH/2.0f)-(SHELL_WIDTH/2.0f);
 	y=player.turret.y+(TURRET_HEIGHT/2.0f)-(SHELL_HEIGHT/2.0f);
 	rot=0.0f;
-	count=1;
-	frame=0;
+	texture=-1;
 
 	const float speed=player.cue_fire/2.4f;
 	float xvel=-cosf(player.turret.rot);
@@ -21,8 +20,7 @@ Shell::Shell(const State &state,const Player &player):owner(player){
 	visual.w=SHELL_VIS_WIDTH;
 	visual.h=0.0f;
 	visual.rot=player.turret.rot;
-	visual.frame=0;
-	visual.count=1;
+	visual.texture=AID_SHELL;
 }
 
 void Shell::process(State &state){
@@ -131,14 +129,13 @@ void Shell::process(State &state){
 }
 
 void Shell::render(const Renderer &renderer,const std::vector<Shell*> &shell_list){
-	glBindTexture(GL_TEXTURE_2D,renderer.assets.texture[TID_SHELL].object);
 	for(const Shell *shell:shell_list){
 		// figure out the color;
 		float r,g,b;
 		State::fill_color(shell->owner.colorid,&r,&g,&b);
 		glUniform4f(renderer.uniform.rgba,r,g,b,1.0f);
 
-		renderer.draw(shell->visual);
+		renderer.draw(shell->visual,&renderer.atlas);
 	}
 	glUniform4f(renderer.uniform.rgba,1.0f,1.0f,1.0f,1.0f);
 }

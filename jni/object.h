@@ -14,18 +14,23 @@
 struct Base{
 	bool collide(const Base&,float=0.0f)const;
 	int correct(const Base&);
-	bool pointing(const crosshair&,float=0.0f)const;
-	void init_background(const Renderer&);
 	float dist(const Base&);
 
 	float x,y,w,h,rot;
+	int texture;
+};
+
+struct UIBase:Base{
+	void init_background(const Renderer&);
+	bool pointing(const crosshair&,float=0.0f)const;
+
 	int frame,count;
 };
 
 #define BUTTON_WIDTH 4.0f
 #define BUTTON_HEIGHT 1.0f
 #define BUTTON_TEXT_COLOR 0.175f,0.175f,0.175f
-struct Button:Base{
+struct Button:UIBase{
 	void init(float,float,const char*);
 	bool process(const crosshair*,float=0.0f);
 	void render(const Renderer&)const;

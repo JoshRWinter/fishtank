@@ -139,47 +139,42 @@ void State::render()const{
 	// draw the upper gradient
 	if(renderer.player_y-4.5f<LOWER_CEILING){
 		glBindTexture(GL_TEXTURE_2D,renderer.assets.texture[TID_UPPER_GRADIENT].object);
-		Base gradient={renderer.player_x-8.0f+(PLAYER_WIDTH/2.0f),UPPER_CEILING,16.0f,18.0f,0.0f,0,1};
+		Base gradient={renderer.player_x-8.0f+(PLAYER_WIDTH/2.0f),UPPER_CEILING,16.0f,18.0f,0.0f,-1};
 		renderer.draw(gradient);
 	}
 
+	// gameplay atlas
+	glBindTexture(GL_TEXTURE_2D,renderer.atlas.texture());
+
 	// draw dead fish
-	if(dead_fish_list.size()!=0)
-		DeadFish::render(renderer,dead_fish_list);
+	DeadFish::render(renderer,dead_fish_list);
 
 	// draw particle bubbles
-	if(particle_bubble_list.size()!=0.0f)
-		ParticleBubble::render(renderer,particle_bubble_list);
+	ParticleBubble::render(renderer,particle_bubble_list);
 
 	// draw shells
-	if(shell_list.size()!=0)
-		Shell::render(renderer,shell_list);
+	Shell::render(renderer,shell_list);
 
 	// draw mines
-	if(mine_list.size()!=0)
-		Mine::render(renderer,mine_list);
+	Mine::render(renderer,mine_list);
 
 	// draw players
 	Player::render(renderer,player_list);
 
 	// draw particles players
-	if(particle_player_list.size()!=0)
-		ParticlePlayer::render(renderer,particle_player_list);
+	ParticlePlayer::render(renderer,particle_player_list);
 
 	// draw particle platforms
-	if(particle_platform_list.size()!=0)
-		ParticlePlatform::render(renderer,particle_platform_list);
+	ParticlePlatform::render(renderer,particle_platform_list);
 
 	// draw platforms
 	Platform::render(renderer,platform_list);
 
 	// draw artillery
-	if(arty_list.size()!=0)
-		Artillery::render(renderer,arty_list);
+	Artillery::render(renderer,arty_list);
 
 	// draw particle shells
-	if(particle_shell_list.size()!=0)
-		ParticleShell::render(renderer,particle_shell_list);
+	ParticleShell::render(renderer,particle_shell_list);
 
 	glUniform4f(renderer.uniform.rgba,1.0f,1.0f,1.0f,1.0f);
 	// draw the ground
@@ -191,7 +186,15 @@ void State::render()const{
 		if(firepower>0.0f){
 			glBindTexture(GL_TEXTURE_2D,renderer.uiassets.texture[UITID_FIREPOWER_INDICATOR].object);
 			float s=FIRE_BUTTON_SIZE*firepower;
-			Base fpi={input.fire.x+(FIRE_BUTTON_SIZE/2.0f)-(s/2.0f),input.fire.y+(FIRE_BUTTON_SIZE/2.0f)-(s/2.0f),s,s,0.0f,0,1};
+			UIBase fpi;
+			fpi.x=input.fire.x+(FIRE_BUTTON_SIZE/2.0f)-(s/2.0f);
+			fpi.y=input.fire.y+(FIRE_BUTTON_SIZE/2.0f)-(s/2.0f);
+			fpi.w=s;
+			fpi.h=s;
+			fpi.rot=0.0f;
+			fpi.texture=-1;
+			fpi.frame=0;
+			fpi.count=1;
 			renderer.uidraw(fpi);
 		}
 		// draw ui buttons
@@ -325,8 +328,7 @@ State::State(){
 	backdrop.w=55.0f;
 	backdrop.h=19.0f;
 	backdrop.rot=0.0f;
-	backdrop.count=1;
-	backdrop.frame=0;
+	backdrop.texture=-1;
 
 	// ground
 	ground.x=-26.0f;
@@ -334,8 +336,7 @@ State::State(){
 	ground.h=4.4f;
 	ground.w=75.0f;
 	ground.rot=0.0f;
-	ground.frame=0;
-	ground.count=1;
+	ground.texture=-1;
 
 	// ui buttons
 	const float DPAD_SIZE=1.2f;

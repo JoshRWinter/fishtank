@@ -1,6 +1,6 @@
 activity=fishtank
 
-all:../assets/assets ../assets/uiassets ../assets/aassets
+all:../assets/assets ../assets/uiassets ../assets/aassets ../assets/atlas
 	NDK_DEBUG=1 ndk-build -C ..
 	ant debug -f ../build.xml
 	adb install -r $(CURDIR)/../bin/$(activity)-debug.apk
@@ -16,3 +16,7 @@ all:../assets/assets ../assets/uiassets ../assets/aassets
 
 ../assets/aassets:../assets_local/apack.txt ../assets_local/*.ogg
 	cd ../assets_local/ && apack --build
+
+../assets/atlas:../assets_local/atlas.txt ../assets_local/*.tga
+	cd ../assets_local && ./convert.sh
+	cd ../assets_local && atlas ../assets/atlas `cat atlas.txt`

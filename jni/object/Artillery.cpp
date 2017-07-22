@@ -6,8 +6,7 @@ Artillery::Artillery(float xpos,float xvel){
 	x=xpos;
 	y=ARTILLERY_Y;
 	rot=0.0f;
-	frame=0;
-	count=1;
+	texture=-1;
 
 	xv=xvel;
 	visual.w=ARTILLERY_WIDTH;
@@ -19,8 +18,7 @@ Artillery::Artillery(float xpos,float xvel){
 	visual.y=y+(ARTILLERY_SIZE/2.0f)-(ARTILLERY_HEIGHT/2.0f);
 	visual.rot=atan2f((visual.y+(ARTILLERY_HEIGHT/2.0f))-((visual.y+ARTILLERY_DOWNWARD_VELOCITY)+(ARTILLERY_HEIGHT/2.0f)),
 		(visual.x+(ARTILLERY_WIDTH/2.0f))-((visual.x+xv)+(ARTILLERY_WIDTH/2.0f)));
-	visual.frame=0;
-	visual.count=1;
+	visual.texture=AID_ARTILLERY;
 }
 
 void Artillery::process(State &state){
@@ -102,7 +100,6 @@ void Artillery::process(State &state){
 }
 
 void Artillery::render(const Renderer &renderer,const std::vector<Artillery*> &arty_list){
-	glBindTexture(GL_TEXTURE_2D,renderer.assets.texture[TID_ARTILLERY].object);
 	for(const Artillery *a:arty_list)
-		renderer.draw(a->visual);
+		renderer.draw(a->visual,&renderer.atlas);
 }

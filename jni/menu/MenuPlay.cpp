@@ -29,6 +29,7 @@ bool MenuPlay::exec(State &state){
 		blob[i].rot=0.0f;
 		blob[i].frame=0;
 		blob[i].count=1;
+		blob[i].texture=-1;
 
 		xpos+=offset;
 	}
@@ -94,7 +95,7 @@ void MenuPlay::render(const Renderer &renderer)const{
 		State::fill_color(i+1,&r,&g,&b);
 		glUniform4f(renderer.uniform.rgba,r,g,b,1.0f);
 
-		Base color_blob=blob[i];
+		UIBase color_blob=blob[i];
 		if(*colorid==i+1){
 			color_blob.w=LARGE_BLOB_SIZE;
 			color_blob.h=LARGE_BLOB_SIZE;
@@ -131,17 +132,28 @@ void MenuPlay::render(const Renderer &renderer)const{
 		float r,g,b;
 		State::fill_color(*colorid,&r,&g,&b);
 		glUniform4f(renderer.uniform.rgba,r,g,b,1.0f);
-		Player player;
+		UIBase player;
+		UIBase turret;
+		// player
 		player.x=-(PLAYER_WIDTH/2.0f);
-		player.y-=2.0f;
-		player.turret.rot=2.85f;
-		player.turret.x=-0.8f;
-		player.turret.y=-2.0f;
+		player.y=-2.0f;
+		player.w=PLAYER_WIDTH;
+		player.h=PLAYER_HEIGHT;
+		player.rot=0.0f;
 		player.count=2;
 		player.frame=0;
+		player.texture=-1;
 		// turret
+		turret.rot=2.85f;
+		turret.x=-0.8f;
+		turret.y=-2.0f;
+		turret.w=TURRET_WIDTH;
+		turret.h=TURRET_HEIGHT;
+		turret.count=1;
+		turret.frame=0;
+		turret.texture=-1;
 		glBindTexture(GL_TEXTURE_2D,renderer.assets.texture[TID_TURRET].object);
-		renderer.uidraw(player.turret);
+		renderer.uidraw(turret);
 		// player
 		glBindTexture(GL_TEXTURE_2D,renderer.assets.texture[TID_TANK].object);
 		renderer.uidraw(player);

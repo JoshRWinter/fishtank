@@ -12,14 +12,12 @@ Player::Player(){
 	rot=0.0f;
 	health=0;
 	cue_fire=0.0f;
-	frame=0;
-	count=2;
+	texture=AID_TANK_BASE;
 
 	turret.w=TURRET_WIDTH;
 	turret.h=TURRET_HEIGHT;
 	turret.rot=M_PI;
-	turret.count=1;
-	turret.frame=0;
+	turret.texture=AID_TURRET;
 
 	beacon.y=FLOOR+10.0f;
 
@@ -113,7 +111,10 @@ void Player::process(State &state){
 			player.beacon.y+=player.beacon.yv;
 			player.beacon.timer_frame-=state.speed;
 			if(player.beacon.timer_frame<=0.0f){
-				player.beacon.frame=!player.beacon.frame;
+				if(player.beacon.texture==AID_BEACON_1)
+					++player.beacon.texture;
+				else
+					--player.beacon.texture;
 				player.beacon.timer_frame=BEACON_FRAME_TIMER;
 			}
 		}
@@ -165,17 +166,16 @@ void Player::render(const Renderer &renderer,const std::vector<Player> &player_l
 		if(player.beacon.y>FLOOR+3.0f||player.colorid==0)
 			continue;
 
+		// beacon color multiplier
 		if(!bound){
 			bound=true;
-			glBindTexture(GL_TEXTURE_2D,renderer.assets.texture[TID_BEACON].object);
 			glUniform4f(renderer.uniform.rgba,1.0f,1.0f,1.0f,1.0f);
 		}
 
-		renderer.draw(player.beacon);
+		renderer.draw(player.beacon,&renderer.atlas);
 	}
 
 	// render the player's turret
-	glBindTexture(GL_TEXTURE_2D,renderer.assets.texture[TID_TURRET].object);
 	for(const Player &player:player_list){
 		if(player.colorid==0)
 			break;
@@ -188,11 +188,10 @@ void Player::render(const Renderer &renderer,const std::vector<Player> &player_l
 		State::fill_color(player.colorid,&r,&g,&b);
 		glUniform4f(renderer.uniform.rgba,r,g,b,1.0f);
 
-		renderer.draw(player.turret);
+		renderer.draw(player.turret,&renderer.atlas);
 	}
 
 	// render the player
-	glBindTexture(GL_TEXTURE_2D,renderer.assets.texture[TID_TANK].object);
 	for(const Player &player:player_list){
 		if(player.colorid==0)
 			break;
@@ -204,13 +203,15 @@ void Player::render(const Renderer &renderer,const std::vector<Player> &player_l
 		State::fill_color(player.colorid,&r,&g,&b);
 		glUniform4f(renderer.uniform.rgba,r,g,b,1.0f);
 
-		renderer.draw(player);
+		renderer.draw(player,&renderer.atlas);
+
+		// player damage mask
 		if(player.health<100){
 			glUniform4f(renderer.uniform.rgba,r,g,b,(100-player.health)/100.0f);
 			// render the damage mask
 			Player mask=player;
-			mask.frame=1;
-			renderer.draw(mask);
+			mask.texture=AID_TANK_DMG;
+			renderer.draw(mask,&renderer.atlas);
 			glUniform4f(renderer.uniform.rgba,r,g,b,1.0f);
 		}
 	}
@@ -221,8 +222,7 @@ Beacon::Beacon(){
 	w=BEACON_WIDTH;
 	h=BEACON_HEIGHT;
 	rot=0.0f;
-	frame=0;
-	count=2;
+	texture=AID_BEACON_1;
 	x=0.0f;
 	y=FLOOR+10.0f;
 	xv=0.0f;
