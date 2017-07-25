@@ -49,7 +49,7 @@ void Platform::create_all(Match &match){
 		else if(match.platform_list.size()==PLATFORM_COUNT)
 			break;
 
-		Platform p(false,horiz.x,horiz.y+PLATFORM_HEIGHT);
+		Platform p(false,horiz.x-(PLATFORM_HEIGHT/2.0f),horiz.y+PLATFORM_HEIGHT);
 
 		match.platform_list.push_back(p);
 	}
