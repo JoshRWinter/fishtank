@@ -1,5 +1,6 @@
 #include "network.h"
 #include <iostream>
+#include <utility>
 
 #ifndef _WIN32
 #include <sys/socket.h>
@@ -145,7 +146,7 @@ net::tcp::tcp(const std::string &address,unsigned short port){
 // in a ownership handoff from <a> -> <b>, <a> cannot be used again.
 net::tcp::tcp(tcp &&rhs){
 	sock=rhs.sock;
-	name=std::move(rhs.name);
+	name=rhs.name;
 	ai=rhs.ai;
 	blocking=rhs.blocking;
 
