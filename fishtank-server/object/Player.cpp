@@ -1,5 +1,6 @@
 #include <string.h>
-#include <math.h>
+#define _USE_MATH_DEFINES
+#include <cmath>
 #include "../fishtank-server.h"
 
 static float shell_dmg(float f){

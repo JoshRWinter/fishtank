@@ -61,4 +61,6 @@ int Base::correct(const Base &b){
 		return side;
 		break;
 	}
+
+	return 0;
 }

@@ -7,6 +7,18 @@
 std::atomic<bool> run;
 
 int ctrl_c_count=0; // only accessed by signal_handler
+#ifdef _WIN32
+BOOL WINAPI handler(DWORD signal){
+	if(signal==CTRL_C_EVENT){
+		run.store(false);
+		if(ctrl_c_count++>0)
+			exit(1);
+		return TRUE;
+	}
+
+	return FALSE;
+}
+#else
 void signal_handler(int s){
 	switch(s){
 	case SIGINT:
@@ -19,13 +31,19 @@ void signal_handler(int s){
 		break;
 	}
 }
+#endif // _WIN32
 
 int main(){
 	srand(time(NULL));
 	run.store(true);
+
+#ifdef _WIN32
+	SetConsoleCtrlHandler(handler, TRUE);
+#else
 	signal(SIGINT,signal_handler);
 	signal(SIGTERM,signal_handler);
 	signal(SIGPIPE,signal_handler);
+#endif // _WIN32
 
 	Match match;
 	if(!match){
@@ -48,11 +66,24 @@ int main(){
 	return 0;
 }
 
+#ifdef _WIN32
+static LARGE_INTEGER freq, start;
+static auto rc=QueryPerformanceFrequency(&freq);
+static auto rc2=QueryPerformanceCounter(&start);
+void get_nano_time(long long *t){
+	const long long per_mill=freq.QuadPart/1'000'000'000;
+
+	LARGE_INTEGER counter;
+	QueryPerformanceCounter(&counter);
+	*t=(counter.QuadPart-start.QuadPart)/per_mill;
+}
+#else
 void get_nano_time(long long *t){
 	timespec ts;
 	clock_gettime(CLOCK_MONOTONIC,&ts);
 	*t=((long long)ts.tv_sec*(long long)1000000000)+(long long)ts.tv_nsec;
 }
+#endif // _WIN32
 
 int randomint(int low,int high){
 	if(low>=high)return low;

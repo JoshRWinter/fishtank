@@ -3,9 +3,13 @@
 
 #include <vector>
 #include <cstdint>
-#include <unistd.h>
 #include <iostream>
 #include <math.h>
+
+#ifndef _WIN32
+#include <unistd.h>
+#endif // _WIN32
+
 #include "../jni/fishnet.h"
 #include "../jni/network.h"
 struct Match;

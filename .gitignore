@@ -7,4 +7,5 @@ libs
 local.properties
 obj
 *.o
-
+*.obj
+.*.swp

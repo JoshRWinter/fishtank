@@ -1,4 +1,8 @@
 #include <string.h>
+#include <time.h>
+#include <thread>
+#include <limits.h>
+#include <chrono>
 #include "fishtank-server.h"
 
 Match::Match():tcp(TCP_PORT),udp(UDP_PORT){
@@ -343,6 +347,8 @@ int Match::get_client_index(int id)const{
 			return index;
 		++index;
 	}
+
+	return 0;
 }
 
 void Match::send_level_config(Client &client){
@@ -542,7 +548,7 @@ void Match::wait_next_step(){
 
 	// sleep longer if no one is connected
 	if(client_list.size()==0){
-		sleep(1);
+		std::this_thread::sleep_for(std::chrono::seconds(1));
 		last_time=time(NULL);
 		frame=0;
 		return;
@@ -562,8 +568,10 @@ void Match::wait_next_step(){
  	// block until time to do next step
 	long long nano_time;
 	do{
+#ifndef _WIN32
 		sched_yield();
-		usleep(300);
+#endif // _WIN32
+		std::this_thread::sleep_for(std::chrono::microseconds(300));
 		get_nano_time(&nano_time);
 	}while(nano_time-last_nano_time<16666600);
 	last_nano_time=nano_time;
