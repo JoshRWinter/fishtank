@@ -327,10 +327,10 @@ void Match::send_chat(const std::string &m,const std::string &f){
 
 	// display the chat on stdout
 	if(from=="server")
-		std::cout<<"chat\033[36m[\033[31mserver: \033[36m";
+		std::cout<<"chat" ANSI_CYAN "[" ANSI_RED "server: " ANSI_CYAN;
 	else
-		std::cout<<"chat\033[36m["<<from<<": ";
-	std::cout<<msg<<"]\033[0m"<<std::endl;
+		std::cout<<"chat" ANSI_CYAN "["<<from<<": ";
+	std::cout<<msg<<"]" ANSI_RESET <<std::endl;
 }
 
 Client *Match::get_client_by_secret(int32_t s){

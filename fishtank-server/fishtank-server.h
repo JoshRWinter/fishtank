@@ -1,6 +1,17 @@
 #ifndef FISHTANK_SERVER_H
 #define FISHTANK_SERVER_H
 
+// ANSI color codes
+#ifdef _WIN32
+#define ANSI_CYAN ""
+#define ANSI_RED ""
+#define ANSI_RESET ""
+#else
+#define ANSI_CYAN "\033[361m"
+#define ANSI_RED "\033[31m"
+#define ANSI_RESET "\033[0m"
+#endif _WIN32
+
 #include <vector>
 #include <cstdint>
 #include <iostream>
