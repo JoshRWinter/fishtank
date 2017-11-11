@@ -7,7 +7,7 @@
 #define ANSI_RED ""
 #define ANSI_RESET ""
 #else
-#define ANSI_CYAN "\033[361m"
+#define ANSI_CYAN "\033[36m"
 #define ANSI_RED "\033[31m"
 #define ANSI_RESET "\033[0m"
 #endif // _WIN32
