@@ -140,7 +140,7 @@ net::tcp::tcp(const std::string &address,unsigned short port){
 // in a ownership handoff from <a> -> <b>, <a> cannot be used again.
 net::tcp::tcp(tcp &&rhs){
 	sock=rhs.sock;
-	name=rhs.name;
+	name=std::move(rhs.name);
 	ai=rhs.ai;
 	blocking=rhs.blocking;
 
