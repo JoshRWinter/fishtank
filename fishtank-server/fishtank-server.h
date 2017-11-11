@@ -10,7 +10,7 @@
 #define ANSI_CYAN "\033[361m"
 #define ANSI_RED "\033[31m"
 #define ANSI_RESET "\033[0m"
-#endif _WIN32
+#endif // _WIN32
 
 #include <vector>
 #include <cstdint>
