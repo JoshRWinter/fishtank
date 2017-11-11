@@ -6,7 +6,11 @@
 #include "fishtank-server.h"
 
 Match::Match():tcp(TCP_PORT),udp(UDP_PORT){
+#ifdef _WIN32
+	last_frame.QuadPart=0;
+#else
 	last_nano_time=0;
+#endif // WIN32
 	win_timer=WIN_TIMER;
 	round_id=0;
 }
@@ -33,14 +37,12 @@ Match::operator bool()const{
 
 void Match::accept_new_clients(){
 	// accept new clients
-	std::string connector_address;
 	int connector_socket=tcp.accept();
-	net::tcp tcptemp(connector_socket);
-	connector_address=tcptemp.get_name();
 	if(connector_socket!=-1){
 		if(client_list.size()==MAX_PLAYERS){
+			net::tcp tcptemp(connector_socket);
 			// have to kick the client
-			std::cout<<"rejected "<<connector_address<<", too many players!"<<std::endl;
+			std::cout<<"rejected "<<tcptemp.get_name()<<", too many players!"<<std::endl;
 			uint8_t i=0;
 			tcptemp.send_block(&i,sizeof(uint8_t));
 		}
@@ -51,13 +53,13 @@ void Match::accept_new_clients(){
 			}
 
 			// accept the client
-			Client *c=new Client(std::move(tcptemp),bounds,mine_list,client_list.size()+1);
+			Client *c=new Client(connector_socket,bounds,mine_list,client_list.size()+1);
 			client_list.push_back(c);
 
 			// send the level configuration to this client
 			send_level_config(*c);
 
-			std::cout<<c->name<<" just connected ("<<connector_address<<")"<<std::endl;
+			std::cout<<c->name<<" just connected ("<<c->connector_address<<")"<<std::endl;
 			// inform the other clients of the new player
 			std::string msg=c->name+" has connected";
 			send_chat(msg,"server");
@@ -566,13 +568,22 @@ void Match::wait_next_step(){
 	++frame;
 
  	// block until time to do next step
+#ifdef _WIN32
+	static LARGE_INTEGER frequency;
+	static auto rc=QueryPerformanceFrequency(&frequency);
+	const auto delta=frequency.QuadPart/60;
+	LARGE_INTEGER now;
+	do{
+		QueryPerformanceCounter(&now);
+	}while(now.QuadPart-last_frame.QuadPart<delta);
+	last_frame=now;
+#else
 	long long nano_time;
 	do{
-#ifndef _WIN32
 		sched_yield();
-#endif // _WIN32
-		std::this_thread::sleep_for(std::chrono::microseconds(300));
+		std::this_thread::sleep_for(std::chrono::microseconds(50));
 		get_nano_time(&nano_time);
 	}while(nano_time-last_nano_time<16666600);
 	last_nano_time=nano_time;
+#endif // _WIN32
 }

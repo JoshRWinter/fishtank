@@ -26,10 +26,11 @@ struct area_bounds;
 #define KILLED_BY_DECOMPRESSION 4
 
 struct Client{
-	Client(net::tcp&&,const area_bounds&,const std::vector<Mine>&,int);
+	Client(int,const area_bounds&,const std::vector<Mine>&,int);
 	void kick(Match&);
 
 	net::tcp tcp;
+	const std::string connector_address;
 	std::string name;
 	static int last_id;
 	int32_t id;
@@ -92,7 +93,11 @@ public:
 	std::vector<Mine> mine_list;
 	net::tcp_server tcp;
 	net::udp_server udp;
+#ifdef _WIN32
+	LARGE_INTEGER last_frame;
+#else
 	long long last_nano_time;
+#endif // _WIN32
 	int win_timer;
 	bool sent_win_message;
 	int round_id;

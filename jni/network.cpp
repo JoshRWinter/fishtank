@@ -120,6 +120,11 @@ net::tcp::tcp(int socket){
 	ai=NULL;
 	blocking=true;
 
+#ifdef _WIN32
+	u_long mode=0;
+	ioctlsocket(sock, FIONBIO, &mode);
+#endif // WIN32
+
 	// figure out name
 	char n[51]="N/A";
 	sockaddr_in6 addr;

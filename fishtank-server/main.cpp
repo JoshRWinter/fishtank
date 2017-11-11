@@ -66,18 +66,7 @@ int main(){
 	return 0;
 }
 
-#ifdef _WIN32
-static LARGE_INTEGER freq, start;
-static auto rc=QueryPerformanceFrequency(&freq);
-static auto rc2=QueryPerformanceCounter(&start);
-void get_nano_time(long long *t){
-	const long long per_mill=freq.QuadPart/1'000'000'000;
-
-	LARGE_INTEGER counter;
-	QueryPerformanceCounter(&counter);
-	*t=(counter.QuadPart-start.QuadPart)/per_mill;
-}
-#else
+#ifndef _WIN32
 void get_nano_time(long long *t){
 	timespec ts;
 	clock_gettime(CLOCK_MONOTONIC,&ts);
