@@ -1,7 +1,7 @@
 #include <string.h>
 #include "fishtank-server.h"
 
-Match::Match(){
+Match::Match():tcp(TCP_PORT),udp(UDP_PORT){
 	last_nano_time=0;
 	win_timer=WIN_TIMER;
 	round_id=0;
@@ -23,21 +23,22 @@ Match::~Match(){
 	airstrike_list.clear();
 }
 
-bool Match::setup(){
-	return tcp.bind(TCP_PORT)&&udp.bind(UDP_PORT);
+Match::operator bool()const{
+	return tcp&&udp;
 }
 
 void Match::accept_new_clients(){
 	// accept new clients
 	std::string connector_address;
-	int connector_socket=tcp.accept(connector_address);
+	int connector_socket=tcp.accept();
+	net::tcp tcptemp(connector_socket);
+	connector_address=tcptemp.get_name();
 	if(connector_socket!=-1){
 		if(client_list.size()==MAX_PLAYERS){
 			// have to kick the client
 			std::cout<<"rejected "<<connector_address<<", too many players!"<<std::endl;
-			socket_tcp tmp(connector_socket,connector_address);
 			uint8_t i=0;
-			tmp.send(&i,sizeof(uint8_t));
+			tcptemp.send_block(&i,sizeof(uint8_t));
 		}
 		else{
 			// if this is the first client, reset the level config
@@ -46,7 +47,7 @@ void Match::accept_new_clients(){
 			}
 
 			// accept the client
-			Client *c=new Client(connector_socket,connector_address,bounds,mine_list,client_list.size()+1);
+			Client *c=new Client(std::move(tcptemp),bounds,mine_list,client_list.size()+1);
 			client_list.push_back(c);
 
 			// send the level configuration to this client
@@ -113,13 +114,12 @@ void Match::send_data(){
 
 			memset(&heartbeat,0,sizeof(to_client_tcp));
 			heartbeat.type=TYPE_HEARTBEAT;
-			client.tcp.send(&heartbeat.type,sizeof(heartbeat.type));
-			client.tcp.send(&heartbeat.msg,sizeof(heartbeat.msg));
-			client.tcp.send(&heartbeat.name,sizeof(heartbeat.name));
+			client.tcp.send_block(&heartbeat.type,sizeof(heartbeat.type));
+			client.tcp.send_block(&heartbeat.msg,sizeof(heartbeat.msg));
+			client.tcp.send_block(&heartbeat.name,sizeof(heartbeat.name));
 			if(client.tcp.error()){
 				// kick
-				std::string ip;
-				client.tcp.get_name(ip);
+				std::string ip=client.tcp.get_name();
 				std::cout<<client.name<<" has disconnected ("<<ip<<")"<<std::endl;
 				std::string msg=client.name+" has disconnected";
 				client.kick(*this);
@@ -218,8 +218,8 @@ void Match::recv_data(){
 		if(client.tcp.peek()>=SIZEOF_TO_SERVER_TCP){
 			to_server_tcp tstcp;
 
-			client.tcp.recv(&tstcp.type,sizeof(tstcp.type));
-			client.tcp.recv(&tstcp.msg,sizeof(tstcp.msg));
+			client.tcp.recv_block(&tstcp.type,sizeof(tstcp.type));
+			client.tcp.recv_block(&tstcp.msg,sizeof(tstcp.msg));
 			tstcp.msg[MSG_LIMIT]=0; // carefully
 
 			switch(tstcp.type){
@@ -237,16 +237,16 @@ void Match::recv_data(){
 					to_client_tcp tctcp;
 					memset(&tctcp,0,sizeof(tctcp));
 					uint32_t index;
-					client.tcp.recv(&index,sizeof(index));
+					client.tcp.recv_block(&index,sizeof(index));
 					index=ntohl(index);
 					if(index<client_list.size())
 						strncpy((char*)tctcp.name,client_list[index]->name.c_str(),MSG_LIMIT+1);
 					else
 						tctcp.name[0]=0;
 					tctcp.type=TYPE_SPECTATED_NAME;
-					client.tcp.send(&tctcp.type,sizeof(tctcp.type));
-					client.tcp.send(tctcp.msg,sizeof(tctcp.msg));
-					client.tcp.send(tctcp.name,sizeof(tctcp.name));
+					client.tcp.send_block(&tctcp.type,sizeof(tctcp.type));
+					client.tcp.send_block(tctcp.msg,sizeof(tctcp.msg));
+					client.tcp.send_block(tctcp.name,sizeof(tctcp.name));
 				}
 				break;
 			}
@@ -258,7 +258,7 @@ void Match::recv_data(){
 		to_server_heartbeat tsh;
 		memset(&tsh,0,sizeof(to_server_heartbeat));
 
-		udp_id id;
+		net::udp_id id;
 		udp.recv(&tsh.state,SIZEOF_TO_SERVER_HEARTBEAT,id);
 
 		// figure out which player sent this state update
@@ -314,9 +314,9 @@ void Match::send_chat(const std::string &m,const std::string &f){
 	for(std::vector<Client*>::iterator it=client_list.begin();it!=client_list.end();++it){
 		Client &client=**it;
 
-		client.tcp.send(&tctcp.type,sizeof(tctcp.type));
-		client.tcp.send(&tctcp.msg,sizeof(tctcp.msg));
-		client.tcp.send(&tctcp.name,sizeof(tctcp.name));
+		client.tcp.send_block(&tctcp.type,sizeof(tctcp.type));
+		client.tcp.send_block(&tctcp.msg,sizeof(tctcp.msg));
+		client.tcp.send_block(&tctcp.name,sizeof(tctcp.name));
 	}
 
 	// display the chat on stdout
@@ -348,10 +348,10 @@ int Match::get_client_index(int id)const{
 void Match::send_level_config(Client &client){
 	// send round id
 	uint32_t round_id_tmp=htonl(round_id);
-	client.tcp.send(&round_id_tmp,sizeof(round_id_tmp));
+	client.tcp.send_block(&round_id_tmp,sizeof(round_id_tmp));
 	// send backdrop index
 	uint32_t backdrop_index_tmp=htonl(backdrop_index);
-	client.tcp.send(&backdrop_index_tmp,sizeof(backdrop_index_tmp));
+	client.tcp.send_block(&backdrop_index_tmp,sizeof(backdrop_index_tmp));
 	// send platform
 	for(const Platform &platform:platform_list){
 		int32_t horiz=platform.horiz;
@@ -366,22 +366,22 @@ void Match::send_level_config(Client &client){
 		health=htonl(health);
 		seed=htonl(seed);
 
-		client.tcp.send(&horiz,sizeof(horiz));
-		client.tcp.send(&x,sizeof(x));
-		client.tcp.send(&y,sizeof(y));
-		client.tcp.send(&health,sizeof(health));
-		client.tcp.send(&seed,sizeof(seed));
+		client.tcp.send_block(&horiz,sizeof(horiz));
+		client.tcp.send_block(&x,sizeof(x));
+		client.tcp.send_block(&y,sizeof(y));
+		client.tcp.send_block(&health,sizeof(health));
+		client.tcp.send_block(&seed,sizeof(seed));
 	}
 
 	// mines
 	uint32_t count=htonl(mine_list.size());
-	client.tcp.send(&count,sizeof(count));
+	client.tcp.send_block(&count,sizeof(count));
 	for(const Mine &mine:mine_list){
 		uint32_t platform_index=htonl(mine.platform_index);
 		uint32_t armed=htonl(mine.armed);
 
-		client.tcp.send(&platform_index,sizeof(platform_index));
-		client.tcp.send(&armed,sizeof(armed));
+		client.tcp.send_block(&platform_index,sizeof(platform_index));
+		client.tcp.send_block(&armed,sizeof(armed));
 	}
 }
 
@@ -410,9 +410,9 @@ void Match::send_scoreboard(Client &client){
 	to_client_tcp tctcp;
 	memset(&tctcp,0,sizeof(tctcp));
 	tctcp.type=TYPE_SCOREBOARD;
-	client.tcp.send(&tctcp.type,sizeof(tctcp.type));
-	client.tcp.send(&tctcp.msg,sizeof(tctcp.msg));
-	client.tcp.send(&tctcp.name,sizeof(tctcp.name));
+	client.tcp.send_block(&tctcp.type,sizeof(tctcp.type));
+	client.tcp.send_block(&tctcp.msg,sizeof(tctcp.msg));
+	client.tcp.send_block(&tctcp.name,sizeof(tctcp.name));
 
 	// populate the scoreboard entries
 	std::vector<ScoreboardEntry> entries;
@@ -426,36 +426,36 @@ void Match::send_scoreboard(Client &client){
 	Match::scoreboard_sort(entries);
 
 	uint32_t count=htonl(client_list.size());
-	client.tcp.send(&count,sizeof(count));
+	client.tcp.send_block(&count,sizeof(count));
 	for(const ScoreboardEntry &e:entries){
 		// send name
 		char name[MSG_LIMIT+1];
 		strncpy(name,e.client->name.c_str(),MSG_LIMIT+1);
-		client.tcp.send(name,MSG_LIMIT+1);
+		client.tcp.send_block(name,MSG_LIMIT+1);
 
 		// send (boolean) currently dead
 		uint32_t dead=e.client->player.health<1;
-		client.tcp.send(&dead,sizeof(dead));
+		client.tcp.send_block(&dead,sizeof(dead));
 
 		// send match victories
 		uint32_t mv=htonl(e.client->stat.match_victories);
-		client.tcp.send(&mv,sizeof(mv));
+		client.tcp.send_block(&mv,sizeof(mv));
 
 		// send one-on-one victories
 		uint32_t ooo=htonl(e.client->stat.victories);
-		client.tcp.send(&ooo,sizeof(ooo));
+		client.tcp.send_block(&ooo,sizeof(ooo));
 
 		// send deaths
 		uint32_t d=htonl(e.client->stat.deaths);
-		client.tcp.send(&d,sizeof(d));
+		client.tcp.send_block(&d,sizeof(d));
 
 		// send points
 		uint32_t p=htonl(e.points);
-		client.tcp.send(&p,sizeof(p));
+		client.tcp.send_block(&p,sizeof(p));
 
 		// send client id
 		uint32_t id=htonl(e.client->id);
-		client.tcp.send(&id,sizeof(id));
+		client.tcp.send_block(&id,sizeof(id));
 	}
 }
 
@@ -521,9 +521,9 @@ void Match::ready_next_round(){
 	memset(&tctcp,0,sizeof(tctcp));
 	tctcp.type=TYPE_NEW_LEVEL;
 	for(Client *client:client_list){
-		client->tcp.send(&tctcp.type,sizeof(tctcp.type));
-		client->tcp.send(&tctcp.msg,sizeof(tctcp.msg));
-		client->tcp.send(&tctcp.name,sizeof(tctcp.name));
+		client->tcp.send_block(&tctcp.type,sizeof(tctcp.type));
+		client->tcp.send_block(&tctcp.msg,sizeof(tctcp.msg));
+		client->tcp.send_block(&tctcp.name,sizeof(tctcp.name));
 		send_level_config(*client);
 		// increment rounds_played
 		++client->stat.rounds_played;

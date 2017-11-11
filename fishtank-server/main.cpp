@@ -28,7 +28,7 @@ int main(){
 	signal(SIGPIPE,signal_handler);
 
 	Match match;
-	if(!match.setup()){
+	if(!match){
 		std::cout<<"error: couldn't bind to port "<<TCP_PORT<<" and/or port "<<UDP_PORT<<std::endl;
 		std::cout<<"make sure no other server is using ports "<<TCP_PORT<<" (TCP) and "<<UDP_PORT<<" (UDP)"<<std::endl;
 		return 1;

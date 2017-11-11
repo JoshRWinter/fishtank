@@ -22,15 +22,15 @@ struct area_bounds;
 #define KILLED_BY_DECOMPRESSION 4
 
 struct Client{
-	Client(int,const std::string&,const area_bounds&,const std::vector<Mine>&,int);
+	Client(net::tcp&&,const area_bounds&,const std::vector<Mine>&,int);
 	void kick(Match&);
 
-	socket_tcp tcp;
+	net::tcp tcp;
 	std::string name;
 	static int last_id;
 	int32_t id;
 	int32_t udp_secret;
-	udp_id udpid;
+	net::udp_id udpid;
 
 	// gameplay related
 	int colorid;
@@ -62,7 +62,7 @@ class Match{
 public:
 	Match();
 	~Match();
-	bool setup();
+	operator bool()const;
 	void accept_new_clients();
 	void player_summary(const Client &client)const;
 	void step();
@@ -86,8 +86,8 @@ public:
 	std::vector<Platform> platform_list;
 	std::vector<Airstrike*> airstrike_list;
 	std::vector<Mine> mine_list;
-	socket_tcp_server tcp;
-	socket_udp_server udp;
+	net::tcp_server tcp;
+	net::udp_server udp;
 	long long last_nano_time;
 	int win_timer;
 	bool sent_win_message;

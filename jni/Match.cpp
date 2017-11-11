@@ -11,9 +11,8 @@ Match::~Match(){
 
 void Match::initialize(State &state){
 	// setup the udp socket
-	std::string address;
-	tcp.get_name(address);
-	if(!udp.setup(address,UDP_PORT)){
+	std::string address=tcp.get_name();
+	if(!udp.target(address,UDP_PORT)){
 		logcat("error: could not setup udp socket");
 		tcp.close();
 		udp.close();
@@ -23,25 +22,25 @@ void Match::initialize(State &state){
 	// send the name
 	char name_tmp[MSG_LIMIT+1];
 	strncpy(name_tmp,state.name.c_str(),MSG_LIMIT+1);
-	tcp.send(name_tmp,MSG_LIMIT+1);
+	tcp.send_block(name_tmp,MSG_LIMIT+1);
 
 	// send the colorid
 	uint32_t colorid_tmp=htonl(state.colorid);
-	tcp.send(&colorid_tmp,sizeof(colorid_tmp));
+	tcp.send_block(&colorid_tmp,sizeof(colorid_tmp));
 
 	// get the udp secret
 	int32_t udp_secret_tmp;
-	tcp.recv(&udp_secret_tmp,4);
+	tcp.recv_block(&udp_secret_tmp,4);
 	udp_secret=ntohl(udp_secret_tmp);
 
 	// get the id
 	uint32_t id_tmp;
-	tcp.recv(&id_tmp,sizeof(id_tmp));
+	tcp.recv_block(&id_tmp,sizeof(id_tmp));
 	id=ntohl(id_tmp);
 
 	// get the player count
 	uint32_t count_tmp;
-	tcp.recv(&count_tmp,sizeof(count_tmp));
+	tcp.recv_block(&count_tmp,sizeof(count_tmp));
 	count_tmp=ntohl(count_tmp);
 
 	// get the level configuration
@@ -59,7 +58,7 @@ bool Match::connected(){
 	return !tcp.error();
 }
 
-socket_tcp &Match::get_tcp(){
+net::tcp &Match::get_tcp(){
 	return tcp;
 }
 
@@ -73,8 +72,8 @@ void Match::send_data(const State &state){
 	if(onein(30)){
 		to_server_tcp heartbeat;
 		heartbeat.type=TYPE_HEARTBEAT;
-		tcp.send(&heartbeat.type,sizeof(heartbeat.type));
-		tcp.send(&heartbeat.msg,sizeof(heartbeat.msg));
+		tcp.send_block(&heartbeat.type,sizeof(heartbeat.type));
+		tcp.send_block(&heartbeat.msg,sizeof(heartbeat.msg));
 		if(tcp.error()){
 			quit();
 			return;
@@ -102,9 +101,9 @@ void Match::recv_data(State &state){
 	if(tcp.peek()>=SIZEOF_TO_CLIENT_TCP){
 		to_client_tcp tctcp;
 
-		tcp.recv(&tctcp.type,sizeof(tctcp.type));
-		tcp.recv(&tctcp.msg,sizeof(tctcp.msg));
-		tcp.recv(&tctcp.name,sizeof(tctcp.name));
+		tcp.recv_block(&tctcp.type,sizeof(tctcp.type));
+		tcp.recv_block(&tctcp.msg,sizeof(tctcp.msg));
+		tcp.recv_block(&tctcp.name,sizeof(tctcp.name));
 
 		// carefully
 		tctcp.msg[MSG_EXTRA_LIMIT]=0;
@@ -136,7 +135,7 @@ void Match::recv_data(State &state){
 		case TYPE_KILLER_INDEX:
 			{
 				uint32_t killer_index;
-				tcp.recv(&killer_index,sizeof(killer_index));
+				tcp.recv_block(&killer_index,sizeof(killer_index));
 				spectate_index=ntohl(killer_index);
 				if(spectate_index==my_index)
 					cycle_spectate(state.player_list);
@@ -270,7 +269,7 @@ void Match::send_chat(const std::string &message){
 		return;
 	strcpy((char*)tstcp.msg,message.c_str());
 
-	tcp.send(&tstcp,sizeof(tstcp));
+	tcp.send_block(&tstcp,sizeof(tstcp));
 }
 
 void Match::request_spectate_name(int i){
@@ -278,10 +277,10 @@ void Match::request_spectate_name(int i){
 	to_server_tcp tstcp;
 	memset(&tstcp,0,sizeof(tstcp));
 	tstcp.type=TYPE_SPECTATED_NAME;
-	tcp.send(&tstcp.type,sizeof(tstcp.type));
-	tcp.send(&tstcp.msg,sizeof(tstcp.msg));
+	tcp.send_block(&tstcp.type,sizeof(tstcp.type));
+	tcp.send_block(&tstcp.msg,sizeof(tstcp.msg));
 	uint32_t index=htonl(i);
-	tcp.send(&index,sizeof(index));
+	tcp.send_block(&index,sizeof(index));
 }
 
 void Match::cycle_spectate(const std::vector<Player> &player_list){
@@ -322,12 +321,12 @@ void Match::get_level_config(State &state){
 
 	// get round id
 	uint32_t round_id_tmp;
-	tcp.recv(&round_id_tmp,sizeof(round_id_tmp));
+	tcp.recv_block(&round_id_tmp,sizeof(round_id_tmp));
 	round_id=ntohl(round_id_tmp);
 
 	// get backdrop index
 	uint32_t backdrop_index_tmp;
-	tcp.recv(&backdrop_index_tmp,sizeof(backdrop_index_tmp));
+	tcp.recv_block(&backdrop_index_tmp,sizeof(backdrop_index_tmp));
 	backdrop_index=ntohl(backdrop_index_tmp);
 
 	// get platforms
@@ -339,11 +338,11 @@ void Match::get_level_config(State &state){
 		int32_t health;
 		uint32_t seed;
 
-		tcp.recv(&horiz,sizeof(horiz));
-		tcp.recv(&x,sizeof(x));
-		tcp.recv(&y,sizeof(y));
-		tcp.recv(&health,sizeof(health));
-		tcp.recv(&seed,sizeof(seed));
+		tcp.recv_block(&horiz,sizeof(horiz));
+		tcp.recv_block(&x,sizeof(x));
+		tcp.recv_block(&y,sizeof(y));
+		tcp.recv_block(&health,sizeof(health));
+		tcp.recv_block(&seed,sizeof(seed));
 
 		horiz=ntohl(horiz);
 		x=ntohl(x);
@@ -359,13 +358,13 @@ void Match::get_level_config(State &state){
 	// get mines
 	state.mine_list.clear();
 	uint32_t count;
-	tcp.recv(&count,sizeof(count));
+	tcp.recv_block(&count,sizeof(count));
 	count=ntohl(count);
 	for(int i=0;i<count;++i){
 		uint32_t platform_index;
 		uint32_t armed;
-		tcp.recv(&platform_index,sizeof(platform_index));
-		tcp.recv(&armed,sizeof(armed));
+		tcp.recv_block(&platform_index,sizeof(platform_index));
+		tcp.recv_block(&armed,sizeof(armed));
 		platform_index=ntohl(platform_index);
 		armed=ntohl(armed);
 
@@ -389,15 +388,15 @@ void Match::request_scoreboard(){
 	to_server_tcp tstcp;
 	memset(&tstcp,0,sizeof(tstcp));
 	tstcp.type=TYPE_SCOREBOARD;
-	tcp.send(&tstcp.type,sizeof(tstcp.type));
-	tcp.send(&tstcp.msg,sizeof(tstcp.msg));
+	tcp.send_block(&tstcp.type,sizeof(tstcp.type));
+	tcp.send_block(&tstcp.msg,sizeof(tstcp.msg));
 }
 
 void Match::get_scoreboard(std::vector<stat> &stat_list){
 	int bytestr=0;
 	// get the count
 	uint32_t count;
-	tcp.recv(&count,sizeof(count));
+	tcp.recv_block(&count,sizeof(count));
 	count=ntohl(count);
 
 	stat_list.clear();
@@ -407,37 +406,37 @@ void Match::get_scoreboard(std::vector<stat> &stat_list){
 
 		// get the name
 		char name[MSG_LIMIT+1];
-		tcp.recv(name,MSG_LIMIT+1);
+		tcp.recv_block(name,MSG_LIMIT+1);
 		name[MSG_LIMIT]=0; // carefully
 
 		// get (boolean) currently dead
 		uint32_t dead;
-		tcp.recv(&dead,sizeof(dead));
+		tcp.recv_block(&dead,sizeof(dead));
 		dead=ntohl(dead);
 
 		// get the match victories
 		uint32_t mv;
-		tcp.recv(&mv,sizeof(mv));
+		tcp.recv_block(&mv,sizeof(mv));
 		mv=ntohl(mv);
 
 		// get the one-on-one-victories
 		uint32_t ooo;
-		tcp.recv(&ooo,sizeof(ooo));
+		tcp.recv_block(&ooo,sizeof(ooo));
 		ooo=ntohl(ooo);
 
 		// get the deaths
 		uint32_t d;
-		tcp.recv(&d,sizeof(d));
+		tcp.recv_block(&d,sizeof(d));
 		d=ntohl(d);
 
 		// get the points
 		uint32_t p;
-		tcp.recv(&p,sizeof(p));
+		tcp.recv_block(&p,sizeof(p));
 		p=ntohl(p);
 
 		// get the id
 		uint32_t id;
-		tcp.recv(&id,sizeof(id));
+		tcp.recv_block(&id,sizeof(id));
 		id=ntohl(id);
 
 		s.name=name;

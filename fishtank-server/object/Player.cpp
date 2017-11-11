@@ -259,11 +259,11 @@ void Player::process(Match &match){
 				to_client_tcp tctcp;
 				memset(&tctcp,0,sizeof(tctcp));
 				tctcp.type=TYPE_KILLER_INDEX;
-				client.tcp.send(&tctcp.type,sizeof(tctcp.type));
-				client.tcp.send(tctcp.msg,sizeof(tctcp.msg));
-				client.tcp.send(tctcp.name,sizeof(tctcp.name));
+				client.tcp.send_block(&tctcp.type,sizeof(tctcp.type));
+				client.tcp.send_block(tctcp.msg,sizeof(tctcp.msg));
+				client.tcp.send_block(tctcp.name,sizeof(tctcp.name));
 				uint32_t killer_index=htonl(match.get_client_index(client.killed_by_id));
-				client.tcp.send(&killer_index,sizeof(killer_index));
+				client.tcp.send_block(&killer_index,sizeof(killer_index));
 
 				// send a server message
 				switch(client.kill_reason){

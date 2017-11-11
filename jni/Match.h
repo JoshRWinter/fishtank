@@ -21,7 +21,7 @@ public:
 	void request_spectate_name(int);
 	int get_id();
 	int get_current_index()const; // returns index of current player viewing
-	socket_tcp &get_tcp();
+	net::tcp &get_tcp();
 
 	int my_index; // player's index into State::player_list
 	int round_id;
@@ -32,8 +32,8 @@ public:
 
 private:
 	int32_t udp_secret;
-	socket_tcp tcp;
-	socket_udp udp;
+	net::tcp tcp;
+	net::udp udp;
 	int id; // client id
 };
 

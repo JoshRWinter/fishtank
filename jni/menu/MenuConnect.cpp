@@ -5,17 +5,17 @@ bool MenuConnect::exec(State &state,const std::string &ip){
 	state.reset();
 	background.init_background(state.renderer);
 
-	socket_tcp &tcp=state.match.get_tcp();
+	net::tcp &tcp=state.match.get_tcp();
 	button_cancel.init(-BUTTON_WIDTH/2.0f,3.1f,"Cancel");
 	button_ready.init(-BUTTON_WIDTH/2.0f,3.1f,"Ready!");
 	address=ip;
 	connection_state=CONN_STATE_TRYING;
 	int initial_time=time(NULL);
-	if(!tcp.setup(ip,TCP_PORT)){
+	if(!tcp.target(ip,TCP_PORT)){
 		tcp.close();
 		connection_state=CONN_STATE_DEAD;
 	}
-	tcp.get_name(connected_address);
+	connected_address=tcp.get_name();
 
 	while(state.process()){
 		// recv network updates if connected
@@ -49,7 +49,7 @@ bool MenuConnect::exec(State &state,const std::string &ip){
 			if(result){
 				// see if the client is accepted
 				uint8_t accepted=0;
-				tcp.recv(&accepted,sizeof(uint8_t));
+				tcp.recv_block(&accepted,sizeof(uint8_t));
 				if(accepted){
 					connection_state=CONN_STATE_READY;
 					state.match.initialize(state);
