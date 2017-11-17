@@ -244,7 +244,7 @@ void State::render()const{
 	}
 	if(chat.size()>0&&timer_chatpane>0.0f&&!pause_menu){
 		glUniform4f(renderer.uniform.rgba,TEXT_COLOR,1.0f);
-		glBindTexture(GL_TEXTURE_2D,renderer.font.main->atlas);
+		glBindTexture(GL_TEXTURE_2D,renderer.font.button_small->atlas);
 
 		// draw the last 3 messages
 		int index=chat.size()-3;
@@ -253,8 +253,8 @@ void State::render()const{
 		float line=renderer.view.top+0.1f;
 		while(index<chat.size()){
 			std::string entry=chat[index].from+": "+chat[index].msg;
-			drawtext(renderer.font.main,renderer.view.left+0.1f,line,entry.c_str());
-			line+=0.6f;
+			drawtext(renderer.font.button_small,renderer.view.left+0.1f,line,entry.c_str());
+			line+=0.5f;
 			++index;
 		}
 	}
