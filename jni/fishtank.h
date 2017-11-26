@@ -214,6 +214,8 @@ struct State{
 		MenuMain main;
 		MenuConfig config;
 		MenuPlay play;
+		MenuBrowserConnect browser_connect;
+		MenuBrowser browser;
 		MenuConnect connect;
 		MenuInput input;
 		MenuPause pause;

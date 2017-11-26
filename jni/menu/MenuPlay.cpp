@@ -49,16 +49,8 @@ bool MenuPlay::exec(State &state){
 
 		// connect the player
 		if(button_connect.process(state.pointer)){
-			std::string addr=state.connect_to;
-			if(!state.menu.input.exec(state,"Connect to a server",&addr))
+			if(!state.menu.browser_connect.exec(state))
 				return false;
-			if(addr.length()>0){
-				state.connect_to=addr;
-				if(!state.menu.connect.exec(state,state.connect_to))
-					return false;
-				if(state.match.connected())
-					return true;
-			}
 		}
 
 		// choose a color

@@ -5,6 +5,12 @@ struct Renderer;
 struct State;
 struct Base;
 
+struct ServerConfig{
+	std::string ip;
+	std::string name;
+	std::string location;
+};
+
 struct Menu{
 	virtual void render(const Renderer&)const=0;
 };
@@ -74,6 +80,25 @@ struct MenuConnect{
 	Button button_cancel;
 	Button button_ready;
 	int connection_state;
+};
+
+struct MenuBrowserConnect{
+	bool exec(State&);
+	virtual void render(const Renderer&)const;
+
+	UIBase background;
+	std::vector<ServerConfig> servers;
+	Button cancel;
+};
+
+// server browser
+struct MenuBrowser{
+	bool exec(State&, const std::vector<ServerConfig>&);
+	virtual void render(const Renderer&)const;
+
+	UIBase background;
+	const std::vector<ServerConfig> *list;
+	Button cancel, direct;
 };
 
 struct MenuPause{

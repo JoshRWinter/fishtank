@@ -1,9 +1,6 @@
 #ifndef FISHTANK_SERVER_H
 #define FISHTANK_SERVER_H
 
-#define MASTER "192.168.1.11"
-#define MASTER_PORT 28860
-
 // ANSI color codes
 #ifdef _WIN32
 #define ANSI_CYAN ""
