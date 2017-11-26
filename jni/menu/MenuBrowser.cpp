@@ -60,6 +60,16 @@ bool MenuBrowser::exec(State &state, const std::vector<ServerConfig> &servers){
 
 		// connect the player
 		if(direct.process(state.pointer)){
+			std::string addr = state.connect_to;
+			if(!state.menu.input.exec(state, "Connect to a server", &addr))
+				return false;
+			if(addr.length() > 0){
+				state.connect_to = addr;
+				if(!state.menu.connect.exec(state, state.connect_to))
+					return false;
+				if(state.match.connected())
+					return true;
+			}
 		}
 
 		// cancel
