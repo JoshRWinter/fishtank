@@ -34,7 +34,7 @@ bool MenuBrowser::exec(State &state, const std::vector<ServerConfig> &servers){
 			}
 			else{
 				scrolly = state.pointer[0].y - anchor;
-				if(fabsf(trueanchor - state.pointer[0].y) > 0.5f){
+				if(fabsf(trueanchor - state.pointer[0].y) > 0.1f){
 					tapzone = false;
 				}
 			}
