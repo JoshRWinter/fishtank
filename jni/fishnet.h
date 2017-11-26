@@ -6,7 +6,7 @@
 #define TCP_PORT 28856
 #define UDP_PORT 28857
 
-#define MASTER "192.168.1.11"
+#define MASTER "192.168.1.55"
 #define MASTER_PORT 28860
 
 #define MAX_PLAYERS 6
