@@ -6,6 +6,8 @@
 
 std::atomic<bool> run;
 
+static std::string register_master();
+
 int ctrl_c_count=0; // only accessed by signal_handler
 #ifdef _WIN32
 BOOL WINAPI handler(DWORD signal){
@@ -37,6 +39,7 @@ int main(){
 	srand(time(NULL));
 	run.store(true);
 
+	// signal handlers
 #ifdef _WIN32
 	SetConsoleCtrlHandler(handler, TRUE);
 #else
@@ -44,6 +47,13 @@ int main(){
 	signal(SIGTERM,signal_handler);
 	signal(SIGPIPE,signal_handler);
 #endif // _WIN32
+
+	// register on the master server
+	const std::string reason = register_master();
+	if(reason.length() != 0)
+		std::cout << "Master Server registration failed: " << reason << std::endl;
+	else
+		std::cout << "Master Server registration successful." << std::endl;
 
 	Match match;
 	if(!match){
@@ -64,6 +74,54 @@ int main(){
 
 	puts("\ngoodbye");
 	return 0;
+}
+
+static void send_string(net::tcp &tcp, const std::string &str){
+	const std::uint32_t count = str.length();
+
+	tcp.send_block(&count, sizeof(count));
+	tcp.send_block(str.c_str(), count);
+}
+
+static std::string get_string(net::tcp &tcp){
+	std::uint32_t count;
+
+	tcp.recv_block(&count, sizeof(count));
+	std::vector<char> data(count + 1);
+
+	tcp.recv_block(&data[0], count);
+	data[count] = 0;
+
+	return {&data[0]};
+}
+
+std::string register_master(){
+	net::tcp tcp(MASTER, MASTER_PORT);
+
+	if(!tcp.connect(5))
+		return "Could not connect to " MASTER;
+
+	// tell the master server that this is a registration attempt
+	const std::uint8_t type = 1;
+	tcp.send_block(&type, sizeof(type));
+
+	send_string(tcp, "coolio julio");
+	send_string(tcp, "low earth orbit");
+
+	// get result
+	std::uint8_t success;
+	tcp.recv_block(&success, sizeof(success));
+
+	std::string reason;
+	if(success == 0){
+		// get reason
+		reason = get_string(tcp);
+	}
+
+	if(tcp.error())
+		return "A network error ocurred.";
+
+	return reason;
 }
 
 #ifndef _WIN32
