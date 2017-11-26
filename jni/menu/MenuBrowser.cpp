@@ -98,7 +98,7 @@ void MenuBrowser::render(const Renderer &renderer)const{
 	drawtextcentered(renderer.font.main,0.0f,-3.75f,header);
 
 	// list
-	float yoff = -2.0f + scrolly;
+	float yoff = -2.8f + scrolly;
 	for(const ServerConfig &server:*list){
 		UIBase selector;
 		selector.w = 15.5f;
