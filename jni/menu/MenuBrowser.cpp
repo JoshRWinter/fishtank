@@ -15,7 +15,7 @@ bool MenuBrowser::exec(State &state, const std::vector<ServerConfig> &servers){
 	background.frame=0;
 	background.count=1;
 
-	direct.init(-6.2f,3.1f,"Connect To");
+	direct.init(-BUTTON_WIDTH - 0.15f,3.1f,"Connect To");
 	cancel.init(direct.x+BUTTON_WIDTH+0.3f,3.1f,"Cancel");
 
 	anchor = 0.0f;
