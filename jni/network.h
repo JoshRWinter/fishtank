@@ -42,6 +42,7 @@ public:
 	tcp(tcp&&);
 	~tcp();
 	tcp &operator=(const tcp&)=delete;
+	tcp &operator=(tcp&&);
 	operator bool()const;
 	bool target(const std::string &address,unsigned short);
 	bool connect();
@@ -54,6 +55,7 @@ public:
 	void close();
 	bool error()const;
 	const std::string &get_name()const;
+	int release();
 
 private:
 	void set_blocking(bool);

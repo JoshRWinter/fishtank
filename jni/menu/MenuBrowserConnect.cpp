@@ -96,7 +96,9 @@ bool MenuBrowserConnect::exec(State &state){
 			std::string ip = get_string(tcp);
 			std::string name = get_string(tcp);
 			std::string location = get_string(tcp);
-			servers.push_back({ip, name, location});
+			uint8_t count = 0;
+			tcp.recv_block(&count, sizeof(count));
+			servers.push_back({ip, name, location, count});
 			break;
 		}
 		}

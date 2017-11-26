@@ -14,6 +14,9 @@
 std::atomic<bool> run;
 
 static std::string register_master();
+static void send_heartbeat(const Match &match);
+static net::tcp master;
+static bool registered = false;
 
 int ctrl_c_count=0; // only accessed by signal_handler
 #ifdef _WIN32
@@ -72,6 +75,8 @@ int main(){
 	std::cout<<"[ready on tcp:"<<TCP_PORT<<" udp:"<<UDP_PORT<<"]"<<std::endl;
 
 	while(run.load()){
+		send_heartbeat(match);
+
 		match.accept_new_clients();
 
 		match.step();
@@ -158,6 +163,7 @@ static ServerConfig get_server_config(){
 	return {name, location};
 }
 
+// attempt to register this server on the fishtank master server
 std::string register_master(){
 	ServerConfig sc = get_server_config();
 	net::tcp tcp(MASTER, MASTER_PORT);
@@ -172,37 +178,70 @@ std::string register_master(){
 	send_string(tcp, sc.name);
 	send_string(tcp, sc.location);
 
-	tcp.close();
-	net::tcp_server listener(UDP_PORT);
-	if(!listener)
-		return "Could not bind to port " + std::to_string(UDP_PORT);
+	// master server connectback test
+	{
+		net::tcp_server listener(TCP_PORT);
+		if(!listener)
+			return "Could not bind to port " + std::to_string(TCP_PORT);
 
-	const int start = time(NULL);
-	int sock = -1;
-	while(sock == -1 && time(NULL) - start < 4){
-		sock = listener.accept();
+		const int start = time(NULL);
+		int sock = -1;
+		while(sock == -1 && time(NULL) - start < 4){
+			sock = listener.accept();
+		}
+		if(sock == -1)
+			return "Could not receive connectback from server.\nCheck your network "
+			"configuration and make sure the proper ports are forwarded through your router and firewall.";
+		net::tcp tcp2(sock);
+		if(!tcp2)
+			return "Could not create listener socket";
+
+		uint8_t test = 0;
+		tcp2.recv_block(&test, sizeof(test));
+		if(test != 1)
+			return "connectback test failed, received " + std::to_string(test) + " instead of 1";
 	}
-	if(sock == -1)
-		return "Could not receive connectback from server.\nCheck your network "
-		"configuration and make sure the proper ports are forwarded through your router and firewall.";
-	net::tcp tcp2(sock);
-	if(!tcp2)
-		return "Could not create listener socket";
 
 	// get result
 	std::uint8_t success;
-	tcp2.recv_block(&success, sizeof(success));
+	tcp.recv_block(&success, sizeof(success));
 
 	std::string reason;
 	if(success == 0){
 		// get reason
-		reason = get_string(tcp2);
+		reason = get_string(tcp);
 	}
 
-	if(tcp2.error())
+	if(tcp.error())
 		return "A network error ocurred.";
 
+	master = std::move(tcp);
+	registered = true;
+
 	return reason;
+}
+
+// send a heartbeat to the master server to let it know i am still connected
+#define MASTER_HEARTBEAT_FREQUENCY 7 // seconds
+void send_heartbeat(const Match &match){
+	if(!registered)
+		return;
+
+	static int last = 0;
+
+	const int current = time(NULL);
+	if(current - last > MASTER_HEARTBEAT_FREQUENCY){
+		last = current;
+
+		// send heartbeat
+		uint8_t count = match.client_list.size();
+		master.send_block(&count, sizeof(count));
+
+		if(master.error()){
+			registered = false;
+			std::cout << ANSI_RED << "Error:" << ANSI_RESET << " lost connection to master server."<<std::endl;
+		}
+	}
 }
 
 #ifndef _WIN32

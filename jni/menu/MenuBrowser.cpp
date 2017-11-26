@@ -121,6 +121,9 @@ void MenuBrowser::render(const Renderer &renderer)const{
 		drawtext(renderer.font.button, renderer.view.left + 0.4f, yoff + 0.5f, loc.c_str());
 		const std::string ip = "IP Address: " + server.ip;
 		drawtext(renderer.font.button, renderer.view.left + 0.4f, yoff + 1.0f, ip.c_str());
+		char count[15] = "";
+		sprintf(count, "(%d/%d)", (int)server.count, MAX_PLAYERS);
+		drawtext(renderer.font.button, renderer.view.right - 2.0f, yoff + 0.5f, count);
 
 		yoff += selector.h + 0.1f;
 

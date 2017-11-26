@@ -6,9 +6,16 @@ struct State;
 struct Base;
 
 struct ServerConfig{
+	ServerConfig(const std::string &i, const std::string &n, const std::string &loc, int c)
+	:ip(i)
+	,name(n)
+	,location(loc)
+	,count(c){}
+
 	std::string ip;
 	std::string name;
 	std::string location;
+	int count;
 };
 
 struct Menu{

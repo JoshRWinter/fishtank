@@ -160,6 +160,23 @@ net::tcp::~tcp(){
 	this->close();
 }
 
+// move assignment
+net::tcp &net::tcp::operator=(net::tcp &&rhs){
+	this->close();
+
+	sock = rhs.sock;
+	name = rhs.name;
+	ai = rhs.ai;
+	blocking = rhs.blocking;
+
+	rhs.sock = -1;
+	rhs.name = "N/A";
+	rhs.ai = NULL;
+	rhs.blocking = true;
+
+	return *this;
+}
+
 net::tcp::operator bool()const{
 	return !error();
 }
@@ -365,6 +382,15 @@ bool net::tcp::error()const{
 // getter for socket name
 const std::string &net::tcp::get_name()const{
 	return name;
+}
+
+int net::tcp::release(){
+	int temp = sock;
+	sock = -1;
+
+	this->close();
+
+	return temp;
 }
 
 // cleanup
