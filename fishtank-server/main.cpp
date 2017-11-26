@@ -172,17 +172,34 @@ std::string register_master(){
 	send_string(tcp, sc.name);
 	send_string(tcp, sc.location);
 
+	tcp.close();
+	net::tcp_server listener(UDP_PORT);
+	if(!listener)
+		return "Could not bind to port " + std::to_string(UDP_PORT);
+
+	const int start = time(NULL);
+	int sock = -1;
+	while(sock == -1 && time(NULL) - start < 4){
+		sock = listener.accept();
+	}
+	if(sock == -1)
+		return "Could not receive connectback from server.\nCheck your network "
+		"configuration and make sure the proper ports are forwarded through your router and firewall.";
+	net::tcp tcp2(sock);
+	if(!tcp2)
+		return "Could not create listener socket";
+
 	// get result
 	std::uint8_t success;
-	tcp.recv_block(&success, sizeof(success));
+	tcp2.recv_block(&success, sizeof(success));
 
 	std::string reason;
 	if(success == 0){
 		// get reason
-		reason = get_string(tcp);
+		reason = get_string(tcp2);
 	}
 
-	if(tcp.error())
+	if(tcp2.error())
 		return "A network error ocurred.";
 
 	return reason;
