@@ -39,6 +39,11 @@ struct area_bounds;
 #define KILLED_BY_MINE 3
 #define KILLED_BY_DECOMPRESSION 4
 
+struct ServerConfig{
+	std::string name;
+	std::string location;
+};
+
 struct Client{
 	Client(int,const area_bounds&,const std::vector<Mine>&,int);
 	void kick(Match&);

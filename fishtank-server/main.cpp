@@ -1,6 +1,13 @@
 #include <atomic>
 #include <signal.h>
 #include <time.h>
+#include <fstream>
+
+#ifdef _WIN32
+#include <windows.h>
+#else
+#include <wordexp.h>
+#endif // _WIN32
 
 #include "fishtank-server.h"
 
@@ -95,7 +102,64 @@ static std::string get_string(net::tcp &tcp){
 	return {&data[0]};
 }
 
+static std::string get_config_path(){
+#ifdef _WIN32
+	const std::string path = "%userprofile%\\fishtank-server.config";
+	char expanded[MAX_PATH + 1] = "(INVALID PATH)";
+	ExpandEnvironmentStrings(path.c_str(), expanded, MAX_PATH);
+	return expanded;
+#else
+	const std::string path = "~/.fishtank-server-config";
+	wordexp_t p;
+	wordexp(path.c_str(), &p, 0);
+	std::string expanded = p.we_wordv[0];
+	wordfree(&p);
+	return expanded;
+#endif // _WIN32
+}
+
+static ServerConfig generate_server_config(){
+	std::cout << "[First Time Setup]\nServer Name: " << std::flush;
+	std::string name;
+	std::getline(std::cin, name);
+	std::cout << "Location (e.g. Northern California): " << std::flush;
+	std::string location;
+	std::getline(std::cin, location);
+
+	const std::string path = get_config_path();
+	std::ofstream out(path);
+	if(!out)
+		return {name, location};
+
+	out << name << std::endl;
+	out << location << std::endl;
+
+	std::cout << "written to \"" << path << "\"" << std::endl;
+
+	return {name, location};
+}
+
+static ServerConfig get_server_config(){
+	const std::string path = get_config_path();
+	std::ifstream in(path);
+	if(!in){
+		std::cout << "Couldn't open config at \"" << path << "\"" << std::endl;
+		return generate_server_config();
+	}
+
+	std::string ip, name, location;
+
+	std::getline(in, name);
+	std::getline(in, location);
+
+	std::cout << "Name: " << name << std::endl;
+	std::cout << "Location: " << location << std::endl;
+
+	return {name, location};
+}
+
 std::string register_master(){
+	ServerConfig sc = get_server_config();
 	net::tcp tcp(MASTER, MASTER_PORT);
 
 	if(!tcp.connect(5))
@@ -105,8 +169,8 @@ std::string register_master(){
 	const std::uint8_t type = 1;
 	tcp.send_block(&type, sizeof(type));
 
-	send_string(tcp, "coolio julio");
-	send_string(tcp, "low earth orbit");
+	send_string(tcp, sc.name);
+	send_string(tcp, sc.location);
 
 	// get result
 	std::uint8_t success;
