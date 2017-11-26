@@ -3,9 +3,7 @@
 #include <time.h>
 #include <fstream>
 
-#ifdef _WIN32
-#include <windows.h>
-#else
+#ifndef _WIN32
 #include <wordexp.h>
 #endif // _WIN32
 
