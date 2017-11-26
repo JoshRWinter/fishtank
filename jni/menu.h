@@ -96,6 +96,11 @@ struct MenuBrowser{
 	bool exec(State&, const std::vector<ServerConfig>&);
 	virtual void render(const Renderer&)const;
 
+	float anchor, trueanchor;
+	bool touching;
+	float scrolly;
+	bool tapzone;
+
 	UIBase background;
 	const std::vector<ServerConfig> *list;
 	Button cancel, direct;

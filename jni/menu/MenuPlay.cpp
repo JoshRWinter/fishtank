@@ -51,6 +51,8 @@ bool MenuPlay::exec(State &state){
 		if(button_connect.process(state.pointer)){
 			if(!state.menu.browser_connect.exec(state))
 				return false;
+			if(state.match.connected())
+				return true;
 		}
 
 		// choose a color

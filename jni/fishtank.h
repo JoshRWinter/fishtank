@@ -69,6 +69,7 @@ struct stat;
 #define UITID_BUTTON_AS 11
 #define UITID_SKULL 12
 #define UITID_HIGHLIGHT 13
+#define UITID_SERVER 14
 
 // gameplay atlas
 #define AID_ARTILLERY 0

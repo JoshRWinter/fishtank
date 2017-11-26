@@ -62,8 +62,11 @@ bool MenuBrowserConnect::exec(State &state){
 	uint64_t servercount = 0;
 
 	while(state.process()){
-		if(time(NULL) - current > TIMEOUT)
-			return true;
+		if(time(NULL) - current > TIMEOUT){
+			if(!state.menu.message.exec(state, "You may still try a \"Direct Connect\"","Could not retrieve Server Listing"))
+				return false;
+			return state.menu.browser.exec(state, std::vector<ServerConfig>());
+		}
 
 		// network
 		switch(conn){
@@ -82,16 +85,12 @@ bool MenuBrowserConnect::exec(State &state){
 			if(!recv_net(tcp, &servercount, sizeof(servercount)))
 				return true;
 			else
-				logcat("received %llu count", servercount);
-			conn = connstate::RECV;
+				conn = connstate::RECV;
 			break;
 		}
 		case connstate::RECV:
 		{
 			if(servercount-- == 0){
-				for(const ServerConfig &config:servers){
-					logcat("name: %s, location: %s, ip: %s", config.name.c_str(), config.location.c_str(), config.ip.c_str());
-				}
 				return state.menu.browser.exec(state, servers);
 			}
 			std::string ip = get_string(tcp);
@@ -104,8 +103,8 @@ bool MenuBrowserConnect::exec(State &state){
 
 		// cancel
 		if(cancel.process(state.pointer)||state.back){
-			state.back=false;
-			return true;
+			state.back = false;
+			return state.menu.browser.exec(state, std::vector<ServerConfig>());
 		}
 
 		render(state.renderer);
