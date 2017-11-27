@@ -229,9 +229,10 @@ bool net::tcp::connect(){
 
 	bool result=::connect(sock,ai->ai_addr,ai->ai_addrlen)==0;
 #ifdef _WIN32
-	const bool connecterr = WSAGetLastError() == WSAEALREADY || WSAGetLastError() == WSAEINVAL;
+	const auto last = WSAGetLastError();
+	const bool connecterr = last == WSAEALREADY || last == WSAEINVAL || last == WSAEISCONN;
 #else
-	const bool connecterr = errno == EALREADY;
+	const bool connecterr = errno == EALREADY || errno == EISCONN;
 #endif // _WIN32
 	if(!result && connecterr)
 		result = writeable();
@@ -257,6 +258,14 @@ bool net::tcp::connect(int seconds){
 	const int start=time(NULL);
 	do{
 		result=::connect(sock,ai->ai_addr,ai->ai_addrlen)==0;
+#ifdef _WIN32
+		const auto last = WSAGetLastError();
+		const bool connecterr = last == WSAEALREADY || last == WSAEINVAL || last == WSAEISCONN;
+#else
+		const bool connecterr = errno == EALREADY || errno == EISCONN;
+#endif // _WIN32
+		if(!result && connecterr)
+			result = writeable();
 		if(result)
 			break;
 
