@@ -145,10 +145,8 @@ static ServerConfig generate_server_config(){
 static ServerConfig get_server_config(){
 	const std::string path = get_config_path();
 	std::ifstream in(path);
-	if(!in){
-		std::cout << "Couldn't open config at \"" << path << "\"" << std::endl;
+	if(!in)
 		return generate_server_config();
-	}
 
 	std::string ip, name, location;
 
