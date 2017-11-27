@@ -218,7 +218,7 @@ std::string register_master(){
 }
 
 // send a heartbeat to the master server to let it know i am still connected
-#define MASTER_HEARTBEAT_FREQUENCY 7 // seconds
+#define MASTER_HEARTBEAT_FREQUENCY 16 // seconds
 void send_heartbeat(const Match &match){
 	if(!registered)
 		return;
