@@ -137,8 +137,9 @@ net::tcp::tcp(int socket){
 
 // regular constructor
 net::tcp::tcp(const std::string &address,unsigned short port){
+	init();
 	if(!target(address,port)){
-		init();
+		close();
 	}
 }
 
@@ -183,7 +184,7 @@ net::tcp::operator bool()const{
 
 // attempt to connect to <address> on <port>, fills <name> with canonical name of <address>, returns true on success
 bool net::tcp::target(const std::string &address,unsigned short port){
-	init();
+	close();
 
 	addrinfo hints;
 
@@ -227,6 +228,13 @@ bool net::tcp::connect(){
 	set_blocking(false);
 
 	bool result=::connect(sock,ai->ai_addr,ai->ai_addrlen)==0;
+#ifdef _WIN32
+	const bool connecterr = WSAGetLastError() == WSAEALREADY || WSAGetLastError() == WSAEINVAL;
+#else
+	const bool connecterr = errno == EALREADY;
+#endif // _WIN32
+	if(!result && connecterr)
+		result = writeable();
 
 	// back to blocking
 	if(result)
@@ -441,6 +449,24 @@ void net::tcp::init(){
 	name="N/A";
 	ai=NULL;
 	blocking=true;
+}
+
+bool net::tcp::writeable(){
+	if(sock == -1)
+		return false;
+
+	fd_set set;
+	timeval tv;
+
+	FD_ZERO(&set);
+	FD_SET(sock, &set);
+	tv.tv_sec = tv.tv_usec = 0;
+
+	int rc = select(sock + 1, NULL, &set, NULL, &tv);
+	if(rc < 0)
+		return false;
+
+	return FD_ISSET(sock, &set) != 0;
 }
 
 /* ------------------------------------------- */
