@@ -60,7 +60,7 @@ public:
 private:
 	void set_blocking(bool);
 	void init();
-	bool writeable();
+	bool writable();
 
 	int sock;
 	std::string name;

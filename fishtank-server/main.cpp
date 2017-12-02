@@ -9,14 +9,12 @@
 
 #include "fishtank-server.h"
 
-std::atomic<bool> run;
+static std::atomic<bool> run;
 
-static std::string register_master();
-static void send_heartbeat(const Match &match);
-static net::tcp master;
-static bool registered = false;
+static std::string register_master(net::tcp&);
+static bool send_heartbeat(net::tcp&, const Match &match);
 
-int ctrl_c_count=0; // only accessed by signal_handler
+static int ctrl_c_count=0; // only accessed by signal_handler
 #ifdef _WIN32
 BOOL WINAPI handler(DWORD signal){
 	if(signal==CTRL_C_EVENT){
@@ -57,7 +55,9 @@ int main(){
 #endif // _WIN32
 
 	// register on the master server
-	const std::string reason = register_master();
+	net::tcp master; // master tcp connection
+	const std::string reason = register_master(master);
+	bool registered = reason.length() == 0;
 	if(reason.length() != 0)
 		std::cout << "Master Server registration failed: " << reason << std::endl;
 	else
@@ -73,7 +73,8 @@ int main(){
 	std::cout<<"[ready on tcp:"<<TCP_PORT<<" udp:"<<UDP_PORT<<"]"<<std::endl;
 
 	while(run.load()){
-		send_heartbeat(match);
+		if(registered)
+			registered = send_heartbeat(master, match);
 
 		match.accept_new_clients();
 
@@ -160,19 +161,19 @@ static ServerConfig get_server_config(){
 }
 
 // attempt to register this server on the fishtank master server
-std::string register_master(){
+std::string register_master(net::tcp &master){
 	ServerConfig sc = get_server_config();
-	net::tcp tcp(MASTER, MASTER_PORT);
+	master.target(MASTER, MASTER_PORT);
 
-	if(!tcp.connect(5))
+	if(!master.connect(5))
 		return "Could not connect to " MASTER;
 
 	// tell the master server that this is a registration attempt
 	const std::uint8_t type = 1;
-	tcp.send_block(&type, sizeof(type));
+	master.send_block(&type, sizeof(type));
 
-	send_string(tcp, sc.name);
-	send_string(tcp, sc.location);
+	send_string(master, sc.name);
+	send_string(master, sc.location);
 
 	// master server connectback test
 	{
@@ -200,29 +201,23 @@ std::string register_master(){
 
 	// get result
 	std::uint8_t success;
-	tcp.recv_block(&success, sizeof(success));
+	master.recv_block(&success, sizeof(success));
 
 	std::string reason;
 	if(success == 0){
 		// get reason
-		reason = get_string(tcp);
+		reason = get_string(master);
 	}
 
-	if(tcp.error())
+	if(master.error())
 		return "A network error ocurred.";
-
-	master = std::move(tcp);
-	registered = true;
 
 	return reason;
 }
 
 // send a heartbeat to the master server to let it know i am still connected
 #define MASTER_HEARTBEAT_FREQUENCY 16 // seconds
-void send_heartbeat(const Match &match){
-	if(!registered)
-		return;
-
+bool send_heartbeat(net::tcp &master, const Match &match){
 	static int last = 0;
 
 	const int current = time(NULL);
@@ -234,10 +229,12 @@ void send_heartbeat(const Match &match){
 		master.send_block(&count, sizeof(count));
 
 		if(master.error()){
-			registered = false;
 			std::cout << ANSI_RED << "Error:" << ANSI_RESET << " lost connection to master server."<<std::endl;
+			return false;
 		}
 	}
+
+	return true;
 }
 
 #ifndef _WIN32

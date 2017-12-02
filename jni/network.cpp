@@ -230,12 +230,16 @@ bool net::tcp::connect(){
 	bool result=::connect(sock,ai->ai_addr,ai->ai_addrlen)==0;
 #ifdef _WIN32
 	const auto last = WSAGetLastError();
+	if(last == WSAECONNREFUSED)
+		return false;
 	const bool connecterr = last == WSAEALREADY || last == WSAEINVAL || last == WSAEISCONN;
 #else
+	if(errno == ECONNREFUSED)
+		return false;
 	const bool connecterr = errno == EALREADY || errno == EISCONN;
 #endif // _WIN32
 	if(!result && connecterr)
-		result = writeable();
+		result = writable();
 
 	// back to blocking
 	if(result)
@@ -258,14 +262,20 @@ bool net::tcp::connect(int seconds){
 	const int start=time(NULL);
 	do{
 		result=::connect(sock,ai->ai_addr,ai->ai_addrlen)==0;
+		if(errno == ECONNREFUSED)
+			break;
 #ifdef _WIN32
 		const auto last = WSAGetLastError();
+		if(last == WSAECONNREFUSED)
+			break;
 		const bool connecterr = last == WSAEALREADY || last == WSAEINVAL || last == WSAEISCONN;
 #else
+		if(errno == ECONNREFUSED)
+			break;
 		const bool connecterr = errno == EALREADY || errno == EISCONN;
 #endif // _WIN32
 		if(!result && connecterr)
-			result = writeable();
+			result = writable();
 		if(result)
 			break;
 
@@ -460,7 +470,7 @@ void net::tcp::init(){
 	blocking=true;
 }
 
-bool net::tcp::writeable(){
+bool net::tcp::writable(){
 	if(sock == -1)
 		return false;
 
