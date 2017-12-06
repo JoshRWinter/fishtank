@@ -20,7 +20,6 @@ struct Beacon:Base{
 	float rot;
 	float rotv;
 	float xv,yv;
-	float ttl;
 };
 #define PLAYER_X_SPEED 0.03f
 #define PLAYER_Y_SPEED 0.1f
@@ -40,7 +39,6 @@ struct Player:Base{
 	int timer_fire;
 	float angle; // angle of the turret
 	float xv,yv;
-
 };
 
 #define SHELL_DMG 61,80

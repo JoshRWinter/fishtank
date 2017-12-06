@@ -308,6 +308,8 @@ void Beacon::reset(){
 	y=FLOOR+10.0f;
 	xv=0.0f;
 	yv=0.0f;
+	rot=0.0f;
+	rotv=0.0f;
 }
 
 void Beacon::fire(const Client &client){
