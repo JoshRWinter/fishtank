@@ -473,6 +473,9 @@ bool State::read_config(){
 }
 
 void State::write_config(){
+	if(colorid < COLOR_RED || colorid > COLOR_PURPLE)
+		colorid = COLOR_RED;
+
 	FILE *file=fopen(DATAPATH"/00","wb");
 	if(!file){
 		logcat("could not open " DATAPATH "/00 for writing");
