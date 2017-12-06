@@ -95,12 +95,12 @@ void Platform::update(const std::vector<Platform> &platform_list){
 	Platform::platform_status[0]=0;
 	Platform::platform_status[1]=0;
 	// pack all platform health status 1=alive 0=dead into uint32_t Platform::platform_status
-	for(int i=0;i<32&&i<platform_list.size();++i){
+	for(unsigned i=0;i<32&&i<platform_list.size();++i){
 		uint32_t status=platform_list[i].health>0;
 
 		Platform::platform_status[0]|=status<<i;
 	}
-	for(int i=0;i<32&&i<platform_list.size();++i){
+	for(unsigned i=0;i<32&&i<platform_list.size();++i){
 		uint32_t status=platform_list[i+32].health>0;
 
 		Platform::platform_status[1]|=status<<i;

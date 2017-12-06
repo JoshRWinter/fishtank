@@ -303,13 +303,13 @@ void Match::send_chat(const std::string &m,const std::string &f){
 
 	// truncate "msg" to MSG_EXTRA_LIMIT chars
 	if(msg.length()>MSG_EXTRA_LIMIT){
-		for(int i=MSG_EXTRA_LIMIT;i<msg.length();++i)
+		for(unsigned i=MSG_EXTRA_LIMIT;i<msg.length();++i)
 			msg.erase(i);
 	}
 
 	// truncate "from" to MSG_LIMIT chars
 	if(from.length()>MSG_LIMIT){
-		for(int i=MSG_LIMIT;i<from.length();++i)
+		for(unsigned i=MSG_LIMIT;i<from.length();++i)
 			from.erase(i);
 	}
 
@@ -402,7 +402,7 @@ int Match::get_score(const Client &c){
 // descending order
 void Match::scoreboard_sort(std::vector<ScoreboardEntry> &entries){
 	// the allmighty insertion sort
-	for(int i=1;i<entries.size();++i){
+	for(unsigned i=1;i<entries.size();++i){
 		int j=i;
 		while(j>0&&entries[j-1].points<entries[j].points){
 			ScoreboardEntry tmp=entries[j];

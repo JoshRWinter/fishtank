@@ -1,6 +1,6 @@
 #include "../fishtank-server.h"
 
-Shell::Shell(const Match &match,Client &client,float firepower):owner(client),power(firepower){
+Shell::Shell(const Match &match,Client &client,float firepower):power(firepower),owner(client){
 	w=SHELL_WIDTH;
 	h=SHELL_HEIGHT;
 	float turretx=client.player.x+(PLAYER_WIDTH/2.0f)-(TURRET_WIDTH/2.0f);
