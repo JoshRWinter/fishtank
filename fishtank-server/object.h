@@ -105,4 +105,14 @@ struct Mine:Base{
 	float yv;
 };
 
+#define GRASS_TYPES 1
+struct Grass{
+	Grass(int);
+	static void generate(std::vector<Grass>&,const std::vector<Platform>&);
+
+	int platform_index;
+	int type;
+	float xoffset;
+};
+
 #endif // OBJECT_H

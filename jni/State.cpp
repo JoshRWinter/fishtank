@@ -53,6 +53,9 @@ bool State::core(){
 	// process dead fish
 	DeadFish::process(*this);
 
+	// process grass
+	Grass::process(grass_list);
+
 	// process server messages
 	if(announcement.size()>0){
 		if(announcement.size()==1)
@@ -166,6 +169,9 @@ void State::render()const{
 
 	// draw particle platforms
 	ParticlePlatform::render(renderer,particle_platform_list);
+
+	// draw grass
+	Grass::render(renderer,grass_list);
 
 	// draw platforms
 	Platform::render(renderer,platform_list);
@@ -385,6 +391,8 @@ void State::reset(){
 	for(DeadFish *f:dead_fish_list)
 		delete f;
 	dead_fish_list.clear();
+	// clear grass
+	grass_list.clear();
 
 	// clear messages
 	chat.clear();

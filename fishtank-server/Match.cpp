@@ -382,14 +382,27 @@ void Match::send_level_config(Client &client){
 	}
 
 	// mines
-	uint32_t count=htonl(mine_list.size());
-	client.tcp.send_block(&count,sizeof(count));
+	const uint32_t mine_count=htonl(mine_list.size());
+	client.tcp.send_block(&mine_count,sizeof(mine_count));
 	for(const Mine &mine:mine_list){
-		uint32_t platform_index=htonl(mine.platform_index);
-		uint32_t armed=htonl(mine.armed);
+		const uint32_t platform_index=htonl(mine.platform_index);
+		const uint32_t armed=htonl(mine.armed);
 
 		client.tcp.send_block(&platform_index,sizeof(platform_index));
 		client.tcp.send_block(&armed,sizeof(armed));
+	}
+
+	// send the grass
+	const uint32_t grass_count=htonl(grass_list.size());
+	client.tcp.send_block(&grass_count, sizeof(grass_count));
+	for(const Grass &grass:grass_list){
+		const uint8_t type=grass.type;
+		const uint32_t platform_index=htonl(grass.platform_index);
+		const int32_t offset=htonl(grass.xoffset*FLOAT_MULTIPLIER);
+
+		client.tcp.send_block(&type,sizeof(type));
+		client.tcp.send_block(&platform_index,sizeof(platform_index));
+		client.tcp.send_block(&offset,sizeof(offset));
 	}
 }
 
@@ -525,6 +538,8 @@ void Match::ready_next_round(){
 	Mine::create_all(*this);
 	Platform::update(platform_list);
 	Mine::update(mine_list);
+	Grass::generate(grass_list,platform_list);
+	std::cout<<"generated "<<grass_list.size()<<" grasses"<<std::endl;
 	to_client_tcp tctcp;
 	memset(&tctcp,0,sizeof(tctcp));
 	tctcp.type=TYPE_NEW_LEVEL;

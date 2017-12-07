@@ -107,6 +107,7 @@ public:
 	std::vector<Platform> platform_list;
 	std::vector<Airstrike*> airstrike_list;
 	std::vector<Mine> mine_list;
+	std::vector<Grass> grass_list;
 	net::tcp_server tcp;
 	net::udp_server udp;
 #ifdef _WIN32

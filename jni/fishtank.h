@@ -93,6 +93,7 @@ struct stat;
 #define AID_TANK_BASE 18
 #define AID_TANK_DMG 19
 #define AID_TURRET 20
+#define AID_GRASS1 21
 
 // sound effects
 #define SID_SILENCE 0
@@ -252,6 +253,7 @@ struct State{
 	std::vector<ParticlePlayer*> particle_player_list;
 	std::vector<ParticleBubble*> particle_bubble_list;
 	std::vector<DeadFish*> dead_fish_list;
+	std::vector<Grass> grass_list;
 };
 
 int32_t inputproc(android_app*,AInputEvent*);

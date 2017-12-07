@@ -318,6 +318,7 @@ void Match::get_level_config(State &state){
 	for(ParticlePlatform *p:state.particle_platform_list)
 		delete p;
 	state.particle_platform_list.clear();
+	state.grass_list.clear();
 
 	// get round id
 	uint32_t round_id_tmp;
@@ -370,6 +371,24 @@ void Match::get_level_config(State &state){
 
 		Mine mine(state.platform_list,platform_index,armed);
 		state.mine_list.push_back(mine);
+	}
+
+	// get grass
+	uint32_t grass_count;
+	tcp.recv_block(&grass_count,sizeof(grass_count));
+	grass_count=ntohl(grass_count);
+	for(int i = 0; i < grass_count; ++i){
+		uint8_t type;
+		uint32_t platform_index;
+		int32_t xoffset;
+		tcp.recv_block(&type, sizeof(type));
+		tcp.recv_block(&platform_index, sizeof(platform_index));
+		tcp.recv_block(&xoffset, sizeof(xoffset));
+
+		platform_index=ntohl(platform_index);
+		xoffset=ntohl(xoffset);
+
+		state.grass_list.push_back({state.platform_list[platform_index], type, xoffset/FLOAT_MULTIPLIER});
 	}
 }
 
