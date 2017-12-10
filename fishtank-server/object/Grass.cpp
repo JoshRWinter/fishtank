@@ -1,8 +1,23 @@
 #include "../fishtank-server.h"
 
+static int decide_grass_type(){
+	int p = randomint(0, 999);
+
+	if(p < 350)
+		return 4;
+	if(p < 520)
+		return 3;
+	if(p < 600)
+		return 2;
+	if(p  < 810)
+		return 0;
+
+	return 1;
+}
+
 Grass::Grass(int plat_index){
-	type = randomint(0, GRASS_TYPES - 1);
-	xoffset = randomint(0, (PLATFORM_WIDTH-grass_width(type))*10.0f)/10.0f;
+	type = decide_grass_type();
+	xoffset = randomint(0, (PLATFORM_WIDTH-grass_width(type))*100.0f)/100.0f;
 	platform_index = plat_index;
 }
 

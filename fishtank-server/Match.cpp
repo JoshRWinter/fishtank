@@ -539,7 +539,6 @@ void Match::ready_next_round(){
 	Platform::update(platform_list);
 	Mine::update(mine_list);
 	Grass::generate(grass_list,platform_list);
-	std::cout<<"generated "<<grass_list.size()<<" grasses"<<std::endl;
 	to_client_tcp tctcp;
 	memset(&tctcp,0,sizeof(tctcp));
 	tctcp.type=TYPE_NEW_LEVEL;
