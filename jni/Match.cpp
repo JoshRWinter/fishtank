@@ -219,6 +219,7 @@ void Match::recv_data(State &state){
 			bool before=state.platform_list[i].active;
 			state.platform_list[i].active=((platform_status[0]>>i)&1)==1;
 			if(before&&!state.platform_list[i].active){
+				Grass::destroy(state.platform_list, state.grass_list, i);
 				// sound effects
 				state.platform_list[i].timer_audio=stagger;
 				stagger+=5;
@@ -230,6 +231,7 @@ void Match::recv_data(State &state){
 			bool before=state.platform_list[i+32].active;
 			state.platform_list[i+32].active=((platform_status[1]>>i)&1)==1;
 			if(before&&!state.platform_list[i+32].active){
+				Grass::destroy(state.platform_list, state.grass_list, i+32);
 				// sound effects
 				state.platform_list[i+32].timer_audio=stagger;
 				stagger+=5;
@@ -388,7 +390,8 @@ void Match::get_level_config(State &state){
 		platform_index=ntohl(platform_index);
 		xoffset=ntohl(xoffset);
 
-		state.grass_list.push_back({state.platform_list[platform_index], type, xoffset/FLOAT_MULTIPLIER});
+		if(state.platform_list[platform_index].active > 0)
+			state.grass_list.push_back({state.platform_list[platform_index], type, xoffset/FLOAT_MULTIPLIER});
 	}
 }
 

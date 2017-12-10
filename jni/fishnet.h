@@ -124,4 +124,48 @@ struct to_client_heartbeat{
 #define MINE_UPWARD_ACCEL 0.0002f
 #define MINE_UPWARD_TERMINAL_VEL 0.075f
 
+#define GRASS_TYPES 5
+#define GRASS1_WIDTH 1.0f
+#define GRASS1_HEIGHT 0.725f
+#define GRASS2_WIDTH 1.0f
+#define GRASS2_HEIGHT 0.7875f
+#define GRASS3_WIDTH 0.75f
+#define GRASS3_HEIGHT 0.8875f
+#define GRASS4_WIDTH 1.7f
+#define GRASS4_HEIGHT 0.8125f
+#define GRASS5_WIDTH 1.2f
+#define GRASS5_HEIGHT 0.45f
+inline float grass_width(int t){
+	switch(t){
+	case 0:
+		return GRASS1_WIDTH;
+	case 1:
+		return GRASS2_WIDTH;
+	case 2:
+		return GRASS3_WIDTH;
+	case 3:
+		return GRASS4_WIDTH;
+	case 4:
+		return GRASS5_WIDTH;
+	}
+
+	return 55.0f;
+}
+inline float grass_height(int t){
+	switch(t){
+	case 0:
+		return GRASS1_HEIGHT;
+	case 1:
+		return GRASS2_HEIGHT;
+	case 2:
+		return GRASS3_HEIGHT;
+	case 3:
+		return GRASS4_HEIGHT;
+	case 4:
+		return GRASS5_HEIGHT;
+	}
+
+	return 55.0f;
+}
+
 #endif // FISHNET_H

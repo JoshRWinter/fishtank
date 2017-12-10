@@ -1,9 +1,9 @@
 #include "../fishtank-server.h"
 
 Grass::Grass(int plat_index){
-	xoffset = randomint(0, (PLATFORM_WIDTH-0.5f)*10.0f)/10.0f;
-	platform_index = plat_index;
 	type = randomint(0, GRASS_TYPES - 1);
+	xoffset = randomint(0, (PLATFORM_WIDTH-grass_width(type))*10.0f)/10.0f;
+	platform_index = plat_index;
 }
 
 void Grass::generate(std::vector<Grass> &list, const std::vector<Platform> &platforms){

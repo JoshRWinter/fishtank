@@ -197,12 +197,13 @@ struct DeadFish:Base{
 	bool stuck;
 };
 
-#define GRASS1_WIDTH 1.0f
-#define GRASS1_HEIGHT 0.725f
 struct Grass:Base{
 	Grass(const Platform&,int,float);
 	static void process(std::vector<Grass>&);
 	static void render(const Renderer&,const std::vector<Grass>&);
+	static void destroy(const std::vector<Platform>&,std::vector<Grass>&,int);
+
+	const Platform *plat;
 };
 
 #endif // OBJECT_H
