@@ -127,8 +127,8 @@ struct to_client_heartbeat{
 #define GRASS_TYPES 5
 #define GRASS1_WIDTH 1.0f
 #define GRASS1_HEIGHT 0.725f
-#define GRASS2_WIDTH 1.0f
-#define GRASS2_HEIGHT 0.7875f
+#define GRASS2_WIDTH 1.2f
+#define GRASS2_HEIGHT 0.5125f
 #define GRASS3_WIDTH 0.75f
 #define GRASS3_HEIGHT 0.8875f
 #define GRASS4_WIDTH 1.7f
