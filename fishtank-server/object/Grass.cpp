@@ -19,6 +19,7 @@ Grass::Grass(int plat_index){
 	type = decide_grass_type();
 	xoffset = randomint(0, (PLATFORM_WIDTH-grass_width(type))*100.0f)/100.0f;
 	platform_index = plat_index;
+	flipped = onein(2) == 1;
 }
 
 void Grass::generate(std::vector<Grass> &list, const std::vector<Platform> &platforms){

@@ -399,10 +399,13 @@ void Match::send_level_config(Client &client){
 		const uint8_t type=grass.type;
 		const uint32_t platform_index=htonl(grass.platform_index);
 		const int32_t offset=htonl(grass.xoffset*FLOAT_MULTIPLIER);
+		const uint8_t flipped=grass.flipped?1:0;
+		std::cout << (flipped == 1 ? "true" : "false") << std::endl;
 
 		client.tcp.send_block(&type,sizeof(type));
 		client.tcp.send_block(&platform_index,sizeof(platform_index));
 		client.tcp.send_block(&offset,sizeof(offset));
+		client.tcp.send_block(&flipped,sizeof(flipped));
 	}
 }
 

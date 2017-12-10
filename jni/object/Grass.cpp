@@ -1,6 +1,6 @@
 #include "../fishtank.h"
 
-Grass::Grass(const Platform &platform, int type, float xoff){
+Grass::Grass(const Platform &platform, int type, float xoff, bool flipped){
 	plat = &platform;
 	texture=AID_GRASS1+type;
 	w = grass_width(type);
@@ -8,6 +8,12 @@ Grass::Grass(const Platform &platform, int type, float xoff){
 	x=platform.x+xoff;
 	y=platform.y-h+0.1f;
 	rot=0.0f;
+
+	// maybe x flip
+	if(flipped){
+		x += w;
+		w = -w;
+	}
 }
 
 void Grass::process(std::vector<Grass> &grass_list){

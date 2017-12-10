@@ -198,7 +198,7 @@ struct DeadFish:Base{
 };
 
 struct Grass:Base{
-	Grass(const Platform&,int,float);
+	Grass(const Platform&,int,float,bool);
 	static void process(std::vector<Grass>&);
 	static void render(const Renderer&,const std::vector<Grass>&);
 	static void destroy(const std::vector<Platform>&,std::vector<Grass>&,int);

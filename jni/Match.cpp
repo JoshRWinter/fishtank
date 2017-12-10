@@ -383,15 +383,20 @@ void Match::get_level_config(State &state){
 		uint8_t type;
 		uint32_t platform_index;
 		int32_t xoffset;
+		uint8_t flipped;
+
 		tcp.recv_block(&type, sizeof(type));
 		tcp.recv_block(&platform_index, sizeof(platform_index));
 		tcp.recv_block(&xoffset, sizeof(xoffset));
+		tcp.recv_block(&flipped, sizeof(flipped));
 
 		platform_index=ntohl(platform_index);
 		xoffset=ntohl(xoffset);
 
+		logcat("%d: %s", i, flipped == 1 ? "true" : "false");
+
 		if(state.platform_list[platform_index].active > 0)
-			state.grass_list.push_back({state.platform_list[platform_index], type, xoffset/FLOAT_MULTIPLIER});
+			state.grass_list.push_back({state.platform_list[platform_index], type, xoffset/FLOAT_MULTIPLIER, flipped == 1});
 	}
 }
 

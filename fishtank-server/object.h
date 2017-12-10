@@ -110,6 +110,7 @@ struct Grass{
 	static void generate(std::vector<Grass>&,const std::vector<Platform>&);
 
 	int platform_index;
+	bool flipped;
 	int type;
 	float xoffset;
 };
