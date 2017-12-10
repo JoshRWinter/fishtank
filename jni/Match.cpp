@@ -393,8 +393,6 @@ void Match::get_level_config(State &state){
 		platform_index=ntohl(platform_index);
 		xoffset=ntohl(xoffset);
 
-		logcat("%d: %s", i, flipped == 1 ? "true" : "false");
-
 		if(state.platform_list[platform_index].active > 0)
 			state.grass_list.push_back({state.platform_list[platform_index], type, xoffset/FLOAT_MULTIPLIER, flipped == 1});
 	}
