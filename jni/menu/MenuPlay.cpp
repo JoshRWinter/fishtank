@@ -18,10 +18,10 @@ bool MenuPlay::exec(State &state){
 	button_back.init(button_connect.x+BUTTON_WIDTH+0.3f,3.1f,"Back");
 
 	// color blobs that the player can click on to change colors
-	float xpos=-4.05f;
+	float xpos=-4.975f;
 	const float ypos=0.0f;
 	const float offset=1.8f;
-	for(int i=0;i<5;++i){
+	for(int i=0;i<6;++i){
 		blob[i].x=xpos;
 		blob[i].y=ypos;
 		blob[i].w=BLOB_SIZE;
@@ -57,7 +57,7 @@ bool MenuPlay::exec(State &state){
 
 		// choose a color
 		if(state.pointer[0].active){
-			for(int i=0;i<5;++i){
+			for(int i=0;i<6;++i){
 				if(blob[i].pointing(state.pointer[0]))
 					state.colorid=i+1;
 			}
@@ -84,7 +84,7 @@ void MenuPlay::render(const Renderer &renderer)const{
 
 	// color blobs
 	glBindTexture(GL_TEXTURE_2D,renderer.uiassets.texture[UITID_COLORBLOB].object);
-	for(int i=0;i<5;++i){
+	for(int i=0;i<6;++i){
 		float r,g,b;
 		State::fill_color(i+1,&r,&g,&b);
 		glUniform4f(renderer.uniform.rgba,r,g,b,1.0f);

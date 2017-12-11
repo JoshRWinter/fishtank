@@ -86,6 +86,7 @@ struct to_client_heartbeat{
 #define COLOR_CYAN 3
 #define COLOR_GREEN 4
 #define COLOR_PURPLE 5
+#define COLOR_YELLOW 6
 
 #define VIEW_LEFT -8.0f
 #define VIEW_RIGHT 8.0f

@@ -68,7 +68,7 @@ struct MenuPlay:Menu{
 	Button button_name;
 	Button button_connect;
 	Button button_back;
-	UIBase blob[5]; // color blobs
+	UIBase blob[6]; // color blobs
 };
 
 #define CONN_STATE_TRYING 1

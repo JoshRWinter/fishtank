@@ -16,6 +16,7 @@
 #define RGB_CYAN RGB_CYAN_R,RGB_CYAN_G,RGB_CYAN_B,1.0f
 #define RGB_GREEN RGB_GREEN_R,RGB_GREEN_G,RGB_GREEN_B,1.0f
 #define RGB_PURPLE RGB_PURPLE_R,RGB_PURPLE_G,RGB_PURPLE_B,1.0f
+#define RGB_YELLOW RGB_YELLOW_R,RGB_YELLOW_G,RGB_YELLOW_B,1.0f
 
 #define RGB_RED_R 0.66f
 #define RGB_RED_G 0.21f
@@ -32,6 +33,9 @@
 #define RGB_PURPLE_R 0.6f
 #define RGB_PURPLE_G 0.275f
 #define RGB_PURPLE_B 0.55f
+#define RGB_YELLOW_R 0.7f
+#define RGB_YELLOW_G 0.68f
+#define RGB_YELLOW_B 0.27f
 
 struct Renderer;
 struct State;

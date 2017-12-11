@@ -481,7 +481,7 @@ bool State::read_config(){
 }
 
 void State::write_config(){
-	if(colorid < COLOR_RED || colorid > COLOR_PURPLE)
+	if(colorid < COLOR_RED || colorid > COLOR_YELLOW)
 		colorid = COLOR_RED;
 
 	FILE *file=fopen(DATAPATH"/00","wb");
@@ -524,6 +524,9 @@ void State::fill_color(int id,float *r,float *g,float *b){
 		break;
 	case COLOR_PURPLE:
 		*r=RGB_PURPLE_R;*g=RGB_PURPLE_G;*b=RGB_PURPLE_B;
+		break;
+	case COLOR_YELLOW:
+		*r=RGB_YELLOW_R;*g=RGB_YELLOW_G;*b=RGB_YELLOW_B;
 		break;
 	}
 }
