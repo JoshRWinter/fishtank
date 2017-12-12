@@ -160,7 +160,6 @@ struct ParticlePlatform:Base{
 struct ParticlePlayer:Base{
 	ParticlePlayer(float,float,bool,int);
 	static void spawn(State&,const Player&);
-	static void spawn(State&,const Shell&,int);
 	static void process(State&);
 	static void render(const Renderer&,const std::vector<ParticlePlayer*>&);
 

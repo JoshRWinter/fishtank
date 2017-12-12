@@ -224,17 +224,14 @@ ParticlePlayer::ParticlePlayer(float xpos,float ypos,bool large,int player_color
 	timer_lifetime=0.0f;
 }
 
-void ParticlePlayer::spawn(State &state,const Shell &shell,int colorid){
-	const int count=randomint(2,5);
-	for(int i=0;i<count;++i){
-		state.particle_player_list.push_back(new ParticlePlayer(shell.x+(SHELL_WIDTH/2.0f)+shell.xv,shell.y+(SHELL_HEIGHT/2.0f)+shell.yv,false,colorid));
-	}
-}
-
 void ParticlePlayer::spawn(State &state,const Player &player){
-	const int count=randomint(12,15);
-	for(int i=0;i<count;++i){
+	const int bigcount=randomint(12,15);
+	for(int i=0;i<bigcount;++i){
 		state.particle_player_list.push_back(new ParticlePlayer(player.x+(PLAYER_WIDTH/2.0f),player.y+(PLAYER_HEIGHT/2.0f),true,player.colorid));
+	}
+	const int smallcount=randomint(3,7);
+	for(int i=0;i<smallcount;++i){
+		state.particle_player_list.push_back(new ParticlePlayer(player.x+(PLAYER_WIDTH/2.0f),player.y+(PLAYER_HEIGHT/2.0f),false,player.colorid));
 	}
 	// spawn one dead fish
 	state.dead_fish_list.push_back(new DeadFish(player.x+(PLAYER_WIDTH/2.0f),player.y+(PLAYER_HEIGHT/2.0f),player.colorid));

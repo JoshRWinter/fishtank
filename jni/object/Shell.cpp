@@ -60,8 +60,6 @@ void Shell::process(State &state){
 						vibratedevice(&state.jni,30);
 				// generate some particles
 				ParticleShell::spawn(state,shell,randomint(6,9));
-				// more particles
-				ParticlePlayer::spawn(state,shell,player.colorid);
 
 				delete *it;
 				it=state.shell_list.erase(it);
