@@ -259,8 +259,10 @@ void ParticlePlayer::process(State &state){
 		particle.active=true;
 		if(particle.y+particle.h>FLOOR){
 			// sound effect
-			if(particle.large&&particle.timer_lifetime<70.0f&&speed>0.0f&&state.config.sounds)
-				sl_play_stereo(state.soundengine,state.aassets.sound+SID_PARTICLE_PLAYER_IMPACT,particle.x+(particle.w/2.0f),particle.y+(particle.h/2.0f));
+			if(particle.large&&particle.timer_lifetime<70.0f&&speed>0.0f&&state.config.sounds){
+				const int select = randomint(0,2);
+				sl_play_stereo(state.soundengine,state.aassets.sound+SID_PARTICLE_PLAYER_IMPACT_1+select,particle.x+(particle.w/2.0f),particle.y+(particle.h/2.0f));
+			}
 
 			particle.xv=0.0f;
 			particle.yv=0.0f;
@@ -274,8 +276,10 @@ void ParticlePlayer::process(State &state){
 					continue;
 
 				if(particle.collide(platform)){
-					if(particle.large&&particle.timer_lifetime<70.0f&&speed>0.0f&&state.config.sounds)
-						sl_play_stereo(state.soundengine,state.aassets.sound+SID_PARTICLE_PLAYER_IMPACT,particle.x+(particle.w/2.0f),particle.y+(particle.h/2.0f));
+					if(particle.large&&particle.timer_lifetime<70.0f&&speed>0.0f&&state.config.sounds){
+						const int select = randomint(0,2);
+						sl_play_stereo(state.soundengine,state.aassets.sound+SID_PARTICLE_PLAYER_IMPACT_1+select,particle.x+(particle.w/2.0f),particle.y+(particle.h/2.0f));
+					}
 
 					particle.xv=0.0f;
 					particle.yv=0.0f;
