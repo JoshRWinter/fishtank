@@ -10,6 +10,9 @@ fishtank-server: $(OBJS)
 	g++ -o $@ $(CPPFLAGS) $<
 
 clean:
-	rm *.o object/*.o
+	rm -f *.o object/*.o
 
-.PHONY: clean
+release: clean
+	g++ -o fishtank-server -O2 -std=c++11 -Wall -pedantic *.cpp ../jni/network.cpp object/*.cpp -s
+
+.PHONY: clean release
