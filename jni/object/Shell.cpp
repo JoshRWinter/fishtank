@@ -98,7 +98,7 @@ void Shell::process(State &state){
 			if(!mine.armed)
 				continue;
 
-			if(shell.collide(mine)){
+			if(shell.collide(mine, 0.25f)){
 				// particles
 				ParticleShell::spawn(state,shell,randomint(3,4));
 				delete *it;
