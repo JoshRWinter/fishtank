@@ -86,6 +86,7 @@ struct Shell:Base{
 	static void render(const Renderer&,const std::vector<Shell*>&);
 
 	float xv,yv;
+	float lifetime;
 	const Player &owner;
 	Base visual; // the shell that is rendered
 };

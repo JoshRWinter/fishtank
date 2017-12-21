@@ -9,6 +9,7 @@ Shell::Shell(const State &state,const Player &player):owner(player){
 	rot=0.0f;
 	texture=-1;
 
+	lifetime=0.0f;
 	const float speed=player.cue_fire/2.4f;
 	float xvel=-cosf(player.turret.rot);
 	float yvel=-sinf(player.turret.rot);
@@ -26,6 +27,8 @@ Shell::Shell(const State &state,const Player &player):owner(player){
 void Shell::process(State &state){
 	for(std::vector<Shell*>::iterator it=state.shell_list.begin();it!=state.shell_list.end();){
 		Shell &shell=**it;
+
+		shell.lifetime+=state.speed;
 
 		// update shell velocities
 		shell.yv+=GRAVITY*state.speed;
@@ -47,7 +50,9 @@ void Shell::process(State &state){
 		// check for shells colliding with player
 		bool stop=false;
 		for(Player &player:state.player_list){
-			if(&player==&shell.owner||player.colorid==0||player.health<1)
+			if(player.colorid==0||player.health<1)
+				continue;
+			if(&player==&shell.owner && shell.lifetime<SHELL_ESCAPE)
 				continue;
 
 			if(player.collide(shell)){

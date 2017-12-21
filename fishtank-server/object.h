@@ -47,6 +47,7 @@ struct Shell:Base{
 	static void process(Match&);
 
 	float xv,yv;
+	int lifetime;
 	const float power;
 	Client &owner;
 };

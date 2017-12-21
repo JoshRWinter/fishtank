@@ -106,6 +106,7 @@ struct to_client_heartbeat{
 
 #define SHELL_WIDTH 0.5f
 #define SHELL_HEIGHT 0.5f
+#define SHELL_ESCAPE 20.0f
 
 #define FLOOR 4.0f
 #define LEFT -15.0f

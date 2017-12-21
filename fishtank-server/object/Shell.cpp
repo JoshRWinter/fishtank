@@ -8,6 +8,7 @@ Shell::Shell(const Match &match,Client &client,float firepower):power(firepower)
 	x=turretx+(TURRET_WIDTH/2.0f)-(SHELL_WIDTH/2.0f);
 	y=turrety+(TURRET_HEIGHT/2.0f)-(SHELL_HEIGHT/2.0f);
 
+	lifetime=0;
 	const float speed=client.input.fire/2.4f;
 	float xvel=-cosf(client.player.angle);
 	float yvel=-sinf(client.player.angle);
@@ -21,6 +22,8 @@ void Shell::process(Match &match){
 	for(std::vector<Shell*>::iterator it=match.shell_list.begin();it!=match.shell_list.end();){
 		Shell &shell=**it;
 
+		++shell.lifetime;
+
 		shell.yv+=GRAVITY;
 		shell.x+=shell.xv;
 		shell.y+=shell.yv;
@@ -30,7 +33,9 @@ void Shell::process(Match &match){
 		for(Client *c:match.client_list){
 			Client &client=*c;
 
-			if(&client==&shell.owner||client.colorid==0||client.player.health<1)
+			if(client.colorid==0||client.player.health<1)
+				continue;
+			if(&client==&shell.owner && shell.lifetime<SHELL_ESCAPE)
 				continue;
 
 			if(client.player.collide(shell)){
