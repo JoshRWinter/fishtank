@@ -154,8 +154,7 @@ void ParticlePlatform::process(State &state){
 			case COLLIDE_TOP:
 				on_ground=true;
 			case COLLIDE_BOTTOM:
-				particle.yv*=0.4f;
-				particle.yv=-particle.yv;
+				particle.yv*=-0.4f*(randomint(75,130)/100.0f);
 				break;
 			}
 		}
