@@ -20,6 +20,7 @@ Player::Player(){
 	turret.texture=AID_TURRET;
 
 	beacon.y=FLOOR+10.0f;
+	beacon.lifetime=0.0f;
 
 	audio.bubbles=0;
 	audio.engine=0;
@@ -107,6 +108,7 @@ void Player::process(State &state){
 		// process the beacon
 		// inactive if below FLOOR+3.0f
 		if(player.beacon.y<FLOOR+3.0f){
+			player.beacon.lifetime+=state.speed;
 			player.beacon.x+=player.beacon.xv;
 			player.beacon.y+=player.beacon.yv;
 			player.beacon.timer_frame-=state.speed;
@@ -165,6 +167,8 @@ void Player::render(const Renderer &renderer,const std::vector<Player> &player_l
 	for(const Player &player:player_list){
 		if(player.beacon.y>FLOOR+3.0f||player.colorid==0)
 			continue;
+		if(player.beacon.lifetime>BEACON_RENDER_FLIP)
+			continue;
 
 		// beacon color multiplier
 		if(!bound){
@@ -216,6 +220,17 @@ void Player::render(const Renderer &renderer,const std::vector<Player> &player_l
 		}
 	}
 	glUniform4f(renderer.uniform.rgba,1.0f,1.0f,1.0f,1.0f);
+
+	// render beacons
+	for(const Player &player:player_list){
+		if(player.beacon.y>FLOOR+3.0f||player.colorid==0)
+			continue;
+		if(player.beacon.lifetime<=BEACON_RENDER_FLIP)
+			continue;
+
+		renderer.draw(player.beacon,&renderer.atlas);
+	}
+
 }
 
 Beacon::Beacon(){

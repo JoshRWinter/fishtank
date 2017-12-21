@@ -53,11 +53,12 @@ struct ButtonBasic:Button{
 };
 
 #define BEACON_FRAME_TIMER 18
+#define BEACON_RENDER_FLIP 20.0f
 struct Beacon:Base{
 	Beacon();
 
 	float xv,yv;
-	float ttl;
+	float lifetime;
 	float timer_frame;
 };
 struct Player:Base{

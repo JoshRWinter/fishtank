@@ -204,8 +204,10 @@ void Match::recv_data(State &state){
 				ParticlePlayer::spawn(state,player);
 			}
 			// beacon sound effect
-			if(before_y_beacon>FLOOR&&player.colorid!=0&&player.beacon.y<FLOOR&&state.config.sounds)
+			if(before_y_beacon>FLOOR&&player.colorid!=0&&player.beacon.y<FLOOR&&state.config.sounds){
 				sl_play_stereo(state.soundengine,state.aassets.sound+SID_BEACON_FIRE,player.x+(PLAYER_WIDTH/2.0f),player.y+(PLAYER_HEIGHT/2.0f));
+				player.beacon.lifetime=0.0f;
+			}
 			// beacon bounce
 			if(before_yv_beacon>0.0f&&player.beacon.yv<0.0f&&fabsf(player.beacon.yv)>0.01f&&state.config.sounds)
 				sl_play_stereo(state.soundengine,state.aassets.sound+SID_BEACON_BOUNCE,player.beacon.x+(BEACON_WIDTH/2.0f),player.beacon.y+(BEACON_HEIGHT/2.0f));
