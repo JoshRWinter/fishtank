@@ -164,8 +164,7 @@ void ParticlePlatform::process(State &state){
 		if(particle.y+particle.h>FLOOR){
 			particle.y=FLOOR-particle.h;
 			on_ground=true;
-			particle.yv*=0.4f;
-			particle.yv=-particle.yv;
+			particle.yv*=-0.4f*(randomint(75,130)/100.0f);
 		}
 
 		// slow down horizontally

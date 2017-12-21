@@ -141,7 +141,7 @@ struct ParticleShell:Base{
 
 #define PARTICLE_PLATFORM_SPEED 0.1f
 #define PARTICLE_PLATFORM_TTL 145.0f
-#define PARTICLE_PLATFORM_SIZE 14,26
+#define PARTICLE_PLATFORM_SIZE 10,26
 struct ParticlePlatform:Base{
 	ParticlePlatform(const Shell&);
 	ParticlePlatform(float,float);
