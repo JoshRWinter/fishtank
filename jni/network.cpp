@@ -262,8 +262,6 @@ bool net::tcp::connect(int seconds){
 	const int start=time(NULL);
 	do{
 		result=::connect(sock,ai->ai_addr,ai->ai_addrlen)==0;
-		if(errno == ECONNREFUSED)
-			break;
 #ifdef _WIN32
 		const auto last = WSAGetLastError();
 		if(last == WSAECONNREFUSED)

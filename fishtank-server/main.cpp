@@ -12,7 +12,8 @@
 static std::atomic<bool> run;
 
 static std::string register_master(net::tcp&);
-static bool send_heartbeat(net::tcp&, const Match &match);
+static bool send_heartbeat(net::udp&, const Match &match);
+static bool recv_heartbeat(net::udp&);
 
 static int ctrl_c_count=0; // only accessed by signal_handler
 #ifdef _WIN32
@@ -55,8 +56,10 @@ int main(){
 #endif // _WIN32
 
 	// register on the master server
-	net::tcp master; // master tcp connection
+	net::tcp master(MASTER, MASTER_PORT); // master tcp connection
+	net::udp hbeater(MASTER, MASTER_PORT); // for heartbeats to master
 	const std::string reason = register_master(master);
+	master.close();
 	bool registered = reason.length() == 0;
 	if(reason.length() != 0)
 		std::cout << "Master Server registration failed: " << reason << std::endl;
@@ -72,11 +75,30 @@ int main(){
 
 	std::cout<<"[ready on tcp:"<<TCP_PORT<<" udp:"<<UDP_PORT<<"]"<<std::endl;
 
+	int last_send_heartbeat = time(NULL);
+	int last_recv_heartbeat = time(NULL);
 	while(run.load()){
-		if(registered)
-			registered = send_heartbeat(master, match);
+		if(registered){
+			const int current = time(NULL);
 
-		match.accept_new_clients();
+			// send heartbeat
+			if(current - last_send_heartbeat > MASTER_HEARTBEAT_FREQUENCY){
+				registered = send_heartbeat(hbeater, match); // send a heartbeat to the master
+				last_send_heartbeat = current;
+			}
+
+			// recv heartbeat
+			if(recv_heartbeat(hbeater))
+				last_recv_heartbeat = current;
+
+			if(current - last_recv_heartbeat > MASTER_HEARTBEAT_FREQUENCY * 6){
+				registered = false;
+				std::cout << ANSI_RED << "Error: " << ANSI_RESET << "lost connection to master" << std::endl;
+			}
+		}
+
+		if(match.accept_new_clients() && registered)
+			registered = send_heartbeat(hbeater, match);
 
 		match.step();
 
@@ -163,7 +185,6 @@ static ServerConfig get_server_config(){
 // attempt to register this server on the fishtank master server
 std::string register_master(net::tcp &master){
 	ServerConfig sc = get_server_config();
-	master.target(MASTER, MASTER_PORT);
 
 	if(!master.connect(5))
 		return "Could not connect to " MASTER;
@@ -216,25 +237,29 @@ std::string register_master(net::tcp &master){
 }
 
 // send a heartbeat to the master server to let it know i am still connected
-#define MASTER_HEARTBEAT_FREQUENCY 16 // seconds
-bool send_heartbeat(net::tcp &master, const Match &match){
-	static int last = 0;
+bool send_heartbeat(net::udp &udp, const Match &match){
+	// send heartbeat
+	std::uint8_t count = match.client_list.size();
+	udp.send(&count, sizeof(count));
 
-	const int current = time(NULL);
-	if(current - last > MASTER_HEARTBEAT_FREQUENCY){
-		last = current;
-
-		// send heartbeat
-		uint8_t count = match.client_list.size();
-		master.send_block(&count, sizeof(count));
-
-		if(master.error()){
-			std::cout << ANSI_RED << "Error:" << ANSI_RESET << " lost connection to master server."<<std::endl;
-			return false;
-		}
+	if(udp.error()){
+		std::cout << ANSI_RED << "Error:" << ANSI_RESET << " failure when sending master heartbeat"<<std::endl;
+		return false;
 	}
 
 	return true;
+}
+
+// receives messages from master, returns true if it got one, false if there's no pending heartbeats
+bool recv_heartbeat(net::udp &udp){
+	std::uint8_t msg;
+	if(udp.peek() > 0){
+		udp.recv(&msg, sizeof(msg));
+
+		return true;
+	}
+
+	return false;
 }
 
 #ifndef _WIN32

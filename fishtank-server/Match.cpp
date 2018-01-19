@@ -35,7 +35,7 @@ Match::operator bool()const{
 	return tcp&&udp;
 }
 
-void Match::accept_new_clients(){
+bool Match::accept_new_clients(){
 	// accept new clients
 	int connector_socket=tcp.accept();
 	if(connector_socket!=-1){
@@ -65,8 +65,12 @@ void Match::accept_new_clients(){
 			send_chat(msg,"server");
 			// current time
 			c->stat.join_time=time(NULL);
+
+			return true;
 		}
 	}
+
+	return false;
 }
 
 void Match::player_summary(const Client &client)const{

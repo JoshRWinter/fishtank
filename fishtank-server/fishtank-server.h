@@ -31,6 +31,8 @@ struct area_bounds;
 #define onein(n) (randomint(0,n-1)==0)
 #define WIN_TIMER 300
 
+#define MASTER_HEARTBEAT_FREQUENCY 10
+
 #define KILLED_BY_AIRSTRIKE 1
 #define KILLED_BY_SHELL 2
 #define KILLED_BY_MINE 3
@@ -84,7 +86,7 @@ public:
 	Match();
 	~Match();
 	operator bool()const;
-	void accept_new_clients();
+	bool accept_new_clients();
 	void player_summary(const Client &client)const;
 	void step();
 	void send_data();
