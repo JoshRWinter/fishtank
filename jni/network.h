@@ -16,6 +16,8 @@
 
 namespace net{
 
+std::string resolve(const std::string&);
+
 // tcp
 class tcp_server{
 public:

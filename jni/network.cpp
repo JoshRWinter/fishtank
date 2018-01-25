@@ -19,9 +19,36 @@
 #include <time.h>
 
 #ifdef _WIN32
-WSADATA wsa;
-static auto resultorino=WSAStartup(MAKEWORD(1,1), &wsa);
+static class glbl{
+	WSADATA wsa;
+
+public:
+	glbl(){
+		WSAStartup(MAKEWORD(1,1), &wsa);
+	}
+	~glbl(){
+		WSACleanup();
+	}
+}wsa;
 #endif // _WIN32
+
+// return the dns resolved name of <ip>
+std::string net::resolve(const std::string &ip){
+	addrinfo hints, *ai;
+	memset(&hints, 0, sizeof(hints));
+	hints.ai_family = AF_UNSPEC;
+
+	if(0 != getaddrinfo(ip.c_str(), "0", &hints, &ai))
+		return "";
+
+	char name[201];
+	if(0 != getnameinfo(ai->ai_addr, ai->ai_addrlen, name, sizeof(name) - 1, NULL, 0, NI_NUMERICHOST)){
+		freeaddrinfo(ai);
+		return "";
+	}
+
+	return name;
+}
 
 net::tcp_server::tcp_server(unsigned short port){
 	bind(port);
