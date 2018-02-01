@@ -289,7 +289,7 @@ std::string get_my_ip_addr(){
 
 	ifaddrs *current = head;
 	while(current != NULL){
-		char host[200];
+		char host[200] = "";
 		getnameinfo(current->ifa_addr, current->ifa_addr->sa_family == AF_INET ? sizeof(sockaddr_in) : sizeof(sockaddr_in6), host, sizeof(host), NULL, 0, NI_NUMERICHOST);
 
 		if(strcmp(host, "127.0.0.1") && strcmp(host, "::1") && strcmp(host, "")){
