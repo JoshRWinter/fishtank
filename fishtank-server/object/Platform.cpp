@@ -43,13 +43,13 @@ void Platform::create_all(Match &match){
 	}
 
 	// create some vertical lines
-	for(Platform &horiz:match.platform_list){
+	for(int i = 0; i < match.platform_list.size(); ++i){
 		if(onein(2))
 			continue;
 		else if(match.platform_list.size()==PLATFORM_COUNT)
 			break;
 
-		Platform p(false,horiz.x-(PLATFORM_HEIGHT/2.0f),horiz.y+PLATFORM_HEIGHT);
+		Platform p(false,match.platform_list[i].x-(PLATFORM_HEIGHT/2.0f),match.platform_list[i].y+PLATFORM_HEIGHT);
 
 		match.platform_list.push_back(p);
 	}
