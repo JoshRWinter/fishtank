@@ -43,7 +43,8 @@ void Platform::create_all(Match &match){
 	}
 
 	// create some vertical lines
-	for(int i = 0; i < match.platform_list.size(); ++i){
+	const int horiz_count = match.platform_list.size();
+	for(int i = 0; i < horiz_count; ++i){
 		if(onein(2))
 			continue;
 		else if(match.platform_list.size()==PLATFORM_COUNT)
