@@ -1,4 +1,4 @@
-fishtank - multiplayer underwater tank battle  
+fishtank - multiplayer underwater tank battle for Android  
 includes server software (Linux, windows)
 
 to build the server software, ensure you have g++ and make installed, then cd to /fishtank-server and run `make`  
