@@ -4,7 +4,8 @@ includes server software (Linux, windows)
 to build the server software, ensure you have g++ and make installed, then cd to /fishtank-server and run `make`  
 to build the game client, you will need the android sdk, the android native development kit (NDK), ANT, and headers for freetype, libogg, and libvorbis.
 
-DEMO VIDEO: https://streamable.com/elx2i
+DEMO VIDEO: https://streamable.com/g783o  
+video demonstrates the server software, some gameplay between two players, and the text-chat feature.
 
 images:
 album: https://imgur.com/a/UP41s
