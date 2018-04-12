@@ -2,6 +2,7 @@
 #define NETWORK_H
 
 #include <string>
+#include <string.h>
 #ifdef _WIN32
 #undef _WIN32_WINNT
 #define _WIN32_WINNT 0x0501
@@ -16,22 +17,30 @@
 
 namespace net{
 
-std::string resolve(const std::string&);
+	std::string me();
+
+#ifdef _WIN32
+	const int WOULDBLOCK = WSAEWOULDBLOCK;
+	const int CONNRESET = WSAECONNRESET;
+#else
+	const int WOULDBLOCK = EWOULDBLOCK;
+	const int CONNRESET = ECONNRESET;
+#endif // _WIN32
 
 // tcp
 class tcp_server{
 public:
+	tcp_server();
 	tcp_server(unsigned short);
 	tcp_server(const tcp_server&)=delete;
 	~tcp_server();
 	tcp_server &operator=(const tcp_server&)=delete;
 	operator bool()const;
-	int accept();
+	bool bind(unsigned short);
+	int accept(int = 0);
 	void close();
 
 private:
-	bool bind(unsigned short);
-
 	int scan; // the socket for scanning
 };
 
@@ -49,6 +58,7 @@ public:
 	bool target(const std::string &address,unsigned short);
 	bool connect();
 	bool connect(int);
+	bool poll_recv(int);
 	void send_block(const void*,unsigned);
 	void recv_block(void*,unsigned);
 	int send_nonblock(const void*,unsigned);
@@ -72,7 +82,9 @@ private:
 
 // udp
 struct udp_id{
-	udp_id():initialized(false),len(sizeof(sockaddr_storage)){}
+	udp_id():initialized(false),len(sizeof(sockaddr_storage)){
+		memset(&storage, 0, sizeof(storage));
+	}
 
 	bool initialized;
 	sockaddr_storage storage;
@@ -81,6 +93,7 @@ struct udp_id{
 
 class udp_server{
 public:
+	udp_server();
 	udp_server(unsigned short);
 	udp_server(const udp_server&)=delete;
 	udp_server(udp_server&&);
@@ -89,7 +102,7 @@ public:
 	operator bool()const;
 	void close();
 	void send(const void*,int,const udp_id&);
-	void recv(void*,int,udp_id&);
+	int recv(void*,int,udp_id&);
 	unsigned peek();
 	bool error()const;
 
@@ -107,11 +120,12 @@ public:
 	udp(udp&&);
 	~udp();
 	udp &operator=(const udp&)=delete;
+	udp &operator=(udp&&);
 	bool target(const std::string&,unsigned short);
 	operator bool()const;
 	void close();
 	void send(const void*,unsigned);
-	void recv(void*,unsigned);
+	int recv(void*,unsigned);
 	unsigned peek();
 	bool error()const;
 

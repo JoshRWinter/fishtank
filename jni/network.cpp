@@ -1,6 +1,4 @@
 #include "network.h"
-#include <iostream>
-#include <utility>
 
 #ifndef _WIN32
 #include <sys/socket.h>
@@ -10,6 +8,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <errno.h>
+#include <ifaddrs.h>
 #endif
 
 #include <stdlib.h>
@@ -19,35 +18,73 @@
 #include <time.h>
 
 #ifdef _WIN32
-static class glbl{
-	WSADATA wsa;
-
-public:
-	glbl(){
-		WSAStartup(MAKEWORD(1,1), &wsa);
+static struct wsa_init
+{
+	wsa_init()
+	{
+		WSADATA wsa;
+		WSAStartup(MAKEWORD(1, 1), &wsa);
 	}
-	~glbl(){
+	~wsa_init()
+	{
 		WSACleanup();
 	}
-}wsa;
+}wsa_init_global;
 #endif // _WIN32
 
-// return the dns resolved name of <ip>
-std::string net::resolve(const std::string &ip){
-	addrinfo hints, *ai;
-	memset(&hints, 0, sizeof(hints));
-	hints.ai_family = AF_UNSPEC;
+// errno related stuff
+#define NET_WOULDBLOCK
+static int get_errno(){
+#ifdef _WIN32
+	return WSAGetLastError();
+#else
+	return errno;
+#endif // _WIN32
+}
 
-	if(0 != getaddrinfo(ip.c_str(), "0", &hints, &ai))
-		return "";
+// get my own ip address
+#ifndef __BIONIC__
+std::string net::me(){
+	std::string hostname;
 
-	char name[201];
-	if(0 != getnameinfo(ai->ai_addr, ai->ai_addrlen, name, sizeof(name) - 1, NULL, 0, NI_NUMERICHOST)){
-		freeaddrinfo(ai);
-		return "";
+#ifdef _WIN32
+	HOSTENT *hostinfo;
+	char host[200];
+
+	if(gethostname(host, sizeof(host)) == 0){
+		if((hostinfo = gethostbyname(host)) != NULL){
+			hostname = inet_ntoa(*(in_addr*)*hostinfo->h_addr_list);
+		}
 	}
 
-	return name;
+	if(hostname == "127.0.0.1" || hostname == "::1")
+		hostname = "";
+#else
+	struct ifaddrs *head;
+	getifaddrs(&head);
+
+	ifaddrs *current = head;
+	while(current != NULL){
+		char host[200] = "";
+		getnameinfo(current->ifa_addr, current->ifa_addr->sa_family == AF_INET ? sizeof(sockaddr_in) : sizeof(sockaddr_in6), host, sizeof(host), NULL, 0, NI_NUMERICHOST);
+
+		if(strcmp(host, "127.0.0.1") && strcmp(host, "::1") && strcmp(host, "")){
+			hostname = host;
+			break;
+		}
+
+		current = current->ifa_next;
+	}
+
+	freeifaddrs(head);
+#endif // _WIN32
+
+	return hostname == "" ? "[undetermined]" : hostname;
+}
+#endif // __BIONIC__
+
+net::tcp_server::tcp_server(){
+	scan = -1;
 }
 
 net::tcp_server::tcp_server(unsigned short port){
@@ -63,17 +100,31 @@ net::tcp_server::operator bool()const{
 	return scan!=-1;
 }
 
-// BLOCKS and returns the connecting socket
-// returns -1 on failure
-int net::tcp_server::accept(){
-	if(scan==-1)
+// implements a timeout of <millis> milliseconds
+int net::tcp_server::accept(int millis){
+	if(scan == -1)
 		return -1;
 
 	sockaddr_in6 connector_addr;
 	socklen_t addr_len=sizeof(sockaddr_in6);
-	int sock=::accept(scan,(sockaddr*)&connector_addr,&addr_len);
 
-	return sock;
+	struct timeval timeout;
+	timeout.tv_sec = 0;
+	timeout.tv_usec = (long)millis * 1000;
+
+	fd_set set;
+	FD_ZERO(&set);
+	FD_SET(scan, &set);
+
+	const int ret = select(scan + 1, &set, NULL, NULL, &timeout);
+	if(ret < 0)
+		return -1;
+	else if(ret == 0)
+		return -1;
+	else if(FD_ISSET(scan, &set))
+		return ::accept(scan, (sockaddr*)&connector_addr, &addr_len);
+
+	return -1;
 }
 
 // cleanup
@@ -317,6 +368,27 @@ bool net::tcp::connect(int seconds){
 	return result;
 }
 
+bool net::tcp::poll_recv(int millis){
+	struct timeval tv;
+	tv.tv_sec = 0;
+	tv.tv_usec = millis * 1000;
+
+	fd_set set;
+	FD_ZERO(&set);
+	FD_SET(sock, &set);
+
+	const int result = select(sock + 1, &set, NULL, NULL, &tv);
+
+	if(result < 0){ // select error
+		this->close();
+		return false;
+	}
+	else if(result == 0) // timeout
+		return false;
+
+	return peek() > 0; // ready for reading if condition holds
+}
+
 // blocking send
 void net::tcp::send_block(const void *buffer,unsigned size){
 	if(sock==-1)
@@ -519,6 +591,10 @@ bool net::tcp::writable(){
 /* ------------------------------------------- */
 
 // UDP
+net::udp_server::udp_server(){
+	sock = -1;
+}
+
 net::udp_server::udp_server(unsigned short port){
 	sock=-1;
 	bind(port);
@@ -552,7 +628,7 @@ void net::udp_server::close(){
 	}
 }
 
-// blocking send
+// non blocking send
 void net::udp_server::send(const void *buffer,int len,const udp_id &id){
 	if(sock==-1)
 		return;
@@ -564,24 +640,31 @@ void net::udp_server::send(const void *buffer,int len,const udp_id &id){
 
 	// no such thing as partial sends for sendto with udp
 	int result=sendto(sock,(const char*)buffer,len,0,(sockaddr*)&id.storage,id.len);
-	if(result!=len){
+	if(result!=len && get_errno() != net::WOULDBLOCK){
 		this->close();
 		return;
 	}
 }
 
-// blocking recv
-void net::udp_server::recv(void *buffer,int len,udp_id &id){
+// non blocking recv
+int net::udp_server::recv(void *buffer,int len,udp_id &id){
 	if(sock==-1)
-		return;
+		return 0;
 
 	// no partial receives
 	int result=recvfrom(sock,(char*)buffer,len,0,(sockaddr*)&id.storage,&id.len);
-	if(result!=len){
-		this->close();
-		return;
+	if(result==-1){
+		const auto eno = get_errno();
+		if(eno == net::WOULDBLOCK || eno == net::CONNRESET)
+			return 0;
+		else
+			this->close();
+		return 0;
 	}
+
 	id.initialized=true;
+
+	return result;
 }
 
 // how many bytes are available on the socket
@@ -616,14 +699,13 @@ bool net::udp_server::bind(unsigned short port){
 	memset(&hints,0,sizeof(addrinfo));
 	hints.ai_family=AF_UNSPEC;
 	hints.ai_socktype=SOCK_DGRAM;
-	hints.ai_flags=AI_PASSIVE;
 
 	// convert port to string
 	char port_string[20];
 	sprintf(port_string,"%hu",port);
 
 	// resolve hostname
-	if(0!=getaddrinfo(NULL,port_string,&hints,&ai)){
+	if(0!=getaddrinfo("::",port_string,&hints,&ai)){
 		this->close();
 		return false;
 	}
@@ -644,6 +726,15 @@ bool net::udp_server::bind(unsigned short port){
 	int reuse=1;
 	setsockopt(sock,SOL_SOCKET,SO_REUSEADDR,&reuse,sizeof(int));
 #endif // _WIN32
+
+	// set to non blocking
+#ifdef _WIN32
+	u_long nonblock=1;
+	ioctlsocket(sock, FIONBIO, &nonblock);
+#else
+	fcntl(sock,F_SETFL,fcntl(sock,F_GETFL,0)|O_NONBLOCK); // set to non blocking
+#endif // _WIN32
+
 	if(::bind(sock,ai->ai_addr,ai->ai_addrlen)){
 		this->close();
 		return false;
@@ -686,6 +777,18 @@ net::udp::~udp(){
 	this->close();
 }
 
+net::udp &net::udp::operator=(net::udp &&other){
+	close();
+
+	sock=other.sock;
+	ai=other.ai;
+
+	other.sock=-1;
+	other.ai=NULL;
+
+	return *this;
+}
+
 net::udp::operator bool()const{
 	return !error();
 }
@@ -695,27 +798,33 @@ void net::udp::send(const void *buffer,unsigned len){
 		return;
 
 	// no such thing as a partial send for udp with sendto
-	ssize_t result=sendto(sock,(const char*)buffer,len,0,(sockaddr*)ai->ai_addr,ai->ai_addrlen);
-	if((unsigned)result!=len){
+	const ssize_t result=sendto(sock,(const char*)buffer,len,0,(sockaddr*)ai->ai_addr,ai->ai_addrlen);
+	if((unsigned)result!=len && get_errno() != net::WOULDBLOCK){
 		this->close();
 		return;
 	}
 }
 
-void net::udp::recv(void *buffer,unsigned len){
+int net::udp::recv(void *buffer,unsigned len){
 	if(sock==-1)
-		return;
+		return 0;
 
 	// ignored
 	sockaddr_storage src_addr;
 	socklen_t src_len=sizeof(sockaddr_storage);
 
 	// no such thing as a partial send for udp with sendto
-	ssize_t result=recvfrom(sock,(char*)buffer,len,0,(sockaddr*)&src_addr,&src_len);
-	if((unsigned)result!=len){
-		this->close();
-		return;
+	const ssize_t result=recvfrom(sock,(char*)buffer,len,0,(sockaddr*)&src_addr,&src_len);
+	if(result==-1){
+		const auto eno = get_errno();
+		if(eno == net::WOULDBLOCK || eno == net::CONNRESET)
+			return 0;
+		else
+			this->close();
+		return 0;
 	}
+
+	return result;
 }
 
 unsigned net::udp::peek(){
@@ -765,7 +874,6 @@ bool net::udp::target(const std::string &address,unsigned short port){
 	memset(&hints,0,sizeof(addrinfo));
 	hints.ai_family=AF_UNSPEC;
 	hints.ai_socktype=SOCK_DGRAM;
-	hints.ai_protocol=0;
 
 	// convert port to string
 	char port_string[20];
@@ -781,6 +889,14 @@ bool net::udp::target(const std::string &address,unsigned short port){
 	if(sock==-1){
 		return false;
 	}
+
+	// set to non blocking
+#ifdef _WIN32
+	u_long nonblock=1;
+	ioctlsocket(sock, FIONBIO, &nonblock);
+#else
+	fcntl(sock,F_SETFL,fcntl(sock,F_GETFL,0)|O_NONBLOCK); // set to non blocking
+#endif // _WIN32
 
 	return true;
 }

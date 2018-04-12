@@ -73,6 +73,12 @@ bool Match::accept_new_clients(){
 	return false;
 }
 
+void Match::kick(int id){
+	for(Client *c : client_list)
+		if(id == c->id)
+			c->kick(*this);
+}
+
 void Match::player_summary(const Client &client)const{
 	const int current=time(NULL);
 	std::cout<<client.name<<" summary:"<<std::endl;
@@ -81,6 +87,15 @@ void Match::player_summary(const Client &client)const{
 	std::cout<<" -- match victories: "<<client.stat.match_victories<<std::endl;
 	std::cout<<" -- one-on-one victories: "<<client.stat.victories<<std::endl;
 	std::cout<<" -- deaths: "<<client.stat.deaths<<std::endl;
+}
+
+std::vector<ShortClient> Match::client_summary()const {
+	std::vector<ShortClient> summary;
+
+	for(const Client *client : client_list)
+		summary.push_back(*client);
+
+	return summary;
 }
 
 // execute one step

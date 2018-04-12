@@ -11,6 +11,7 @@
 #endif // _WIN32
 
 #include "fishtank-server.h"
+#include "WebView.h"
 
 static std::atomic<bool> run;
 
@@ -79,6 +80,13 @@ int main(){
 		return 1;
 	}
 
+	WebView web(WEBVIEW_PORT, match);
+	if(!web){
+		std::cout<<"error: couldn't bind to port "<<WEBVIEW_PORT<<std::endl;
+		std::cout<<"make sure no other server is using that port."<<std::endl;
+		return 1;
+	}
+
 	std::cout<<"[ready on tcp:"<<TCP_PORT<<" udp:"<<UDP_PORT<<" at \""<<my_ip_addr<<"\"]"<<std::endl;
 
 	int last_send_heartbeat = time(NULL);
@@ -107,6 +115,9 @@ int main(){
 			registered = send_heartbeat(hbeater, match);
 
 		match.step();
+
+		// handle the web view interface
+		web.serve();
 
 		match.wait_next_step();
 	}

@@ -1,6 +1,8 @@
 #ifndef FISHTANK_SERVER_H
 #define FISHTANK_SERVER_H
 
+#define WEBVIEW_PORT 20501
+
 // ANSI color codes
 #ifdef _WIN32
 #define ANSI_CYAN ""
@@ -76,6 +78,16 @@ struct Client{
 	}stat;
 };
 
+// a brief summary of a client
+struct ShortClient{
+	ShortClient(const Client &client)
+		: id(client.id)
+		, name(client.name) {}
+
+	const int id;
+	const std::string name;
+};
+
 struct area_bounds{
 	float left,right,bottom,top;
 };
@@ -87,7 +99,9 @@ public:
 	~Match();
 	operator bool()const;
 	bool accept_new_clients();
+	void kick(int);
 	void player_summary(const Client &client)const;
+	std::vector<ShortClient> client_summary()const;
 	void step();
 	void send_data();
 	void recv_data();
