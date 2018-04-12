@@ -58,7 +58,7 @@ void WebView::index(net::tcp &sock){
 
 		for(const ShortClient &client : summary){
 			const std::string id_string = std::to_string(client.id);
-			content += "<tr><td style=\"padding: 15px\">" + id_string + "</td><td style=\"padding: 15px\">" + client.name + "</td><td style=\"padding: 15px\"><a href=\"/kick/" + id_string + "\">kick</a></td></tr>";
+			content += "<tr><td style=\"padding: 15px\">" + id_string + "</td><td style=\"padding: 15px\">" + client.name + "</td><td style=\"padding: 15px\"><a href=\"/kick/" + id_string + "\"><button class=\"button\">kick</button></a></td></tr>";
 		}
 
 		content += "</table>";
