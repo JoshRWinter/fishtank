@@ -27,6 +27,8 @@ Client::Client(int s,const area_bounds &bounds,const std::vector<Mine> &mine_lis
 	tcp.send_block(&tmp,4);
 
 	// send the clients id
+	if(player_count == 1)
+		Client::last_id = 0;
 	Client::last_id++;
 	id=Client::last_id;
 	uint32_t id_tmp=htonl(last_id);
