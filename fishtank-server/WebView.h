@@ -8,6 +8,7 @@
 #define HTTP_STATUS_OK 200
 #define HTTP_STATUS_NOT_FOUND 404
 #define HTTP_STATUS_SEE_OTHER 303
+#define HTTP_STATUS_FORBIDDEN 403
 #define HTTP_STATUS_INTERNAL_ERROR 500
 
 class WebView{
@@ -23,6 +24,7 @@ private:
 	void process(net::tcp&);
 	void index(net::tcp&);
 	void kick(net::tcp&);
+	void forbidden(net::tcp&);
 	void not_found(net::tcp&);
 
 	static void respond(net::tcp&, const std::string&, int = HTTP_STATUS_OK);

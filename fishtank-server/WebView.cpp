@@ -20,9 +20,6 @@ void WebView::serve(){
 		return;
 
 	net::tcp connection(sock);
-	const std::string &name = connection.get_name();
-	if(name != "::ffff:127.0.0.1" && name != "::1" && name != "127.0.0.1")
-		return;
 
 	try{
 		process(connection);
@@ -37,7 +34,11 @@ void WebView::process(net::tcp &sock){
 	const std::string request = WebView::get_http_request(sock);
 	const std::string resource = WebView::get_target_resource(request);
 
-	if(resource == "/"){
+	const std::string &name = sock.get_name();
+	if(name != "::ffff:127.0.0.1" && name != "::1" && name != "127.0.0.1"){
+		forbidden(sock);
+	}
+	else if(resource == "/"){
 		index(sock);
 	}
 	else if(resource.find("/kick/") == 0 && resource.size() > 6){
@@ -100,6 +101,12 @@ void WebView::kick(net::tcp &sock){
 	const std::string content = WebView::html_wrap("moved", "see other");
 
 	WebView::redirect(sock, content, "/");
+}
+
+void WebView::forbidden(net::tcp &sock){
+	const std::string content = WebView::html_wrap("Nope", "<h1>Forbidden</h1><br><p>nice try</p>");
+
+	WebView::respond(sock, content, HTTP_STATUS_FORBIDDEN);
 }
 
 void WebView::not_found(net::tcp &sock){
@@ -243,6 +250,9 @@ std::string WebView::get_status_code(int code){
 		break;
 	case HTTP_STATUS_SEE_OTHER:
 		status = "302 See Other";
+		break;
+	case HTTP_STATUS_FORBIDDEN:
+		status = "403 Forbidden";
 		break;
 	default:
 		status = "500 Internal Server Error";
