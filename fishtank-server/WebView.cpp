@@ -50,15 +50,35 @@ void WebView::process(net::tcp &sock){
 
 void WebView::index(net::tcp &sock){
 	const std::vector<ShortClient> summary = match.client_summary();
+	const std::string style = "\"padding: 10px 20px;border: 1px solid black;\"";
 
 	std::string content;
 	if(summary.size() > 0){
 		content = "<table style=\"border: 1px solid black;border-collapse: collapse;\">"
-		"<tr><th>Client ID</th><th>Name</th><th>Action</th></tr>";
+		"<tr style=" + style + "><th>Id</th>"
+		"<th style=" + style + ">Name</th>"
+		"<th style=" + style + ">Play Time</th>"
+		"<th style=" + style + ">Match Victories</th>"
+		"<th style=" + style + ">Kills</th>"
+		"<th style=" + style + ">Deaths</th>"
+		"<th style=" + style + ">Rounds Played</th>"
+		"<th style=" + style + ">Action</th></tr>";
 
 		for(const ShortClient &client : summary){
 			const std::string id_string = std::to_string(client.id);
-			content += "<tr><td style=\"padding: 15px\">" + id_string + "</td><td style=\"padding: 15px\">" + client.name + "</td><td style=\"padding: 15px\"><a href=\"/kick/" + id_string + "\"><button class=\"button\">kick</button></a></td></tr>";
+			const std::string play_time = WebView::format(time(NULL) - client.play_time);
+
+			content +=
+			"<tr>"
+			"<td style=" + style + ">" + id_string + "</td>"
+			"<td style=" + style + ">" + client.name + "</td>"
+			"<td style=" + style + ">" + play_time + "</td>"
+			"<td style=" + style + ">" + std::to_string(client.match_victories) + "</td>"
+			"<td style=" + style + ">" + std::to_string(client.victories) + "</td>"
+			"<td style=" + style + ">" + std::to_string(client.deaths) + "</td>"
+			"<td style=" + style + ">" + std::to_string(client.rounds_played) + "</td>"
+			"<td style=" + style + "><a href=\"/kick/" + id_string + "\"><button class=\"button\">kick</button></a></td>"
+			"</tr>";
 		}
 
 		content += "</table>";
@@ -236,4 +256,14 @@ std::string WebView::html_wrap(const std::string &page_title, const std::string 
 	"</body>"
 	"</html>"
 	;
+}
+
+std::string WebView::format(int played){
+	int minutes = played / 60;
+	int seconds = played % 60;
+
+	char fmt[21];
+	snprintf(fmt, sizeof(fmt), "%02d:%02d", minutes, seconds);
+
+	return fmt;
 }

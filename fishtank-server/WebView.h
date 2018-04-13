@@ -34,6 +34,7 @@ private:
 	static std::string get_status_code(int);
 	static void check_http_request(const std::string&);
 	static std::string html_wrap(const std::string&, const std::string&);
+	static std::string format(int);
 
 	net::tcp_server tcp;
 	Match &match;

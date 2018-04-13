@@ -6,7 +6,7 @@ OBJS := ../jni/network.o main.o WebView.o Match.o Client.o object/Base.o object/
 fishtank-server: $(OBJS)
 	g++ -o $@ $(OBJS) $(LFLAGS)
 
-%.o: %.cpp ../jni/network.h fishtank-server.h object.h ../jni/fishnet.h
+%.o: %.cpp ../jni/network.h fishtank-server.h WebView.h object.h ../jni/fishnet.h
 	g++ -o $@ $(CPPFLAGS) $<
 
 clean:

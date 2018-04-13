@@ -81,11 +81,22 @@ struct Client{
 // a brief summary of a client
 struct ShortClient{
 	ShortClient(const Client &client)
-		: id(client.id)
-		, name(client.name) {}
+		: name(client.name)
+		, id(client.id)
+		, play_time(client.stat.join_time)
+		, victories(client.stat.victories)
+		, match_victories(client.stat.match_victories)
+		, deaths(client.stat.deaths)
+		, rounds_played(client.stat.rounds_played)
+	{}
 
-	const int id;
 	const std::string name;
+	const int id;
+	const int play_time;
+	const int victories;
+	const int match_victories;
+	const int deaths;
+	const int rounds_played;
 };
 
 struct area_bounds{
