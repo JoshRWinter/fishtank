@@ -6,8 +6,10 @@
 #include "WebView.h"
 
 WebView::WebView(unsigned short port, Match &m)
-	: tcp(port)
-	, match(m) {}
+	: match(m)
+{
+	tcp.bind(port, true);
+}
 
 WebView::operator bool()const{
 	return tcp;
@@ -78,7 +80,7 @@ void WebView::index(net::tcp &sock){
 			"<td style=" + style + ">" + std::to_string(client.victories) + "</td>"
 			"<td style=" + style + ">" + std::to_string(client.deaths) + "</td>"
 			"<td style=" + style + ">" + std::to_string(client.rounds_played) + "</td>"
-			"<td style=" + style + "><a href=\"/kick/" + id_string + "\"><button class=\"button\">kick</button></a></td>"
+			"<td style=" + style + "><a href=\"/kick/" + id_string + "\"><button class=\"button\">Kick</button></a></td>"
 			"</tr>";
 		}
 

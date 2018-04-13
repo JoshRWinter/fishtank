@@ -9,6 +9,7 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <ifaddrs.h>
+#include <arpa/inet.h>
 #endif
 
 #include <stdlib.h>
@@ -142,12 +143,15 @@ void net::tcp_server::close(){
 // creates and binds a socket
 // true on success
 // false on failure (most common cause for failure: someone else is already bound to <port>)
-bool net::tcp_server::bind(unsigned short port){
+bool net::tcp_server::bind(unsigned short port, bool local_only){
 	sockaddr_in6 addr;
 	memset(&addr,0,sizeof(sockaddr_in6));
 	addr.sin6_family=AF_INET6;
 	addr.sin6_port=htons(port);
-	addr.sin6_addr=in6addr_any;
+	if(local_only)
+		inet_pton(AF_INET6, "::1", &addr.sin6_addr);
+	else
+		addr.sin6_addr=in6addr_any;
 
 	// create the socket for scanning
 	scan=socket(AF_INET6,SOCK_STREAM,IPPROTO_TCP);

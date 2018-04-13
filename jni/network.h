@@ -36,7 +36,7 @@ public:
 	~tcp_server();
 	tcp_server &operator=(const tcp_server&)=delete;
 	operator bool()const;
-	bool bind(unsigned short);
+	bool bind(unsigned short, bool = false);
 	int accept(int = 0);
 	void close();
 
