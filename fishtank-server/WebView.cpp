@@ -1,5 +1,6 @@
 #include <stdexcept>
 
+#include <time.h>
 #include <ctype.h>
 
 #include "WebView.h"
