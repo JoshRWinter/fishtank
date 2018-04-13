@@ -10,6 +10,8 @@
 #include <errno.h>
 #include <ifaddrs.h>
 #include <arpa/inet.h>
+#else
+#include <Ws2tcpip.h>
 #endif
 
 #include <stdlib.h>
@@ -143,6 +145,9 @@ void net::tcp_server::close(){
 // creates and binds a socket
 // true on success
 // false on failure (most common cause for failure: someone else is already bound to <port>)
+#ifdef _WIN32
+#define inet_pton InetPton
+#endif // _WIN32
 bool net::tcp_server::bind(unsigned short port, bool local_only){
 	sockaddr_in6 addr;
 	memset(&addr,0,sizeof(sockaddr_in6));
@@ -185,6 +190,9 @@ bool net::tcp_server::bind(unsigned short port, bool local_only){
 	listen(scan,SOMAXCONN);
 	return true;
 }
+#ifdef _WIN32
+#undef inet_pton
+#endif // _WIN32
 
 /* ------------------------------------------- */
 /* ------------------------------------------- */
