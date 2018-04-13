@@ -7,7 +7,6 @@
 #undef _WIN32_WINNT
 #define _WIN32_WINNT 0x0600
 #include <winsock2.h>
-#include <Ws2tcpip.h>
 #include <sys/types.h>
 #define ssize_t SSIZE_T
 #else
@@ -36,7 +35,7 @@ public:
 	~tcp_server();
 	tcp_server &operator=(const tcp_server&)=delete;
 	operator bool()const;
-	bool bind(unsigned short, bool = false);
+	bool bind(unsigned short);
 	int accept(int = 0);
 	void close();
 

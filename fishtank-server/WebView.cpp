@@ -6,10 +6,9 @@
 #include "WebView.h"
 
 WebView::WebView(unsigned short port, Match &m)
-	: match(m)
-{
-	tcp.bind(port, true);
-}
+	: tcp(port)
+	, match(m)
+{}
 
 WebView::operator bool()const{
 	return tcp;
@@ -20,8 +19,12 @@ void WebView::serve(){
 	if(sock == -1)
 		return;
 
+	net::tcp connection(sock);
+	const std::string &name = connection.get_name();
+	if(name != "::ffff:127.0.0.1" && name != "::1" && name != "127.0.0.1")
+		return;
+
 	try{
-		net::tcp connection(sock);
 		process(connection);
 	}
 	catch(const std::exception &e)

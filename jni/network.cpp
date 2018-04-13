@@ -145,18 +145,12 @@ void net::tcp_server::close(){
 // creates and binds a socket
 // true on success
 // false on failure (most common cause for failure: someone else is already bound to <port>)
-#ifdef _WIN32
-#define inet_pton InetPton
-#endif // _WIN32
-bool net::tcp_server::bind(unsigned short port, bool local_only){
+bool net::tcp_server::bind(unsigned short port){
 	sockaddr_in6 addr;
 	memset(&addr,0,sizeof(sockaddr_in6));
 	addr.sin6_family=AF_INET6;
 	addr.sin6_port=htons(port);
-	if(local_only)
-		inet_pton(AF_INET6, "::1", &addr.sin6_addr);
-	else
-		addr.sin6_addr=in6addr_any;
+	addr.sin6_addr=in6addr_any;
 
 	// create the socket for scanning
 	scan=socket(AF_INET6,SOCK_STREAM,IPPROTO_TCP);
@@ -190,9 +184,6 @@ bool net::tcp_server::bind(unsigned short port, bool local_only){
 	listen(scan,SOMAXCONN);
 	return true;
 }
-#ifdef _WIN32
-#undef inet_pton
-#endif // _WIN32
 
 /* ------------------------------------------- */
 /* ------------------------------------------- */
