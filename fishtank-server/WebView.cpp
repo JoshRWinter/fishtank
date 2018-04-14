@@ -62,7 +62,7 @@ void WebView::index(net::tcp &sock){
 	// fill in the client table
 	std::string content;
 	if(summary.size() > 0){
-		content = "<h2>Clients</h2><table style=\"border: 1px solid black;border-collapse: collapse;\">"
+		content = "<div style=\"float: left;\"><h2>Clients</h2><table style=\"border: 1px solid black;border-collapse: collapse;\">"
 		"<tr style=" + style + "><th>Id</th>"
 		"<th style=" + style + ">Name</th>"
 		"<th style=" + style + ">Play Time</th>"
@@ -88,7 +88,7 @@ void WebView::index(net::tcp &sock){
 			"<td style=" + style + "><a href=\"/kick/" + id_string + "\"><button class=\"button\">Kick</button></a></td>"
 			"</tr>\n";
 		}
-		content += "</table>";
+		content += "</table></div><div style=\"float: left;padding-left: 30px;\">";
 
 		// fill in the chats table
 		const std::vector<ChatMessage> chats = match.chat_log();
@@ -96,6 +96,7 @@ void WebView::index(net::tcp &sock){
 		for(const ChatMessage &cm : chats){
 			content += std::string("<font color=") + (cm.from == "server" ? "\"red\"" : "\"blue\"") + ">" + cm.from + "</font>: " + cm.message + "<br>\n";
 		}
+		content += "</div>";
 	}
 	else{
 		content = "No Clients are connected.";
