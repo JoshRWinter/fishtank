@@ -50,6 +50,7 @@ bool Match::accept_new_clients(){
 			// if this is the first client, reset the level config
 			if(client_list.size()==0){
 				ready_next_round();
+				chats.clear();
 			}
 
 			// accept the client
@@ -96,6 +97,10 @@ std::vector<ShortClient> Match::client_summary()const {
 		summary.push_back(*client);
 
 	return summary;
+}
+
+std::vector<ChatMessage> Match::chat_log()const{
+	return chats;
 }
 
 // execute one step
@@ -350,6 +355,9 @@ void Match::send_chat(const std::string &m,const std::string &f){
 	else
 		std::cout<<"chat" ANSI_CYAN "["<<from<<": ";
 	std::cout<<msg<<"]" ANSI_RESET <<std::endl;
+
+	// save it
+	chats.push_back({m, f});
 }
 
 Client *Match::get_client_by_secret(int32_t s){

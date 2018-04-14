@@ -99,6 +99,15 @@ struct ShortClient{
 	const int rounds_played;
 };
 
+struct ChatMessage{
+	ChatMessage(const std::string &m, const std::string &f)
+		: message(m)
+		, from(f) {}
+
+	const std::string message;
+	const std::string from;
+};
+
 struct area_bounds{
 	float left,right,bottom,top;
 };
@@ -113,6 +122,7 @@ public:
 	void kick(int);
 	void player_summary(const Client &client)const;
 	std::vector<ShortClient> client_summary()const;
+	std::vector<ChatMessage> chat_log()const;
 	void step();
 	void send_data();
 	void recv_data();
@@ -135,6 +145,7 @@ public:
 	std::vector<Airstrike*> airstrike_list;
 	std::vector<Mine> mine_list;
 	std::vector<Grass> grass_list;
+	std::vector<ChatMessage> chats;
 	net::tcp_server tcp;
 	net::udp_server udp;
 #ifdef _WIN32

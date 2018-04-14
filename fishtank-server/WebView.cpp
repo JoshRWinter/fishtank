@@ -59,9 +59,10 @@ void WebView::index(net::tcp &sock){
 	const std::vector<ShortClient> summary = match.client_summary();
 	const std::string style = "\"padding: 10px 20px;border: 1px solid black;\"";
 
+	// fill in the client table
 	std::string content;
 	if(summary.size() > 0){
-		content = "<table style=\"border: 1px solid black;border-collapse: collapse;\">"
+		content = "<h2>Clients</h2><table style=\"border: 1px solid black;border-collapse: collapse;\">"
 		"<tr style=" + style + "><th>Id</th>"
 		"<th style=" + style + ">Name</th>"
 		"<th style=" + style + ">Play Time</th>"
@@ -69,7 +70,7 @@ void WebView::index(net::tcp &sock){
 		"<th style=" + style + ">Kills</th>"
 		"<th style=" + style + ">Deaths</th>"
 		"<th style=" + style + ">Rounds Played</th>"
-		"<th style=" + style + ">Action</th></tr>";
+		"<th style=" + style + ">Action</th></tr>\n";
 
 		for(const ShortClient &client : summary){
 			const std::string id_string = std::to_string(client.id);
@@ -85,10 +86,16 @@ void WebView::index(net::tcp &sock){
 			"<td style=" + style + ">" + std::to_string(client.deaths) + "</td>"
 			"<td style=" + style + ">" + std::to_string(client.rounds_played) + "</td>"
 			"<td style=" + style + "><a href=\"/kick/" + id_string + "\"><button class=\"button\">Kick</button></a></td>"
-			"</tr>";
+			"</tr>\n";
 		}
-
 		content += "</table>";
+
+		// fill in the chats table
+		const std::vector<ChatMessage> chats = match.chat_log();
+		content += "\n<h2>Chat Log</h2>";
+		for(const ChatMessage &cm : chats){
+			content += std::string("<font color=") + (cm.from == "server" ? "\"red\"" : "\"blue\"") + ">" + cm.from + "</font>: " + cm.message + "<br>\n";
+		}
 	}
 	else{
 		content = "No Clients are connected.";
