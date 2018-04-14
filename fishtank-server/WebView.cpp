@@ -31,14 +31,17 @@ void WebView::serve(){
 }
 
 void WebView::process(net::tcp &sock){
-	const std::string request = WebView::get_http_request(sock);
-	const std::string resource = WebView::get_target_resource(request);
-
+	// handle people who aren't localhost
 	const std::string &name = sock.get_name();
 	if(name != "::ffff:127.0.0.1" && name != "::1" && name != "127.0.0.1"){
 		forbidden(sock);
+		return;
 	}
-	else if(resource == "/"){
+
+	const std::string request = WebView::get_http_request(sock);
+	const std::string resource = WebView::get_target_resource(request);
+
+	if(resource == "/"){
 		index(sock);
 	}
 	else if(resource.find("/kick/") == 0 && resource.size() > 6){
