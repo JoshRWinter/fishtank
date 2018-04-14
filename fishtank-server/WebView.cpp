@@ -1,4 +1,6 @@
 #include <stdexcept>
+#include <chrono>
+#include <iostream>
 
 #include <time.h>
 #include <ctype.h>
@@ -22,7 +24,13 @@ void WebView::serve(){
 	net::tcp connection(sock);
 
 	try{
+		const auto start = std::chrono::high_resolution_clock::now();
 		process(connection);
+		const auto end = std::chrono::high_resolution_clock::now();
+
+		std::chrono::duration<float, std::ratio<1, 1000>> diff = end - start;
+		if(diff.count() >= 1.0f)
+			std::cout << "WebView: took " << diff.count() << " milliseconds to serve" << std::endl;
 	}
 	catch(const std::exception &e)
 	{
@@ -145,7 +153,11 @@ std::string WebView::get_http_request(net::tcp &sock){
 	const int get_size = 128; // try to recv how many characters at a time
 	std::string req; // request
 
+	const int start_time = time(NULL);
 	while(!end){
+		if(time(NULL) - start_time > 1)
+			throw std::runtime_error("no http request");
+
 		// receive a bit of the HTTP request
 		char block[get_size + 1];
 		const int received = sock.recv_nonblock(block, get_size);
