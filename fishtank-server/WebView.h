@@ -36,7 +36,7 @@ private:
 	static std::string construct_redirect_header(int, long long, const std::string&);
 	static std::string get_status_code(int);
 	static void check_http_request(const std::string&);
-	static std::string html_wrap(const std::string&, const std::string&);
+	static std::string html_wrap(const std::string&, const std::string&, const std::string& = "");
 	static std::string format(int);
 	static void escape_and_encode(std::string&);
 

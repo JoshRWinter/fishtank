@@ -78,6 +78,23 @@ void WebView::index(net::tcp &sock){
 	const std::vector<ShortClient> summary = match.client_summary();
 	const std::string style = "\"padding: 10px 20px;border: 1px solid black;\"";
 
+	const std::string head =
+	"<script type=\"text/javascript\">\n"
+	"function timed_refresh(){\n"
+		"\tsetTimeout(do_reload, 5000);\n"
+	"}\n"
+	"function do_reload(){\n"
+		"\tvar say = document.getElementById('saymessage').value;\n"
+		"\tif(say.trim().length === 0){\n"
+			"\t\tlocation.reload(true);\n"
+		"\t}\n"
+		"\telse{\n"
+			"\t\tsetTimeout(do_reload, 5000);\n"
+		"\t}\n"
+	"}\n"
+	"window.onload=timed_refresh;\n"
+	"</script>";
+
 	// fill in the client table
 	std::string content;
 	if(summary.size() > 0){
@@ -112,7 +129,7 @@ void WebView::index(net::tcp &sock){
 		// fill in the chats table
 		const std::vector<ChatMessage> chats = match.chat_log();
 		content += "\n<h2>Chat Log</h2>";
-		content += "<form action=\"/say\" method=\"get\"><input type=\"text\" name=\"m\" autocomplete=\"off\" style=\"margin-right: 10px;\"><input type=\"submit\" value=\"Say\"></form><br>";
+		content += "<form action=\"/say\" method=\"get\"><input type=\"text\" id=\"saymessage\" name=\"m\" autocomplete=\"off\" style=\"margin-right: 10px;\" autofocus><input type=\"submit\" value=\"Say\"></form><br>";
 		for(const ChatMessage &cm : chats){
 			content += std::string("<font color=") + (cm.from == "server" ? "\"red\"" : "\"blue\"") + ">" + cm.from + "</font>: " + cm.message + "<br>\n";
 		}
@@ -122,7 +139,7 @@ void WebView::index(net::tcp &sock){
 		content = "No Clients are connected.";
 	}
 
-	WebView::respond(sock, WebView::html_wrap("Client Index", content));
+	WebView::respond(sock, WebView::html_wrap("Client Index", content, head));
 }
 
 void WebView::say(net::tcp &sock, const std::string &msg){
@@ -301,11 +318,11 @@ std::string WebView::get_status_code(int code){
 	return status;
 }
 
-std::string WebView::html_wrap(const std::string &page_title, const std::string &body){
+std::string WebView::html_wrap(const std::string &page_title, const std::string &body, const std::string &head){
 	return
 	"<!Doctype html>"
 	"<html>"
-	"<head><title>" + page_title + "</title></head>"
+	"<head><title>" + page_title + "</title>\n" + head + "\n</head>"
 	"<body>"
 	+ body +
 	"</body>"
