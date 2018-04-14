@@ -52,7 +52,15 @@ void WebView::process(net::tcp &sock){
 	if(resource == "/"){
 		index(sock);
 	}
-	else if(resource.find("/kick/") == 0 && resource.size() > 6){
+	else if(resource.find("/say") == 0){
+		const auto pos = resource.find("?m=");
+		if(pos != std::string::npos){
+			std::string msg = resource.substr(pos + 3);
+			WebView::escape_and_encode(msg);
+			say(sock, msg);
+		}
+	}
+	else if(resource.find("/kick") == 0 && resource.size() > 6){
 		int id = 0;
 		if(sscanf(resource.c_str() + 6, "%d", &id) == 1){
 			match.kick(id);
@@ -104,6 +112,7 @@ void WebView::index(net::tcp &sock){
 		// fill in the chats table
 		const std::vector<ChatMessage> chats = match.chat_log();
 		content += "\n<h2>Chat Log</h2>";
+		content += "<form action=\"/say\" method=\"get\"><input type=\"text\" name=\"m\" autocomplete=\"off\" style=\"margin-right: 10px;\"><input type=\"submit\" value=\"Say\"></form><br>";
 		for(const ChatMessage &cm : chats){
 			content += std::string("<font color=") + (cm.from == "server" ? "\"red\"" : "\"blue\"") + ">" + cm.from + "</font>: " + cm.message + "<br>\n";
 		}
@@ -114,6 +123,13 @@ void WebView::index(net::tcp &sock){
 	}
 
 	WebView::respond(sock, WebView::html_wrap("Client Index", content));
+}
+
+void WebView::say(net::tcp &sock, const std::string &msg){
+	match.send_chat(msg);
+	const std::string content = WebView::html_wrap("moved", "see other");
+
+	WebView::redirect(sock, content, "/");
 }
 
 void WebView::kick(net::tcp &sock){
@@ -305,4 +321,32 @@ std::string WebView::format(int played){
 	snprintf(fmt, sizeof(fmt), "%02d:%02d", minutes, seconds);
 
 	return fmt;
+}
+
+void WebView::escape_and_encode(std::string &text){
+	// replace + with space
+	for(char &c : text)
+		if(c == '+')
+			c = ' ';
+
+	// percent decode
+	for(unsigned i = 0; i < text.length(); ++i){
+		const char c = text.at(i);
+
+		if(c == '%'){
+			// get the 2 hex chars
+			const std::string hex = text.substr(i + 1, 2);
+			unsigned int decoded = '?';
+			sscanf(hex.c_str(), "%x", &decoded);
+
+			// remove and replace
+			text.erase(i, 3);
+			if(decoded == '<')
+				text.insert(i, "&lt;");
+			else if(decoded == '>')
+				text.insert(i, "&gt;");
+			else
+				text.insert(text.begin() + i, (char)decoded);
+		}
+	}
 }

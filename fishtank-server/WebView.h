@@ -23,6 +23,7 @@ public:
 private:
 	void process(net::tcp&);
 	void index(net::tcp&);
+	void say(net::tcp&, const std::string&);
 	void kick(net::tcp&);
 	void forbidden(net::tcp&);
 	void not_found(net::tcp&);
@@ -37,6 +38,7 @@ private:
 	static void check_http_request(const std::string&);
 	static std::string html_wrap(const std::string&, const std::string&);
 	static std::string format(int);
+	static void escape_and_encode(std::string&);
 
 	net::tcp_server tcp;
 	Match &match;

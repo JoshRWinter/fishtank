@@ -126,7 +126,7 @@ public:
 	void step();
 	void send_data();
 	void recv_data();
-	void send_chat(const std::string&,const std::string&);
+	void send_chat(const std::string&,const std::string& = "server");
 	void send_scoreboard(Client&);
 	Client *get_client_by_secret(int32_t);
 	int get_client_index(int)const;
