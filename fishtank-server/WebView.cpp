@@ -97,9 +97,9 @@ void WebView::index(net::tcp &sock){
 	"</script>";
 
 	// fill in the client table
-	std::string content;
+	std::string content = "<a href=\"https://github.com/joshrwinter/fishtank\">source code</a><br>";
 	if(summary.size() > 0){
-		content = "<div style=\"float: left;\"><h2>Clients</h2><table style=\"border: 1px solid black;border-collapse: collapse;\">"
+		content += "<div style=\"float: left;\"><h2>Clients</h2><table style=\"border: 1px solid black;border-collapse: collapse;\">"
 		"<tr style=" + style + "><th>Id</th>"
 		"<th style=" + style + ">Name</th>"
 		"<th style=" + style + ">Play Time</th>"
@@ -137,7 +137,7 @@ void WebView::index(net::tcp &sock){
 		content += "</div>";
 	}
 	else{
-		content = "No Clients are connected.";
+		content += "No Clients are connected.";
 	}
 
 	WebView::respond(sock, WebView::html_wrap("Client Index", content, head));
