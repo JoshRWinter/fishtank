@@ -7,6 +7,8 @@
 
 #include "WebView.h"
 
+std::unordered_map<std::string, WebView::ROUTEFN> WebView::routes;
+
 WebView::WebView(unsigned short port, Match &m)
 	: tcp(port)
 	, match(m)
@@ -25,11 +27,11 @@ void WebView::serve(){
 
 	try{
 		const auto start = std::chrono::high_resolution_clock::now();
-		process(connection);
+		router(connection);
 		const auto end = std::chrono::high_resolution_clock::now();
 
 		std::chrono::duration<float, std::ratio<1, 1000>> diff = end - start;
-		if(diff.count() >= 1.0f)
+		if(diff.count() >= 1.5f)
 			std::cout << "WebView: took " << diff.count() << " milliseconds to serve" << std::endl;
 	}
 	catch(const std::exception &e)
@@ -38,136 +40,99 @@ void WebView::serve(){
 	}
 }
 
-void WebView::process(net::tcp &sock){
+// add a route to the routes map
+bool WebView::add_route(const std::string &name, ROUTEFN fn){
+	WebView::routes.insert(std::pair<std::string, ROUTEFN>(name, fn));
+
+	return true;
+}
+
+// decode the "%20" related stuff from url
+void WebView::url_decode(std::string &text){
+	// replace + with space
+	for(char &c : text)
+		if(c == '+')
+			c = ' ';
+
+	// percent decode
+	for(unsigned i = 0; i < text.length(); ++i){
+		const char c = text.at(i);
+
+		if(c == '%'){
+			// get the 2 hex chars
+			const std::string hex = text.substr(i + 1, 2);
+			unsigned int decoded = '?';
+			sscanf(hex.c_str(), "%x", &decoded);
+
+			// remove and replace
+			text.erase(i, 3);
+			text.insert(text.begin() + i, (char)decoded);
+		}
+	}
+}
+
+// needs to be run after WebView::url_decode(...)
+void WebView::html_entities(std::string &text){
+	for(unsigned i = 0; i < text.length(); ++i){
+		const char c = text.at(i);
+
+		if(c == '<'){
+			text.erase(text.begin() + i);
+			text.insert(i, "&lt;");
+		}
+		else if(c == '>'){
+			text.erase(text.begin() + i);
+			text.insert(i, "&gt;");
+		}
+	}
+}
+
+// dispatch get request to proper controller
+void WebView::router(net::tcp &sock){
 	// handle people who aren't localhost
 	const std::string &name = sock.get_name();
 	if(name != "::ffff:127.0.0.1" && name != "::1" && name != "127.0.0.1"){
-		forbidden(sock);
+		WebView::dispatch(WebView::get_controller("http_forbidden"), "", match, sock);
 		return;
 	}
 
 	const std::string request = WebView::get_http_request(sock);
 	const std::string resource = WebView::get_target_resource(request);
+	const std::string target = WebView::get_page(resource);
+	const std::string args = WebView::get_args(resource);
+	ROUTEFN controller = WebView::get_controller(target);
 
-	if(resource == "/"){
-		index(sock);
-	}
-	else if(resource.find("/say") == 0){
-		const auto pos = resource.find("?m=");
-		if(pos != std::string::npos){
-			std::string msg = resource.substr(pos + 3);
-			WebView::escape_and_encode(msg);
-			say(sock, msg);
+	WebView::dispatch(controller, args, match, sock);
+}
+
+// dispatch
+void WebView::dispatch(ROUTEFN controller, const std::string &args, Match &m, net::tcp &sock){
+	const WebViewResult result = controller(args, m);
+
+	if(result.code == HTTP_STATUS_SEE_OTHER)
+		WebView::redirect(sock, result.html, result.redirect_to);
+	else
+		WebView::respond(sock, result.html, result.code);
+}
+
+WebView::ROUTEFN WebView::get_controller(const std::string &name){
+	auto cit = WebView::routes.find(name);
+
+	if(cit == WebView::routes.end()){
+		cit = WebView::routes.find("http_not_found");
+
+		if(cit == WebView::routes.end()){
+			cit = WebView::routes.find("http_internal_server_error");
+
+			if(cit == WebView::routes.end())
+				throw std::runtime_error("no 500 controller");
 		}
 	}
-	else if(resource.find("/kick") == 0 && resource.size() > 6){
-		int id = 0;
-		if(sscanf(resource.c_str() + 6, "%d", &id) == 1){
-			match.kick(id);
-			kick(sock);
-		}
-		else
-			not_found(sock);
-	}
-	else{
-		not_found(sock);
-	}
+
+	return cit->second;
 }
 
-void WebView::index(net::tcp &sock){
-	const std::vector<ShortClient> summary = match.client_summary();
-	const std::string style = "\"padding: 10px 20px;border: 1px solid black;\"";
-
-	const std::string head =
-	"<script type=\"text/javascript\">\n"
-	"function timed_refresh(){\n"
-		"\tsetTimeout(do_reload, 5000);\n"
-	"}\n"
-	"function do_reload(){\n"
-		"\tvar elm = document.getElementById('saymessage');\n"
-		"\tvar say = elm == undefined ? \"\" : elm.value;\n"
-		"\tif(say.trim().length === 0){\n"
-			"\t\tlocation.reload(true);\n"
-		"\t}\n"
-		"\telse{\n"
-			"\t\tsetTimeout(do_reload, 5000);\n"
-		"\t}\n"
-	"}\n"
-	"window.onload=timed_refresh;\n"
-	"</script>";
-
-	// fill in the client table
-	std::string content = "<a href=\"https://github.com/joshrwinter/fishtank\">source code</a><br>";
-	if(summary.size() > 0){
-		content += "<div style=\"float: left;\"><h2>Clients</h2><table style=\"border: 1px solid black;border-collapse: collapse;\">"
-		"<tr style=" + style + "><th>Id</th>"
-		"<th style=" + style + ">Name</th>"
-		"<th style=" + style + ">Play Time</th>"
-		"<th style=" + style + ">Match Victories</th>"
-		"<th style=" + style + ">Kills</th>"
-		"<th style=" + style + ">Deaths</th>"
-		"<th style=" + style + ">Rounds Played</th>"
-		"<th style=" + style + ">Action</th></tr>\n";
-
-		for(const ShortClient &client : summary){
-			const std::string id_string = std::to_string(client.id);
-			const std::string play_time = WebView::format(time(NULL) - client.play_time);
-
-			content +=
-			"<tr>"
-			"<td style=" + style + ">" + id_string + "</td>"
-			"<td style=" + style + ">" + client.name + "</td>"
-			"<td style=" + style + ">" + play_time + "</td>"
-			"<td style=" + style + ">" + std::to_string(client.match_victories) + "</td>"
-			"<td style=" + style + ">" + std::to_string(client.victories) + "</td>"
-			"<td style=" + style + ">" + std::to_string(client.deaths) + "</td>"
-			"<td style=" + style + ">" + std::to_string(client.rounds_played) + "</td>"
-			"<td style=" + style + "><a href=\"/kick/" + id_string + "\"><button class=\"button\">Kick</button></a></td>"
-			"</tr>\n";
-		}
-		content += "</table></div><div style=\"float: left;padding-left: 30px;\">";
-
-		// fill in the chats table
-		const std::vector<ChatMessage> chats = match.chat_log();
-		content += "\n<h2>Chat Log</h2>";
-		content += "<form action=\"/say\" method=\"get\"><input type=\"text\" id=\"saymessage\" name=\"m\" autocomplete=\"off\" style=\"margin-right: 10px;\" autofocus><input type=\"submit\" value=\"Say\"></form><br>";
-		for(const ChatMessage &cm : chats){
-			content += std::string("<font color=") + (cm.from == "server" ? "\"red\"" : "\"blue\"") + ">" + cm.from + "</font>: " + cm.message + "<br>\n";
-		}
-		content += "</div>";
-	}
-	else{
-		content += "No Clients are connected.";
-	}
-
-	WebView::respond(sock, WebView::html_wrap("Client Index", content, head));
-}
-
-void WebView::say(net::tcp &sock, const std::string &msg){
-	match.send_chat(msg);
-	const std::string content = WebView::html_wrap("moved", "see other");
-
-	WebView::redirect(sock, content, "/");
-}
-
-void WebView::kick(net::tcp &sock){
-	const std::string content = WebView::html_wrap("moved", "see other");
-
-	WebView::redirect(sock, content, "/");
-}
-
-void WebView::forbidden(net::tcp &sock){
-	const std::string content = WebView::html_wrap("Nope", "<h1>Forbidden</h1><br><p>nice try</p>");
-
-	WebView::respond(sock, content, HTTP_STATUS_FORBIDDEN);
-}
-
-void WebView::not_found(net::tcp &sock){
-	const std::string content = WebView::html_wrap("404 - Page Not Found", "The requested resource was not understood.");
-
-	WebView::respond(sock, content, HTTP_STATUS_NOT_FOUND);
-}
-
+// send http response
 void WebView::respond(net::tcp &sock, const std::string &response, int code){
 	const int length = response.length();
 	const std::string sum = WebView::construct_response_header(code, length) + response;
@@ -175,6 +140,7 @@ void WebView::respond(net::tcp &sock, const std::string &response, int code){
 	sock.send_block(sum.c_str(), sum.length());
 }
 
+// send http response with location header (for redirecting the browser)
 void WebView::redirect(net::tcp &sock, const std::string &response, const std::string &location){
 	const int length = response.length();
 	const std::string sum = WebView::construct_redirect_header(HTTP_STATUS_SEE_OTHER, length, location) + response;
@@ -182,6 +148,7 @@ void WebView::redirect(net::tcp &sock, const std::string &response, const std::s
 	sock.send_block(sum.c_str(), sum.length());
 }
 
+// get http request from client
 std::string WebView::get_http_request(net::tcp &sock){
 	bool end = false;
 	const int get_size = 128; // try to recv how many characters at a time
@@ -263,7 +230,42 @@ std::string WebView::get_target_resource(const std::string &header){
 	for(char &c : target)
 		c = tolower(c);
 
+	// strip the leading slash (if any)
+	while(target.length() > 0 && target[0] == '/')
+		target.erase(target.begin());
+
 	return target;
+}
+
+// get the page from the request
+// e.g. "http://localhost:20501/index" will return "index"
+// "http://localhost:20501/say?m=hello+there" will return "say"
+std::string WebView::get_page(const std::string &request){
+	if(request == "")
+		return "index";
+
+	const auto question_pos = request.find("?");
+	if(question_pos != std::string::npos)
+		return request.substr(0, question_pos);
+
+	const auto slash_pos = request.find("/");
+	if(slash_pos != std::string::npos)
+		return request.substr(0, slash_pos);
+
+	return request;
+}
+
+// get the arguments bit from the requested resource
+// e.g. "http://localhost:50201/index/say" will extract "say"
+// "http://localhost:20501/index?arg=hello+there&arg2=more+words" will extract "?arg=hello+there&arg2=more+words"
+std::string WebView::get_args(const std::string &request){
+	const auto question_pos = request.find("?");
+	if(question_pos != std::string::npos)
+		return request.substr(question_pos);
+
+	const auto slash_pos = request.find("/");
+
+	return slash_pos == std::string::npos ? "" : request.substr(slash_pos + 1);
 }
 
 std::string WebView::construct_response_header(int code, long long content_length){
@@ -317,54 +319,4 @@ std::string WebView::get_status_code(int code){
 	}
 
 	return status;
-}
-
-std::string WebView::html_wrap(const std::string &page_title, const std::string &body, const std::string &head){
-	return
-	"<!Doctype html>"
-	"<html>"
-	"<head><title>" + page_title + "</title>\n" + head + "\n</head>"
-	"<body>"
-	+ body +
-	"</body>"
-	"</html>"
-	;
-}
-
-std::string WebView::format(int played){
-	int minutes = played / 60;
-	int seconds = played % 60;
-
-	char fmt[21];
-	snprintf(fmt, sizeof(fmt), "%02d:%02d", minutes, seconds);
-
-	return fmt;
-}
-
-void WebView::escape_and_encode(std::string &text){
-	// replace + with space
-	for(char &c : text)
-		if(c == '+')
-			c = ' ';
-
-	// percent decode
-	for(unsigned i = 0; i < text.length(); ++i){
-		const char c = text.at(i);
-
-		if(c == '%'){
-			// get the 2 hex chars
-			const std::string hex = text.substr(i + 1, 2);
-			unsigned int decoded = '?';
-			sscanf(hex.c_str(), "%x", &decoded);
-
-			// remove and replace
-			text.erase(i, 3);
-			if(decoded == '<')
-				text.insert(i, "&lt;");
-			else if(decoded == '>')
-				text.insert(i, "&gt;");
-			else
-				text.insert(text.begin() + i, (char)decoded);
-		}
-	}
 }
