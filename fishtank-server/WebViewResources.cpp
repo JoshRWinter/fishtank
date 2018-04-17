@@ -25,12 +25,12 @@ ROUTE_ADD(http_forbidden, args, match){
 // homepage
 ROUTE_ADD(index, args, match){
 	const std::vector<ShortClient> summary = match.client_summary();
-	const std::string style = "\"padding: 10px 20px;border: 1px solid black;\"";
+	const std::string style = "\"padding: 10px;border: 1px solid black;\"";
 
 	// fill in the client table
 	std::string content;
 	if(summary.size() > 0){
-		content += "<div style=\"float: left;\"><h2>Clients</h2><table style=\"border: 1px solid black;border-collapse: collapse;\">"
+		content += "<div style=\"float: left;padding-right: 30px;\"><h2>Clients</h2><table style=\"border: 1px solid black;border-collapse: collapse;\">"
 
 		"<tr style=" + style + "><th>Id</th>"
 		"<th style=" + style + ">Name</th>"
@@ -57,7 +57,7 @@ ROUTE_ADD(index, args, match){
 			"<td style=" + style + "><a href=\"/kick/" + id_string + "\"><button class=\"button\">Kick</button></a></td>"
 			"</tr>\n";
 		}
-		content += "</table></div><div style=\"float: left;padding-left: 30px;\">";
+		content += "</table></div><div style=\"float: left;max-width: 350px;\">";
 
 		// fill in the chats table
 		const std::vector<ChatMessage> chats = match.chat_log();

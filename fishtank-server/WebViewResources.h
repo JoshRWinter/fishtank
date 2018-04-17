@@ -24,7 +24,7 @@ static const std::string refresher_js =
 
 static const std::string master_css =
 "<style>\n"
-"body { margin-left: 15%; margin-right: 15%; }\n"
+"body { margin-left: 12%; margin-right: 12%; }\n"
 "#topdiv { background-color: rgb(42, 157, 212); }\n"
 "#titleheader { padding-left: 5px; display: inline; }\n"
 "#navspan { margin: 0; padding: 0; float: right; }\n"
