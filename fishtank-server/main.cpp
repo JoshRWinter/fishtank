@@ -87,7 +87,7 @@ int main(){
 		return 1;
 	}
 
-	std::cout<<"[ready on tcp:"<<TCP_PORT<<" udp:"<<UDP_PORT<<" at \""<<my_ip_addr<<"\" interface: \"localhost:"<<WEBVIEW_PORT<<"\"]"<<std::endl;
+	std::cout<<"[ready on tcp:"<<TCP_PORT<<" udp:"<<UDP_PORT<<" at \""<<my_ip_addr<<"\" web-interface: \"http://localhost:"<<WEBVIEW_PORT<<"\"]"<<std::endl;
 
 	int last_send_heartbeat = time(NULL);
 	int last_recv_heartbeat = time(NULL);
