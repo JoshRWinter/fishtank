@@ -9,9 +9,10 @@
 
 std::unordered_map<std::string, WebView::ROUTEFN> WebView::routes;
 
-WebView::WebView(unsigned short port, Match &m)
+WebView::WebView(unsigned short port, Match &m, const std::string &a)
 	: tcp(port)
 	, match(m)
+	, allowed(a)
 {}
 
 WebView::operator bool()const{
@@ -91,7 +92,7 @@ void WebView::html_entities(std::string &text){
 void WebView::router(net::tcp &sock){
 	// handle people who aren't localhost
 	const std::string &name = sock.get_name();
-	if(name != "::ffff:127.0.0.1" && name != "::1" && name != "127.0.0.1"){
+	if(!authorized(name)){
 		WebView::dispatch(WebView::get_controller("http_forbidden"), "", match, sock);
 		return;
 	}
@@ -103,6 +104,14 @@ void WebView::router(net::tcp &sock){
 	ROUTEFN controller = WebView::get_controller(target);
 
 	WebView::dispatch(controller, args, match, sock);
+}
+
+// determine if the ip address is authorized to access
+bool WebView::authorized(const std::string &ipaddr)const{
+	if(allowed.find(ipaddr) != std::string::npos || (ipaddr.find("::ffff:") == 0 && allowed.find(ipaddr.substr(7))))
+		return true;
+
+	return ipaddr == "::1" || ipaddr == "::ffff:127.0.0.1" || ipaddr == "127.0.0.1";
 }
 
 // dispatch

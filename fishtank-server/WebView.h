@@ -36,7 +36,7 @@ class WebView{
 public:
 	typedef WebViewResult (*ROUTEFN)(const std::string&, Match&);
 
-	WebView(unsigned short, Match&);
+	WebView(unsigned short, Match&, const std::string&);
 	WebView(const WebView&) = delete;
 
 	void operator=(const WebView&) = delete;
@@ -50,6 +50,7 @@ public:
 
 private:
 	void router(net::tcp&);
+	bool authorized(const std::string&)const;
 
 	static void dispatch(ROUTEFN, const std::string&, Match&, net::tcp &sock);
 	static ROUTEFN get_controller(const std::string&);
@@ -66,6 +67,7 @@ private:
 
 	net::tcp_server tcp;
 	Match &match;
+	const std::string &allowed;
 
 	static std::unordered_map<std::string, ROUTEFN> routes;
 };

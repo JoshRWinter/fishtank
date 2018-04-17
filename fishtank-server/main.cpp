@@ -13,12 +13,17 @@
 #include "fishtank-server.h"
 #include "WebView.h"
 
+struct CommandLine{
+	std::string allowed_ip_address; // who is allowed to connect to web interface
+};
+
 static std::atomic<bool> run;
 
 static std::string register_master(net::tcp&);
 static bool send_heartbeat(net::udp&, const Match &match);
 static bool recv_heartbeat(net::udp&);
 static std::string get_my_ip_addr();
+static CommandLine get_cmdline_args(int, char**);
 
 static int ctrl_c_count=0; // only accessed by signal_handler
 #ifdef _WIN32
@@ -47,7 +52,7 @@ void signal_handler(int s){
 }
 #endif // _WIN32
 
-int main(){
+int main(int argc, char **argv){
 	srand(time(NULL));
 	run.store(true);
 
@@ -59,6 +64,9 @@ int main(){
 	signal(SIGTERM,signal_handler);
 	signal(SIGPIPE,signal_handler);
 #endif // _WIN32
+
+	// figure out cmd line args
+	const CommandLine cmd = get_cmdline_args(argc, argv);
 
 	const std::string &my_ip_addr = get_my_ip_addr();
 
@@ -80,7 +88,7 @@ int main(){
 		return 1;
 	}
 
-	WebView web(WEBVIEW_PORT, match);
+	WebView web(WEBVIEW_PORT, match, cmd.allowed_ip_address);
 	if(!web){
 		std::cout<<"error: couldn't bind to port "<<WEBVIEW_PORT<<std::endl;
 		std::cout<<"make sure no other server is using that port."<<std::endl;
@@ -315,6 +323,29 @@ std::string get_my_ip_addr(){
 #endif // _WIN32
 
 	return hostname == "" ? "[undetermined]" : hostname;
+}
+
+static void usage(const char *program){
+	std::cout << "usage:\n" << program << " [--allowed-ips=...]" << std::endl;
+	std::cout << "\n--allowed-ips: Comma separated list of ip addresses that are allowed to access the web interface" << std::endl;
+	std::cout << "\tex. --allowed-ips=192.168.1.15,192.168.1.22" << std::endl;
+
+	exit(0);
+}
+
+CommandLine get_cmdline_args(int argc, char **argv){
+	CommandLine cmd;
+
+	for(int i = 1; i < argc; ++i){
+		const std::string option = argv[i];
+
+		if(option == "--help" || option == "-help" || option == "-h")
+			usage(argv[0]);
+		else if(option.find("--allowed-ips=") != std::string::npos)
+			cmd.allowed_ip_address = option.substr(14);
+	}
+
+	return cmd;
 }
 
 #ifndef _WIN32
