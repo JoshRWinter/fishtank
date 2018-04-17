@@ -293,10 +293,8 @@ void Match::recv_data(){
 
 		// figure out which player sent this state update
 		Client *client=get_client_by_secret(ntohl(tsh.state[CLIENT_STATE_UDP_SECRET]));
-		if(client==NULL){
-			std::cout<<"unrecognized udp id"<<std::endl;
+		if(client==NULL)
 			continue;
-		}
 		if(!client->udpid.initialized)
 			client->udpid=id;
 
