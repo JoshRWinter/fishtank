@@ -1,5 +1,5 @@
 #include "WebView.h"
-#include "WebViewResourcesHelper.h"
+#include "WebViewResources.h"
 
 // http 500
 ROUTE_ADD(http_internal_server_error, args, match){
@@ -28,9 +28,10 @@ ROUTE_ADD(index, args, match){
 	const std::string style = "\"padding: 10px 20px;border: 1px solid black;\"";
 
 	// fill in the client table
-	std::string content = "<a href=\"https://github.com/joshrwinter/fishtank\">source code</a><br>";
+	std::string content;
 	if(summary.size() > 0){
 		content += "<div style=\"float: left;\"><h2>Clients</h2><table style=\"border: 1px solid black;border-collapse: collapse;\">"
+
 		"<tr style=" + style + "><th>Id</th>"
 		"<th style=" + style + ">Name</th>"
 		"<th style=" + style + ">Play Time</th>"
@@ -70,7 +71,7 @@ ROUTE_ADD(index, args, match){
 		content += "</div>";
 	}
 	else{
-		content += "No Clients are connected.";
+		content += "<p>No Clients are connected.</p>";
 	}
 
 	return {wrap(content, "Server Status", refresher_js)};
@@ -101,4 +102,29 @@ ROUTE_ADD(kick, args, match){
 		match.kick(kick_id);
 
 	return {wrap("<h2>Moved</h2>", "See Other"), HTTP_STATUS_SEE_OTHER, "/"};
+}
+
+ROUTE_ADD(help, args, match){
+	const std::string content =
+	"<br>"
+	"<img src=\"https://i.imgur.com/PyX3s3M.png\" alt=\"fishtank logo\">\n"
+	"<h2>About</h2><p>"
+	"Fishtank is an Android game capable of real-time multiplayer over the internet.<br>"
+	"</p><p>"
+	"A Client-Server model is used to coordinate all connected players. The Fishtank Game Server "
+	"is intended to run on your computer, and you can connect to your computer's IP address to play."
+	"</p><h2>Port Forwarding</h2><p>"
+	"If you want to play with people who are outside of your local area network, then you need to configure "
+	"your router to forward connections to your computer. This is called <b>Port Forwarding</b>."
+	"</p><ol>"
+	"<li>Open your router's web interface</li>"
+	"<li>Find the settings for Port Forwarding</li>"
+	"<li>Forward the following ports: 28856 (TCP), and 28857 (UDP)</li>"
+	"</ol>"
+	"<h2>Source Code</h2><p>"
+	"Source code can be found on <a href=\"https://github.com/joshrwinter/fishtank\">github</a>."
+	"</p>"
+	;
+
+	return wrap(content, "about");
 }
