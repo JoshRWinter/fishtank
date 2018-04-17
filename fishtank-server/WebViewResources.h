@@ -1,6 +1,8 @@
 #ifndef WEB_VIEW_STATIC_RESOURCES_H
 #define WEB_VIEW_STATIC_RESOURCES_H
 
+#include <time.h>
+
 static const std::string refresher_js =
 "<script type=\"text/javascript\">\n"
 "function timed_refresh(){\n"
