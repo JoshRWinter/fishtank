@@ -125,7 +125,12 @@ int main(int argc, char **argv){
 		match.step();
 
 		// handle the web view interface
-		web.serve();
+		try{
+			web.serve();
+		}catch(const ShutdownException &e){
+			std::cout << "@@@@@@@@@@@@@@ WebView shutdown" << std::endl;
+			return 0;
+		}
 
 		match.wait_next_step();
 	}

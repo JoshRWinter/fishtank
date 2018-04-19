@@ -148,3 +148,21 @@ ROUTE_ADD(configuration, args, match){
 
 	return wrap(content, "Configuration");
 }
+
+ROUTE_ADD(shutdown, args, match){
+	const std::string script =
+	"<script>"
+	"function go(){\n"
+	"setTimeout(\"window.location.href = '/'\", 5000);\n"
+	"}\n"
+	"window.onload=go;\n"
+	"</script>\n"
+	;
+
+	const std::string content =
+	"<h2>Shutting down...</h2>\n"
+	"<p><sub>how could you do this</sub></p>"
+	;
+
+	throw ShutdownException(wrap(content, "shutting down", script));
+}

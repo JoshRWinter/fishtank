@@ -43,10 +43,10 @@ static const std::string body_pre =
 "<a class=\"navlink\" href=\"/\">Status</a>"
 "<a class=\"navlink\" href=\"/configuration\">Configuration</a>\n"
 "<a class=\"navlink\" href=\"/help\">Help</a>\n"
+"<a class=\"navlink\" href=\"/shutdown\">Shutdown</a>\n"
 "</span>\n"
 "</div>\n"
 ;
-
 
 static std::string wrap(const std::string &body, const std::string &title, const std::string &head = ""){
 	return

@@ -35,9 +35,14 @@ void WebView::serve(){
 		if(diff.count() >= 1.5f)
 			std::cout << "WebView: took " << diff.count() << " milliseconds to serve" << std::endl;
 	}
-	catch(const std::exception &e)
+	catch(const std::runtime_error &e)
 	{
 		std::cout << "@@@@@@@@@@@@@@ WebView Exception: " << e.what() << std::endl;
+	}
+	catch(const ShutdownException &e)
+	{
+		respond(connection, e.what(), HTTP_STATUS_OK);
+		throw;
 	}
 }
 

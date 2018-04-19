@@ -19,6 +19,19 @@ static WebViewResult fn(const std::string&, Match&); \
 static const bool private_route_variable_ ## fn = WebView::add_route(#fn, fn); \
 static WebViewResult fn(const std::string &q, Match &m)
 
+class ShutdownException : public std::exception{
+public:
+	ShutdownException(const std::string &c)
+		: content(c) {}
+
+	virtual const char *what() const noexcept{
+		return content.c_str();
+	}
+
+private:
+	const std::string content;
+};
+
 struct WebViewResult
 {
 	WebViewResult(const std::string &content, int rc = HTTP_STATUS_OK, const std::string &redir = "")
