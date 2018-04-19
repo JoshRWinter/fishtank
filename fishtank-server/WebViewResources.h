@@ -31,6 +31,8 @@ static const std::string master_css =
 ".titlebar { font-size: 20px; }\n"
 "a.navlink, a:visited.navlink { height: 100%; padding-left: 16px; padding-right: 16px; text-decoration: none; background-color: rgb(42, 157, 212); color: black; }\n"
 "a:hover.navlink { background-color: rgb(62, 177, 232); }\n"
+"#table_noborder { padding-bottom: 10px; padding-right: 100px; }\n"
+"#table_normal { padding: 10px; border: 1px solid black; }\n"
 "</style>"
 ;
 
@@ -39,6 +41,7 @@ static const std::string body_pre =
 "<p id=\"titleheader\" class=\"titlebar\">FISHTANK</p>\n"
 "<span id=\"navspan\" class=\"titlebar\">\n"
 "<a class=\"navlink\" href=\"/\">Status</a>"
+"<a class=\"navlink\" href=\"/configuration\">Configuration</a>\n"
 "<a class=\"navlink\" href=\"/help\">Help</a>\n"
 "</span>\n"
 "</div>\n"

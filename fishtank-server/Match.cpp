@@ -90,6 +90,15 @@ void Match::player_summary(const Client &client)const{
 	std::cout<<" -- deaths: "<<client.stat.deaths<<std::endl;
 }
 
+// reset the ranked stats for each client
+void Match::reset_stats(){
+	for(Client *client : client_list){
+		client->stat.match_victories = 0;
+		client->stat.victories = 0;
+		client->stat.deaths = 0;
+	}
+}
+
 std::vector<ShortClient> Match::client_summary()const {
 	std::vector<ShortClient> summary;
 

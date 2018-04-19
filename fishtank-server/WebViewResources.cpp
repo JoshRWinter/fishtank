@@ -32,14 +32,14 @@ ROUTE_ADD(index, args, match){
 	if(summary.size() > 0){
 		content += "<div style=\"float: left;padding-right: 30px;\"><h2>Clients</h2><table style=\"border: 1px solid black;border-collapse: collapse;\">"
 
-		"<tr style=" + style + "><th>Id</th>"
-		"<th style=" + style + ">Name</th>"
-		"<th style=" + style + ">Play Time</th>"
-		"<th style=" + style + ">Match Victories</th>"
-		"<th style=" + style + ">Kills</th>"
-		"<th style=" + style + ">Deaths</th>"
-		"<th style=" + style + ">Rounds Played</th>"
-		"<th style=" + style + ">Action</th></tr>\n";
+		"<tr id=\"table_normal\"><th>Id</th>"
+		"<th id=\"table_normal\">Name</th>"
+		"<th id=\"table_normal\">Play Time</th>"
+		"<th id=\"table_normal\">Match Victories</th>"
+		"<th id=\"table_normal\">Kills</th>"
+		"<th id=\"table_normal\">Deaths</th>"
+		"<th id=\"table_normal\">Rounds Played</th>"
+		"<th id=\"table_normal\">Action</th></tr>\n";
 
 		for(const ShortClient &client : summary){
 			const std::string id_string = std::to_string(client.id);
@@ -47,14 +47,14 @@ ROUTE_ADD(index, args, match){
 
 			content +=
 			"<tr>"
-			"<td style=" + style + ">" + id_string + "</td>"
-			"<td style=" + style + ">" + client.name + "</td>"
-			"<td style=" + style + ">" + play_time + "</td>"
-			"<td style=" + style + ">" + std::to_string(client.match_victories) + "</td>"
-			"<td style=" + style + ">" + std::to_string(client.victories) + "</td>"
-			"<td style=" + style + ">" + std::to_string(client.deaths) + "</td>"
-			"<td style=" + style + ">" + std::to_string(client.rounds_played) + "</td>"
-			"<td style=" + style + "><a href=\"/kick/" + id_string + "\"><button class=\"button\">Kick</button></a></td>"
+			"<td id=\"table_normal\">" + id_string + "</td>"
+			"<td id=\"table_normal\">" + client.name + "</td>"
+			"<td id=\"table_normal\">" + play_time + "</td>"
+			"<td id=\"table_normal\">" + std::to_string(client.match_victories) + "</td>"
+			"<td id=\"table_normal\">" + std::to_string(client.victories) + "</td>"
+			"<td id=\"table_normal\">" + std::to_string(client.deaths) + "</td>"
+			"<td id=\"table_normal\">" + std::to_string(client.rounds_played) + "</td>"
+			"<td id=\"table_normal\"><a href=\"/kick/" + id_string + "\"><button class=\"button\">Kick</button></a></td>"
 			"</tr>\n";
 		}
 		content += "</table></div><div style=\"float: left;max-width: 350px;\">";
@@ -127,4 +127,24 @@ ROUTE_ADD(help, args, match){
 	;
 
 	return wrap(content, "about");
+}
+
+ROUTE_ADD(configuration, args, match){
+	if(args.length() > 0){
+		if(args == "reset")
+			match.reset_stats();
+		else
+			return http_not_found(args, match);
+
+		return {wrap("<h2>See Other</h2>", "See Other"), HTTP_STATUS_SEE_OTHER, "/configuration"};
+	}
+
+	const std::string content =
+	"<h2>Additional Configuration</h2>\n"
+	"<table><tr><th id=\"table_noborder\">Action</th><th id=\"table_noborder\">Description</th></tr>\n"
+	"<tr><td id=\"table_noborder\"><a href=\"/configuration/reset\"><button class=\"button\">Reset Stats</button></a></td><td id=\"table_noborder\">Resets ranked status for all connected players</td></tr>\n"
+	"</table>\n"
+	;
+
+	return wrap(content, "Configuration");
 }

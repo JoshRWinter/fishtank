@@ -121,6 +121,7 @@ public:
 	bool accept_new_clients();
 	void kick(int);
 	void player_summary(const Client &client)const;
+	void reset_stats();
 	std::vector<ShortClient> client_summary()const;
 	std::vector<ChatMessage> chat_log()const;
 	void step();
