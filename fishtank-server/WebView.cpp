@@ -113,7 +113,7 @@ void WebView::router(net::tcp &sock){
 
 // determine if the ip address is authorized to access
 bool WebView::authorized(const std::string &ipaddr)const{
-	if(allowed.find(ipaddr) != std::string::npos || (ipaddr.find("::ffff:") == 0 && allowed.find(ipaddr.substr(7))))
+	if(allowed.find(ipaddr) != std::string::npos || (ipaddr.find("::ffff:") == 0 && allowed.find(ipaddr.substr(7)) != std::string::npos))
 		return true;
 
 	return ipaddr == "::1" || ipaddr == "::ffff:127.0.0.1" || ipaddr == "127.0.0.1";
