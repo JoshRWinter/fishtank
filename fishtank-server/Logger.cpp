@@ -1,6 +1,3 @@
-#include <vector>
-#include <string>
-
 #include <stdio.h>
 #include <stdarg.h>
 
@@ -18,4 +15,8 @@ void fishtank_log(const char *fmt, ...){
 	puts(say); // say it
 
 	va_end(args);
+}
+
+const std::vector<std::string> &get_log_buffer(){
+	return buffer;
 }

@@ -149,20 +149,27 @@ ROUTE_ADD(configuration, args, match){
 	return wrap(content, "Configuration");
 }
 
-ROUTE_ADD(shutdown, args, match){
-	const std::string script =
-	"<script>"
-	"function go(){\n"
-	"setTimeout(\"window.location.href = '/'\", 5000);\n"
-	"}\n"
-	"window.onload=go;\n"
-	"</script>\n"
-	;
+ROUTE_ADD(logs, args, match){
+	const std::vector<std::string> buffer = get_log_buffer();
+	std::string content = "<h2>Server logs</h2><pre>\n";
 
-	const std::string content =
-	"<h2>Shutting down...</h2>\n"
-	"<p><sub>how could you do this</sub></p>"
-	;
+	char lineno_convert[20];
+	unsigned long long lineno = 1;
+	for(const std::string &line : buffer){
+		snprintf(lineno_convert, sizeof(lineno_convert), "%4llu", lineno);
+		const std::string colorized = colorize(line);
 
-	throw ShutdownException(wrap(content, "shutting down", script));
+		content.append("<span id=\"gray\">");
+		content.append(lineno_convert);
+		content.append(": </span>");
+
+		content.append(colorized);
+		content.append("\n");
+
+		++lineno;
+	}
+
+	content.append("</pre>");
+
+	return wrap(content, "Server Logs");
 }

@@ -33,6 +33,14 @@ static const std::string master_css =
 "a:hover.navlink { background-color: rgb(62, 177, 232); }\n"
 "#table_noborder { padding-bottom: 10px; padding-right: 100px; }\n"
 "#table_normal { padding: 10px; border: 1px solid black; }\n"
+"#red { color: rgb(200, 0, 0); }\n"
+"#red_bold { color: rgb(255, 0, 0); }\n"
+"#green { color: rgb(0, 200, 0); }\n"
+"#green_bold { color: rgb(0, 255, 0); }\n"
+"#cyan { color: rgb(0, 200, 200); }\n"
+"#cyan_bold { color: rgb(0, 255, 255); }\n"
+"#gray { color: rgb(128, 128, 128); }\n"
+"pre { font-size: 14px; }\n"
 "</style>"
 ;
 
@@ -42,8 +50,8 @@ static const std::string body_pre =
 "<span id=\"navspan\" class=\"titlebar\">\n"
 "<a class=\"navlink\" href=\"/\">Status</a>"
 "<a class=\"navlink\" href=\"/configuration\">Configuration</a>\n"
-"<a class=\"navlink\" href=\"/help\">Help</a>\n"
-"<a class=\"navlink\" href=\"/shutdown\">Shutdown</a>\n"
+"<a class=\"navlink\" href=\"/logs\">Logs</a>\n"
+"<a class=\"navlink\" href=\"/help\">?</a>\n"
 "</span>\n"
 "</div>\n"
 ;
@@ -73,6 +81,85 @@ static std::string format(int span){
 	snprintf(fmt, sizeof(fmt), "%02d:%02d", minutes, seconds);
 
 	return fmt;
+}
+
+typedef std::string::size_type position;
+
+struct sequence_position{
+	sequence_position(position s, int c, const char *sp) : start(s), count(c), span(sp) {}
+	sequence_position() : start(std::string::npos), count(0), span("") {}
+
+	position start;
+	int count;
+	const char *span;
+};
+
+static const char *code_to_span(const std::string &code){
+	if(code == "\033[31m")
+		return "<span id=\"red\">";
+	else if(code == "\033[31;1m")
+		return "<span id=\"red_bold\">";
+
+	else if(code == "\033[32m")
+		return "<span id=\"green\">";
+	else if(code == "\033[32;1m")
+		return "<span id=\"green_bold\">";
+
+	else if(code == "\033[36m")
+		return "<span id=\"cyan\">";
+	else if(code == "\033[36;1m")
+		return "<span id=\"cyan_bold\">";
+
+	else if(code == "\033[0m")
+		return "</span>";
+
+	return "<span>";
+}
+
+static sequence_position find_next_sequence(const std::string &line, int start){
+	const position pos = line.find("\033[", start);
+	if(pos == std::string::npos)
+		return {};
+
+	// find the 'm'
+	position after_index = pos;
+	for(position i = pos + 2; i < line.length(); ++i){
+		if(line[i] == 'm'){
+			after_index = i + 1;
+			break;
+		}
+	}
+	const int length = after_index - pos;
+
+	const std::string sequence = line.substr(pos, length);
+	return {pos, length, code_to_span(sequence)};
+}
+
+static std::string colorize(const std::string &line){
+	bool open_span = false;
+	std::string colorized;
+
+	sequence_position pos = find_next_sequence(line, 0);
+
+	for(position index = 0; index < line.length(); ++index){
+		if(index == pos.start){
+			if(!strcmp(pos.span, "</span>"))
+				open_span = false;
+			else if(open_span)
+				colorized.append("</span>");
+			else
+				open_span = true;
+
+			colorized.append(pos.span);
+			index += pos.count - 1;
+			pos = find_next_sequence(line, index + 1);
+		}
+		else{
+			colorized.push_back(line[index]);
+		}
+	}
+
+	return colorized;
 }
 
 #endif // WEB_VIEW_STATIC_RESOURCES_H
