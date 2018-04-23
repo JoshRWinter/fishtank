@@ -3,6 +3,7 @@
 #include <time.h>
 #include <string.h>
 #include <fstream>
+#include <iostream>
 
 #ifndef _WIN32
 #include <wordexp.h>
@@ -77,25 +78,25 @@ int main(int argc, char **argv){
 	master.close();
 	bool registered = reason.length() == 0;
 	if(reason.length() != 0)
-		std::cout << "Master Server registration failed: " << reason << std::endl;
+		lprintf("Master Server registration failed: %s", reason.c_str());
 	else
-		std::cout << "Master Server registration successful." << std::endl;
+		lprintf("Master Server registration successful.");
 
 	Match match;
 	if(!match){
-		std::cout<<"error: couldn't bind to port "<<TCP_PORT<<" and/or port "<<UDP_PORT<<std::endl;
-		std::cout<<"make sure no other server is using ports "<<TCP_PORT<<" (TCP) and "<<UDP_PORT<<" (UDP)"<<std::endl;
+		lprintf("error: couldn't bind to port %d and/or port %d", TCP_PORT, UDP_PORT);
+		lprintf("make sure no other server is using ports %d (TCP) or %d (UDP)", TCP_PORT, UDP_PORT);
 		return 1;
 	}
 
 	WebView web(WEBVIEW_PORT, match, cmd.allowed_ip_address);
 	if(!web){
-		std::cout<<"error: couldn't bind to port "<<WEBVIEW_PORT<<std::endl;
-		std::cout<<"make sure no other server is using that port."<<std::endl;
+		lprintf("error: couldn't bind to port %d", WEBVIEW_PORT);
+		lprintf("make sure no other server is using that port.");
 		return 1;
 	}
 
-	std::cout<<"[ready on tcp:"<<TCP_PORT<<" udp:"<<UDP_PORT<<" at \""<<my_ip_addr<<"\" web-interface: \"http://localhost:"<<WEBVIEW_PORT<<"\"]"<<std::endl;
+	lprintf("[ready on tcp: %d udp: %d at \"%s\" web-interface: \"http://localhost:%d\"]", TCP_PORT, UDP_PORT, my_ip_addr.c_str(), WEBVIEW_PORT);
 
 	int last_send_heartbeat = time(NULL);
 	int last_recv_heartbeat = time(NULL);
@@ -115,7 +116,7 @@ int main(int argc, char **argv){
 
 			if(current - last_recv_heartbeat > MASTER_HEARTBEAT_FREQUENCY * 6){
 				registered = false;
-				std::cout << ANSI_RED << "Error: " << ANSI_RESET << "lost connection to master" << std::endl;
+				lprintf(ANSI_RED "Error: " ANSI_RESET "lost connection to master");
 			}
 		}
 
@@ -128,7 +129,7 @@ int main(int argc, char **argv){
 		try{
 			web.serve();
 		}catch(const ShutdownException &e){
-			std::cout << "@@@@@@@@@@@@@@ WebView shutdown" << std::endl;
+			lprintf("@@@@@@@@@@@@@@@ WebView shutdown");
 			return 0;
 		}
 
@@ -178,7 +179,7 @@ static ServerConfig generate_server_config(){
 	std::cout << "[First Time Setup]\nServer Name: " << std::flush;
 	std::string name;
 	std::getline(std::cin, name);
-	std::cout << "Location (e.g. Northern California): " << std::flush;
+	std::cout << "Location (e.g. Central Kentucky): " << std::flush;
 	std::string location;
 	std::getline(std::cin, location);
 
@@ -190,7 +191,7 @@ static ServerConfig generate_server_config(){
 	out << name << std::endl;
 	out << location << std::endl;
 
-	std::cout << "written to \"" << path << "\"" << std::endl;
+	lprintf("written to \"%s\"", path.c_str());
 
 	return {name, location};
 }
@@ -206,8 +207,8 @@ static ServerConfig get_server_config(){
 	std::getline(in, name);
 	std::getline(in, location);
 
-	std::cout << "Name: " << name << std::endl;
-	std::cout << "Location: " << location << std::endl;
+	lprintf("Name: %s", name.c_str());
+	lprintf("Location: %s", location.c_str());
 
 	return {name, location};
 }
@@ -273,7 +274,7 @@ bool send_heartbeat(net::udp &udp, const Match &match){
 	udp.send(&count, sizeof(count));
 
 	if(udp.error()){
-		std::cout << ANSI_RED << "Error:" << ANSI_RESET << " failure when sending master heartbeat"<<std::endl;
+		lprintf(ANSI_RED "Error: " ANSI_RESET "failure when sending master heartbeat");
 		return false;
 	}
 
@@ -331,9 +332,9 @@ std::string get_my_ip_addr(){
 }
 
 static void usage(const char *program){
-	std::cout << "usage:\n" << program << " [--allowed-ips=...]" << std::endl;
-	std::cout << "\n--allowed-ips: Comma separated list of ip addresses that are allowed to access the web interface" << std::endl;
-	std::cout << "\tex. --allowed-ips=192.168.1.15,192.168.1.22" << std::endl;
+	lprintf("usage:\n%s [--allowed-ips=...]", program);
+	lprintf("\n--allowed-ips=: Comma separated list of ip addresses that are allowed to access the web interface");
+	lprintf("\tex. --allowed-ips=192.168.1.15,192.168.1.22");
 
 	exit(0);
 }

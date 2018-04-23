@@ -1,6 +1,7 @@
 #ifndef NETWORK_H
 #define NETWORK_H
 
+#undef distance
 #include <string>
 #include <string.h>
 #ifdef _WIN32

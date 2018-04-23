@@ -42,7 +42,7 @@ bool Match::accept_new_clients(){
 		if(client_list.size()==MAX_PLAYERS){
 			net::tcp tcptemp(connector_socket);
 			// have to kick the client
-			std::cout<<"rejected "<<tcptemp.get_name()<<", too many players!"<<std::endl;
+			lprintf("rejected %s, too many players!", tcptemp.get_name().c_str());
 			uint8_t i=0;
 			tcptemp.send_block(&i,sizeof(uint8_t));
 		}
@@ -60,7 +60,7 @@ bool Match::accept_new_clients(){
 			// send the level configuration to this client
 			send_level_config(*c);
 
-			std::cout<<c->name<<" just connected ("<<c->connector_address<<")"<<std::endl;
+			lprintf("%s just connected (%s)", c->name.c_str(), c->connector_address.c_str());
 			// inform the other clients of the new player
 			std::string msg=c->name+" has connected";
 			send_chat(msg,"server");
@@ -82,12 +82,12 @@ void Match::kick(int id){
 
 void Match::player_summary(const Client &client)const{
 	const int current=time(NULL);
-	std::cout<<client.name<<" summary:"<<std::endl;
-	std::cout<<" -- rounds played: "<<client.stat.rounds_played<<std::endl;
-	std::cout<<" -- time played: "<<((current-client.stat.join_time)/60)<<"m "<<((current-client.stat.join_time)%60)<<"s"<<std::endl;
-	std::cout<<" -- match victories: "<<client.stat.match_victories<<std::endl;
-	std::cout<<" -- one-on-one victories: "<<client.stat.victories<<std::endl;
-	std::cout<<" -- deaths: "<<client.stat.deaths<<std::endl;
+	lprintf("%s summary:", client.name.c_str());
+	lprintf(" -- rounds played: %d", client.stat.rounds_played);
+	lprintf(" -- time played: %dm:%ds", ((current-client.stat.join_time) / 60), ((current-client.stat.join_time)%60));
+	lprintf(" -- match victories: %d", client.stat.match_victories);
+	lprintf(" -- one-on-one victories: %d", client.stat.victories);
+	lprintf(" -- deaths: %d", client.stat.deaths);
 }
 
 // reset the ranked stats for each client
@@ -159,7 +159,7 @@ void Match::send_data(){
 			if(client.tcp.error()){
 				// kick
 				std::string ip=client.tcp.get_name();
-				std::cout<<client.name<<" has disconnected ("<<ip<<")"<<std::endl;
+				lprintf("%s has disconnected (%s)", client.name.c_str(), ip.c_str());
 				std::string msg=client.name+" has disconnected";
 				client.kick(*this);
 				// round summary
@@ -358,10 +358,9 @@ void Match::send_chat(const std::string &m,const std::string &f){
 
 	// display the chat on stdout
 	if(from=="server")
-		std::cout<<"chat" ANSI_CYAN "[" ANSI_RED "server: " ANSI_CYAN;
+		lprintf("chat " ANSI_CYAN "[" ANSI_RED "server:" ANSI_CYAN " %s]" ANSI_RESET, msg.c_str());
 	else
-		std::cout<<"chat" ANSI_CYAN "["<<from<<": ";
-	std::cout<<msg<<"]" ANSI_RESET <<std::endl;
+		lprintf("chat " ANSI_CYAN "[" ANSI_RESET "%s:" ANSI_CYAN " %s]" ANSI_RESET, from.c_str(), msg.c_str());
 
 	// save it
 	chats.push_back({m, f});
@@ -610,7 +609,7 @@ void Match::wait_next_step(){
 		last_time=current_time;
 		// server is falling behind
 		if(sps<55&&frame>200)
-			std::cout<<"sps "<<sps<<" -- having trouble keeping up"<<std::endl;
+			lprintf("sps %d -- having trouble keeping up", sps);
 		sps=0;
 	}
 	else

@@ -84,11 +84,11 @@ void Platform::create_all(Match &match){
 
 	// just to check
 	if(match.platform_list.size()!=PLATFORM_COUNT){
-		std::cout<<"\033[31;1mERROR: platform_list.size() != PLATFORM_COUNT\033[0m"<<std::endl;
+		lprintf(ANSI_RED "ERROR: platform_list.size() != PLATFORM_COUNT" ANSI_RESET);
 		exit(1);
 	}
 
-	std::cout<<"constructed new playing area ("<<unused<<" unused)"<<std::endl;
+	lprintf("constructed new playing area (%d unused)", unused);
 }
 
 // fill in platform_status

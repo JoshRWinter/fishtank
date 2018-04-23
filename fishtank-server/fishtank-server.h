@@ -1,6 +1,11 @@
 #ifndef FISHTANK_SERVER_H
 #define FISHTANK_SERVER_H
 
+#include "Logger.h"
+
+#define lprintf(fmt, ...) fishtank_log(fmt, ##__VA_ARGS__)
+#define tprintf(fmt, ...) fishtank_log(__FILE__ "(%d): " fmt, __LINE__, ##__VA_ARGS__)
+
 #define WEBVIEW_PORT 20501
 
 // ANSI color codes
@@ -16,15 +21,14 @@
 
 #include <vector>
 #include <cstdint>
-#include <iostream>
 #include <math.h>
 
 #ifndef _WIN32
 #include <unistd.h>
 #endif // _WIN32
 
-#include "../jni/fishnet.h"
 #include "../jni/network.h"
+#include "../jni/fishnet.h"
 struct Match;
 struct Client;
 struct area_bounds;
