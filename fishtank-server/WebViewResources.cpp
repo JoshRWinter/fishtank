@@ -133,6 +133,14 @@ ROUTE_ADD(configuration, args, match){
 	if(args.length() > 0){
 		if(args == "reset")
 			match.reset_stats();
+		else if(args == "shutdown"){
+			const std::string content =
+			"<h2>Shutting down...</h2>\n"
+			"<p><sub>how could you do this</sub></p>"
+			;
+
+			throw ShutdownException(wrap(content, "Shutting down..."));
+		}
 		else
 			return http_not_found(args, match);
 
@@ -143,6 +151,7 @@ ROUTE_ADD(configuration, args, match){
 	"<h2>Additional Configuration</h2>\n"
 	"<table><tr><th id=\"table_noborder\">Action</th><th id=\"table_noborder\">Description</th></tr>\n"
 	"<tr><td id=\"table_noborder\"><a href=\"/configuration/reset\"><button class=\"button\">Reset Stats</button></a></td><td id=\"table_noborder\">Resets ranked status for all connected players</td></tr>\n"
+	"<tr><td id=\"table_noborder\"><a href=\"/configuration/shutdown\"><button class=\"button\">Shutdown</button></a></td><td id=\"table_noborder\">Shutdown the server</td></tr>\n"
 	"</table>\n"
 	;
 

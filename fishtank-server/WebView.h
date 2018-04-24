@@ -23,6 +23,7 @@ class ShutdownException : public std::exception{
 public:
 	ShutdownException(const std::string &c)
 		: content(c) {}
+	virtual ~ShutdownException() noexcept {};
 
 	virtual const char *what() const noexcept{
 		return content.c_str();
