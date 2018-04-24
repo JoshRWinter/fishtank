@@ -13,6 +13,7 @@ void fishtank_log(const char *fmt, ...){
 	vsnprintf(say, sizeof(say), fmt, args);
 	buffer.emplace_back(say); // save it
 	puts(say); // say it
+	fflush(stdout);
 
 	va_end(args);
 }
