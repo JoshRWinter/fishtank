@@ -143,7 +143,7 @@ ROUTE_ADD(configuration, args, match){
 			"<h2>Restarting</h2>"
 			"<p>Please wait...</p>";
 
-			throw RestartException(wrap(content, "See Other", script));
+			throw RestartException(wrap(content, "Restarting...", script));
 		}
 		else if(args == "shutdown"){
 			const std::string content =
