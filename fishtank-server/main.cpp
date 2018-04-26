@@ -9,6 +9,8 @@
 #include <wordexp.h>
 #include <sys/types.h>
 #include <ifaddrs.h>
+#else
+#include <process.h>
 #endif // _WIN32
 
 #include "fishtank-server.h"
@@ -364,7 +366,12 @@ CommandLine get_cmdline_args(int argc, char **argv){
 }
 
 void restart(int argc, char **argv){
-	execve(argv[0], argv, NULL);
+#ifdef _WIN32
+	_execve
+#else
+	execve
+#endif // _WIN32
+	(argv[0], argv, NULL);
 	lprintf("could not exec, errno=%d", errno);
 }
 
