@@ -25,6 +25,7 @@ static bool send_heartbeat(net::udp&, const Match &match);
 static bool recv_heartbeat(net::udp&);
 static std::string get_my_ip_addr();
 static CommandLine get_cmdline_args(int, char**);
+static void restart(int, char**);
 
 static int ctrl_c_count=0; // only accessed by signal_handler
 #ifdef _WIN32
@@ -131,6 +132,14 @@ int main(int argc, char **argv){
 		}catch(const ShutdownException &e){
 			lprintf("@@@@@@@@@@@@@@@ WebView shutdown");
 			return 0;
+		}
+		catch(const RestartException &e){
+			lprintf("@@@@@@@@@@@@@@@ WebView restart");
+			web.~WebView();
+			match.~Match();
+			hbeater.~udp();
+			master.~tcp();
+			restart(argc, argv);
 		}
 
 		match.wait_next_step();
@@ -352,6 +361,11 @@ CommandLine get_cmdline_args(int argc, char **argv){
 	}
 
 	return cmd;
+}
+
+void restart(int argc, char **argv){
+	execve(argv[0], argv, NULL);
+	lprintf("could not exec, errno=%d", errno);
 }
 
 #ifndef _WIN32

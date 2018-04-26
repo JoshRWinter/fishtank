@@ -44,6 +44,11 @@ void WebView::serve(){
 		respond(connection, e.what(), HTTP_STATUS_OK);
 		throw;
 	}
+	catch(const RestartException &e)
+	{
+		respond(connection, e.what(), HTTP_STATUS_OK);
+		throw;
+	}
 }
 
 // add a route to the routes map
