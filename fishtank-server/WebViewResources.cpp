@@ -163,8 +163,8 @@ ROUTE_ADD(configuration, args, match){
 	"<h2>Additional Configuration</h2>\n"
 	"<table><tr><th id=\"table_noborder\">Action</th><th id=\"table_noborder\">Description</th></tr>\n"
 	"<tr><td id=\"table_noborder\"><a href=\"/configuration/reset\"><button class=\"button\">Reset Stats</button></a></td><td id=\"table_noborder\">Resets ranked status for all connected players</td></tr>\n"
-	"<tr><td id=\"table_noborder\"><a href=\"/configuration/restart\"><button class=\"button\">Restart</button></a></td><td id=\"table_noborder\">Restarts the server (exec(...))</td></tr>\n"
-	"<tr><td id=\"table_noborder\"><a href=\"/configuration/shutdown\"><button class=\"button\">Shutdown</button></a></td><td id=\"table_noborder\">Shutdown the server</td></tr>\n"
+	"<tr><td id=\"table_noborder\"><a href=\"/configuration/restart\"><button class=\"button\">Restart</button></a></td><td id=\"table_noborder\">Restarts the server</td></tr>\n"
+	"<tr><td id=\"table_noborder\"><a href=\"/configuration/shutdown\"><button class=\"button\">Shutdown</button></a></td><td id=\"table_noborder\">Shuts down the server</td></tr>\n"
 	"</table>\n"
 	;
 

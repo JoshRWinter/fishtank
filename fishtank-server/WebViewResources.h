@@ -41,6 +41,7 @@ static const std::string master_css =
 "#cyan_bold { color: rgb(0, 255, 255); }\n"
 "#gray { color: rgb(128, 128, 128); }\n"
 "pre { font-size: 14px; }\n"
+"button { width: 100%; }\n"
 "</style>"
 ;
 
