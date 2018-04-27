@@ -33,13 +33,14 @@ static const std::string master_css =
 "a:hover.navlink { background-color: rgb(62, 177, 232); }\n"
 "#table_noborder { padding-bottom: 10px; padding-right: 100px; }\n"
 "#table_normal { padding: 10px; border: 1px solid black; }\n"
-"#red { color: rgb(200, 0, 0); }\n"
-"#red_bold { color: rgb(255, 0, 0); }\n"
-"#green { color: rgb(0, 200, 0); }\n"
-"#green_bold { color: rgb(0, 255, 0); }\n"
-"#cyan { color: rgb(0, 200, 200); }\n"
-"#cyan_bold { color: rgb(0, 255, 255); }\n"
-"#gray { color: rgb(128, 128, 128); }\n"
+".red { color: rgb(200, 0, 0); }\n"
+".red_bold { color: rgb(255, 0, 0); }\n"
+".green { color: rgb(0, 200, 0); }\n"
+".green_bold { color: rgb(0, 255, 0); }\n"
+".cyan { color: rgb(0, 200, 200); }\n"
+".cyan_bold { color: rgb(0, 255, 255); }\n"
+".blue { color: rgb(12, 127, 182); }\n"
+".gray { color: rgb(128, 128, 128); }\n"
 "pre { font-size: 14px; }\n"
 "button { width: 100%; }\n"
 "</style>"
@@ -97,19 +98,19 @@ struct sequence_position{
 
 static const char *code_to_span(const std::string &code){
 	if(code == "\033[31m")
-		return "<span id=\"red\">";
+		return "<span class=\"red\">";
 	else if(code == "\033[31;1m")
-		return "<span id=\"red_bold\">";
+		return "<span class=\"red_bold\">";
 
 	else if(code == "\033[32m")
-		return "<span id=\"green\">";
+		return "<span class=\"green\">";
 	else if(code == "\033[32;1m")
-		return "<span id=\"green_bold\">";
+		return "<span class=\"green_bold\">";
 
 	else if(code == "\033[36m")
-		return "<span id=\"cyan\">";
+		return "<span class=\"cyan\">";
 	else if(code == "\033[36;1m")
-		return "<span id=\"cyan_bold\">";
+		return "<span class=\"cyan_bold\">";
 
 	else if(code == "\033[0m")
 		return "</span>";

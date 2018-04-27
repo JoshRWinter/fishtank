@@ -172,18 +172,24 @@ ROUTE_ADD(configuration, args, match){
 }
 
 ROUTE_ADD(logs, args, match){
-	const std::vector<std::string> buffer = get_log_buffer();
+	const std::vector<std::tuple<unsigned, std::string> > buffer = get_log_buffer();
 	std::string content = "<h2>Server logs</h2><pre>\n";
+	char timestamp[30] = "?";
 
 	char lineno_convert[20];
 	unsigned long long lineno = 1;
-	for(const std::string &line : buffer){
+	for(const std::tuple<unsigned, std::string> &line : buffer){
 		snprintf(lineno_convert, sizeof(lineno_convert), "%4llu", lineno);
-		const std::string colorized = colorize(line);
+		const std::string colorized = colorize(std::get<1>(line));
+		const time_t t = std::get<0>(line);
+		const struct tm *formatted = localtime(&t);
+		strftime(timestamp, sizeof(timestamp), "%a, %b %d %I:%M:%S %p", formatted);
 
 		content.append("<span id=\"gray\">");
 		content.append(lineno_convert);
-		content.append(": </span>");
+		content.append(":</span> <span class=\"blue\">[");
+		content.append(timestamp);
+		content.append("]</span> ");
 
 		content.append(colorized);
 		content.append("\n");
